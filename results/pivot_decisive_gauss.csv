@@ -1,0 +1,8 @@
+level,method,psnr,note
+3,degraded_input,22.4307,
+3,least_squares,16.5238,
+1,best_TV,25.6346,frac=0.7
+2,DnCNN,27.7221,seed=0
+2,DnCNN,27.5248,seed=1
+2,DnCNN,27.5573,seed=2
+,GAP_learn_minus_TV,1.9668,pass=True

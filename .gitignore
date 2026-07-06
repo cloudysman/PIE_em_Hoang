@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# Moi truong ao
+.venv/
+venv/
+env/
+
+# Cau hinh ca nhan cua Claude Code
+.claude/
+
+# He dieu hanh
+Thumbs.db
+.DS_Store

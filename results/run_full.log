@@ -1,0 +1,45 @@
+== PIE-Net | device=cuda | blur=gauss | noise=0.01 ==
+   train patches: (96, 1, 64, 64) | test: (8, 1, 64, 64)
+
+[1/2] Huấn luyện PIE-Net (rho_theta HỌC ĐƯỢC)...
+  epoch   0 | rec 4.0611e-03 | mono 1.509e-05 | PSNR(train) 23.98 dB
+  epoch  10 | rec 2.5397e-03 | mono 0.000e+00 | PSNR(train) 27.62 dB
+  epoch  20 | rec 2.4946e-03 | mono 0.000e+00 | PSNR(train) 28.00 dB
+  epoch  30 | rec 2.4871e-03 | mono 0.000e+00 | PSNR(train) 28.00 dB
+  epoch  40 | rec 2.4624e-03 | mono 0.000e+00 | PSNR(train) 28.34 dB
+  epoch  44 | rec 2.4197e-03 | mono 0.000e+00 | PSNR(train) 28.39 dB
+
+[2/2] Huấn luyện PIE-Net (rho HẰNG SỐ - thí nghiệm then chốt)...
+  epoch   0 | rec 4.0623e-03 | mono 1.780e-05 | PSNR(train) 23.99 dB
+  epoch  10 | rec 2.5522e-03 | mono 0.000e+00 | PSNR(train) 27.84 dB
+  epoch  20 | rec 2.5159e-03 | mono 0.000e+00 | PSNR(train) 27.62 dB
+  epoch  30 | rec 2.4825e-03 | mono 0.000e+00 | PSNR(train) 28.26 dB
+  epoch  40 | rec 2.4146e-03 | mono 0.000e+00 | PSNR(train) 28.06 dB
+  epoch  44 | rec 2.3947e-03 | mono 0.000e+00 | PSNR(train) 28.68 dB
+
+[ablation] huấn luyện ngắn các biến thể cấu trúc...
+   Bo quan tinh (no inertial)     PSNR 28.70 | VIres 1.24e+00
+   Bo viscosity (no viscosity)    PSNR 28.58 | VIres 5.47e-01
+   Chieu chinh xac (exact proj)   PSNR 28.92 | VIres 8.61e-01
+   L-free (Tseng linesearch)      PSNR 24.45 | VIres 6.16e+00
+
+======================================================================
+KẾT QUẢ (test) | PSNR(dB)  SSIM   VI_res     iters   ms/img
+----------------------------------------------------------------------
+Anh mo (degraded input)        22.45   0.646        nan      0      0.0
+PIE-Net (rho hoc duoc)         28.31   0.736   7.15e-01     12      6.9
+PIE-Net (rho hang so)          28.91   0.752   8.61e-01     12      3.6
+Bo quan tinh (no inertial)     28.70   0.746   1.24e+00     12      5.1
+Bo viscosity (no viscosity)    28.58   0.742   5.47e-01     12      5.1
+Chieu chinh xac (exact proj)   28.92   0.754   8.61e-01     12      3.6
+L-free (Tseng linesearch)      24.45   0.685   6.16e+00     12     18.8
+======================================================================
+-> đã lưu results/metrics.csv
+   T2 (hoi tu thuat toan): VI residual 2.48e+00 -> 1.99e-01 qua 200 buoc
+   semi-convergence: PSNR dinh 28.38 dB @ k=26, cuoi 6.77 dB (khoi phuc tot = diem-lap chan troi huu han)
+-> đã lưu results/convergence.png
+-> đã lưu results/reconstructions.png
+
+rho_theta hoc duoc tren test: min=0.935 max=1.023 mean=0.991
+
+Hoan tat. Xem thu muc 'results/'.

@@ -1,0 +1,5 @@
+regime,method,psnr_mean,psnr_std,violation
+khớp,PnP,27.4674,0.1292,0.9713
+khớp,ours,26.8800,0.0606,0.9643
+lệch,PnP,25.3625,0.1547,0.9600
+lệch,ours,24.4783,0.2243,0.9919
