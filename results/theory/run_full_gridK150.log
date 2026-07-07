@@ -1,0 +1,182 @@
+== LÝ THUYẾT: sơ đồ phản xạ 4 pha + chiếu xấp xỉ TV | device=cpu ==
+   K=150 | size=64 | beta0=0.05 | noise=0.05 | tau_frac=0.55 | n_test=3
+   blur=['gauss', 'motion'] | modes=['m1', 'm2', 'm5', 'mlog', 'exact', 'epsconst']
+
+[gauss] L=||B^T B||=0.972209 (power iteration) -> lambda=0.9(sqrt2-1)/L=0.3834 | tau tb=131.8
+  [chạy] gauss / m1 ...
+    k=   0 | e_k=1.705e+00 | resid=1.788e+00 | PSNR=21.57 dB | inner_k=1 | cum=1
+    k=  15 | e_k=3.222e-01 | resid=3.647e-01 | PSNR=23.26 dB | inner_k=1 | cum=16
+    k=  30 | e_k=1.350e-01 | resid=1.814e-01 | PSNR=23.81 dB | inner_k=1 | cum=31
+    k=  45 | e_k=9.785e-02 | resid=1.229e-01 | PSNR=24.11 dB | inner_k=1 | cum=46
+    k=  60 | e_k=6.329e-02 | resid=8.221e-02 | PSNR=24.22 dB | inner_k=1 | cum=61
+    k=  75 | e_k=4.823e-02 | resid=6.210e-02 | PSNR=24.29 dB | inner_k=1 | cum=76
+    k=  90 | e_k=3.813e-02 | resid=4.956e-02 | PSNR=24.35 dB | inner_k=1 | cum=91
+    k= 105 | e_k=3.202e-02 | resid=4.148e-02 | PSNR=24.38 dB | inner_k=1 | cum=106
+    k= 120 | e_k=2.633e-02 | resid=3.445e-02 | PSNR=24.40 dB | inner_k=1 | cum=121
+    k= 135 | e_k=2.281e-02 | resid=2.969e-02 | PSNR=24.41 dB | inner_k=1 | cum=136
+    k= 149 | e_k=2.056e-02 | resid=2.655e-02 | PSNR=24.41 dB | inner_k=1 | cum=150
+    -> results\theory\theory_gauss_m1.csv | PSNR=24.4075 dB | resid=2.654845e-02 | tổng bước nội=150 | t_alg=0.365s (t_total=75.108s)
+  [chạy] gauss / m2 ...
+    k=   0 | e_k=1.112e+00 | resid=1.229e+00 | PSNR=21.91 dB | inner_k=2 | cum=2
+    k=  15 | e_k=9.694e-02 | resid=1.717e-01 | PSNR=23.77 dB | inner_k=2 | cum=32
+    k=  30 | e_k=4.862e-02 | resid=8.267e-02 | PSNR=24.14 dB | inner_k=2 | cum=62
+    k=  45 | e_k=3.005e-02 | resid=5.312e-02 | PSNR=24.31 dB | inner_k=2 | cum=92
+    k=  60 | e_k=2.104e-02 | resid=3.822e-02 | PSNR=24.38 dB | inner_k=2 | cum=122
+    k=  75 | e_k=1.611e-02 | resid=2.955e-02 | PSNR=24.40 dB | inner_k=2 | cum=152
+    k=  90 | e_k=1.270e-02 | resid=2.356e-02 | PSNR=24.40 dB | inner_k=2 | cum=182
+    k= 105 | e_k=1.021e-02 | resid=1.928e-02 | PSNR=24.39 dB | inner_k=2 | cum=212
+    k= 120 | e_k=8.738e-03 | resid=1.637e-02 | PSNR=24.38 dB | inner_k=2 | cum=242
+    k= 135 | e_k=7.445e-03 | resid=1.413e-02 | PSNR=24.36 dB | inner_k=2 | cum=272
+    k= 149 | e_k=6.476e-03 | resid=1.242e-02 | PSNR=24.35 dB | inner_k=2 | cum=300
+    -> results\theory\theory_gauss_m2.csv | PSNR=24.3458 dB | resid=1.241933e-02 | tổng bước nội=300 | t_alg=0.683s (t_total=80.616s)
+  [chạy] gauss / m5 ...
+    k=   0 | e_k=3.882e-01 | resid=5.733e-01 | PSNR=22.21 dB | inner_k=5 | cum=5
+    k=  15 | e_k=2.296e-02 | resid=9.711e-02 | PSNR=24.03 dB | inner_k=5 | cum=80
+    k=  30 | e_k=1.077e-02 | resid=4.683e-02 | PSNR=24.33 dB | inner_k=5 | cum=155
+    k=  45 | e_k=6.683e-03 | resid=2.983e-02 | PSNR=24.39 dB | inner_k=5 | cum=230
+    k=  60 | e_k=4.462e-03 | resid=2.112e-02 | PSNR=24.38 dB | inner_k=5 | cum=305
+    k=  75 | e_k=3.313e-03 | resid=1.587e-02 | PSNR=24.36 dB | inner_k=5 | cum=380
+    k=  90 | e_k=2.560e-03 | resid=1.262e-02 | PSNR=24.34 dB | inner_k=5 | cum=455
+    k= 105 | e_k=2.175e-03 | resid=1.005e-02 | PSNR=24.31 dB | inner_k=5 | cum=530
+    k= 120 | e_k=1.668e-03 | resid=8.196e-03 | PSNR=24.29 dB | inner_k=5 | cum=605
+    k= 135 | e_k=1.427e-03 | resid=6.953e-03 | PSNR=24.27 dB | inner_k=5 | cum=680
+    k= 149 | e_k=1.190e-03 | resid=5.920e-03 | PSNR=24.25 dB | inner_k=5 | cum=750
+    -> results\theory\theory_gauss_m5.csv | PSNR=24.2513 dB | resid=5.919595e-03 | tổng bước nội=750 | t_alg=1.539s (t_total=82.149s)
+  [chạy] gauss / mlog ...
+    k=   0 | e_k=1.705e+00 | resid=1.788e+00 | PSNR=21.57 dB | inner_k=1 | cum=1
+    k=  15 | e_k=1.380e-02 | resid=9.390e-02 | PSNR=24.05 dB | inner_k=7 | cum=85
+    k=  30 | e_k=4.593e-03 | resid=4.246e-02 | PSNR=24.36 dB | inner_k=8 | cum=201
+    k=  45 | e_k=2.141e-03 | resid=2.593e-02 | PSNR=24.39 dB | inner_k=9 | cum=334
+    k=  60 | e_k=1.136e-03 | resid=1.774e-02 | PSNR=24.38 dB | inner_k=10 | cum=476
+    k=  75 | e_k=7.038e-04 | resid=1.331e-02 | PSNR=24.35 dB | inner_k=10 | cum=626
+    k=  90 | e_k=5.473e-04 | resid=1.015e-02 | PSNR=24.31 dB | inner_k=11 | cum=777
+    k= 105 | e_k=3.093e-04 | resid=8.019e-03 | PSNR=24.29 dB | inner_k=11 | cum=942
+    k= 120 | e_k=2.467e-04 | resid=6.560e-03 | PSNR=24.26 dB | inner_k=11 | cum=1107
+    k= 135 | e_k=2.071e-04 | resid=5.360e-03 | PSNR=24.24 dB | inner_k=11 | cum=1272
+    k= 149 | e_k=1.409e-04 | resid=4.615e-03 | PSNR=24.22 dB | inner_k=12 | cum=1428
+    -> results\theory\theory_gauss_mlog.csv | PSNR=24.2240 dB | resid=4.615409e-03 | tổng bước nội=1428 | t_alg=2.852s (t_total=83.209s)
+  [chạy] gauss / exact ...
+    k=   0 | e_k=6.494e-03 | resid=4.834e-01 | PSNR=22.23 dB | inner_k=110 | cum=110
+    k=  15 | e_k=1.787e-02 | resid=8.563e-02 | PSNR=24.10 dB | inner_k=5 | cum=276
+    k=  30 | e_k=1.820e-02 | resid=4.679e-02 | PSNR=24.33 dB | inner_k=3 | cum=335
+    k=  45 | e_k=2.426e-02 | resid=3.509e-02 | PSNR=24.38 dB | inner_k=1 | cum=367
+    k=  60 | e_k=2.129e-02 | resid=3.045e-02 | PSNR=24.39 dB | inner_k=1 | cum=382
+    k=  75 | e_k=2.802e-02 | resid=2.963e-02 | PSNR=24.39 dB | inner_k=0 | cum=385
+    k=  90 | e_k=2.109e-02 | resid=2.934e-02 | PSNR=24.39 dB | inner_k=1 | cum=386
+    k= 105 | e_k=2.818e-02 | resid=2.932e-02 | PSNR=24.39 dB | inner_k=0 | cum=386
+    k= 120 | e_k=2.789e-02 | resid=2.903e-02 | PSNR=24.39 dB | inner_k=0 | cum=387
+    k= 135 | e_k=2.814e-02 | resid=2.902e-02 | PSNR=24.39 dB | inner_k=0 | cum=387
+    k= 149 | e_k=2.822e-02 | resid=2.902e-02 | PSNR=24.39 dB | inner_k=0 | cum=387
+    -> results\theory\theory_gauss_exact.csv | PSNR=24.3884 dB | resid=2.901515e-02 | tổng bước nội=387 | t_alg=0.900s (t_total=312.503s)
+  [chạy] gauss / epsconst ...
+    k=   0 | e_k=3.264e-02 | resid=4.850e-01 | PSNR=22.23 dB | inner_k=35 | cum=35
+    k=  15 | e_k=9.435e-02 | resid=1.343e-01 | PSNR=23.81 dB | inner_k=1 | cum=101
+    k=  30 | e_k=1.009e-01 | resid=1.049e-01 | PSNR=23.98 dB | inner_k=0 | cum=110
+    k=  45 | e_k=1.020e-01 | resid=1.047e-01 | PSNR=23.98 dB | inner_k=0 | cum=110
+    k=  60 | e_k=7.652e-02 | resid=1.019e-01 | PSNR=24.00 dB | inner_k=1 | cum=111
+    k=  75 | e_k=1.003e-01 | resid=1.019e-01 | PSNR=24.00 dB | inner_k=0 | cum=111
+    k=  90 | e_k=1.005e-01 | resid=1.018e-01 | PSNR=24.00 dB | inner_k=0 | cum=111
+    k= 105 | e_k=1.007e-01 | resid=1.018e-01 | PSNR=24.00 dB | inner_k=0 | cum=111
+    k= 120 | e_k=1.008e-01 | resid=1.018e-01 | PSNR=24.00 dB | inner_k=0 | cum=111
+    k= 135 | e_k=1.009e-01 | resid=1.018e-01 | PSNR=24.00 dB | inner_k=0 | cum=111
+    k= 149 | e_k=1.010e-01 | resid=1.018e-01 | PSNR=24.00 dB | inner_k=0 | cum=111
+    -> results\theory\theory_gauss_epsconst.csv | PSNR=23.9960 dB | resid=1.017640e-01 | tổng bước nội=111 | t_alg=0.369s (t_total=311.392s)
+
+[motion] L=||B^T B||=0.982412 (power iteration) -> lambda=0.9(sqrt2-1)/L=0.3795 | tau tb=131.8
+  [chạy] motion / m1 ...
+    k=   0 | e_k=2.089e+00 | resid=2.176e+00 | PSNR=21.89 dB | inner_k=1 | cum=1
+    k=  15 | e_k=6.700e-01 | resid=7.298e-01 | PSNR=23.17 dB | inner_k=1 | cum=16
+    k=  30 | e_k=3.946e-01 | resid=4.292e-01 | PSNR=23.91 dB | inner_k=1 | cum=31
+    k=  45 | e_k=2.776e-01 | resid=3.005e-01 | PSNR=24.40 dB | inner_k=1 | cum=46
+    k=  60 | e_k=2.277e-01 | resid=2.448e-01 | PSNR=24.68 dB | inner_k=1 | cum=61
+    k=  75 | e_k=1.921e-01 | resid=2.058e-01 | PSNR=24.82 dB | inner_k=1 | cum=76
+    k=  90 | e_k=1.643e-01 | resid=1.758e-01 | PSNR=24.91 dB | inner_k=1 | cum=91
+    k= 105 | e_k=1.504e-01 | resid=1.604e-01 | PSNR=24.97 dB | inner_k=1 | cum=106
+    k= 120 | e_k=1.359e-01 | resid=1.445e-01 | PSNR=25.03 dB | inner_k=1 | cum=121
+    k= 135 | e_k=1.262e-01 | resid=1.336e-01 | PSNR=25.08 dB | inner_k=1 | cum=136
+    k= 149 | e_k=1.159e-01 | resid=1.225e-01 | PSNR=25.11 dB | inner_k=1 | cum=150
+    -> results\theory\theory_motion_m1.csv | PSNR=25.1146 dB | resid=1.225249e-01 | tổng bước nội=150 | t_alg=0.408s (t_total=150.496s)
+  [chạy] motion / m2 ...
+    k=   0 | e_k=1.484e+00 | resid=1.605e+00 | PSNR=22.40 dB | inner_k=2 | cum=2
+    k=  15 | e_k=1.725e-01 | resid=2.437e-01 | PSNR=23.89 dB | inner_k=2 | cum=32
+    k=  30 | e_k=9.104e-02 | resid=1.288e-01 | PSNR=24.46 dB | inner_k=2 | cum=62
+    k=  45 | e_k=5.488e-02 | resid=8.030e-02 | PSNR=24.72 dB | inner_k=2 | cum=92
+    k=  60 | e_k=3.916e-02 | resid=5.840e-02 | PSNR=24.90 dB | inner_k=2 | cum=122
+    k=  75 | e_k=3.145e-02 | resid=4.669e-02 | PSNR=25.02 dB | inner_k=2 | cum=152
+    k=  90 | e_k=2.570e-02 | resid=3.804e-02 | PSNR=25.10 dB | inner_k=2 | cum=182
+    k= 105 | e_k=2.222e-02 | resid=3.240e-02 | PSNR=25.14 dB | inner_k=2 | cum=212
+    k= 120 | e_k=1.958e-02 | resid=2.807e-02 | PSNR=25.17 dB | inner_k=2 | cum=242
+    k= 135 | e_k=1.754e-02 | resid=2.492e-02 | PSNR=25.19 dB | inner_k=2 | cum=272
+    k= 149 | e_k=1.589e-02 | resid=2.232e-02 | PSNR=25.20 dB | inner_k=2 | cum=300
+    -> results\theory\theory_motion_m2.csv | PSNR=25.2013 dB | resid=2.232079e-02 | tổng bước nội=300 | t_alg=0.687s (t_total=118.585s)
+  [chạy] motion / m5 ...
+    k=   0 | e_k=7.267e-01 | resid=9.129e-01 | PSNR=22.75 dB | inner_k=5 | cum=5
+    k=  15 | e_k=4.904e-02 | resid=1.272e-01 | PSNR=24.24 dB | inner_k=5 | cum=80
+    k=  30 | e_k=2.416e-02 | resid=6.403e-02 | PSNR=24.76 dB | inner_k=5 | cum=155
+    k=  45 | e_k=1.739e-02 | resid=4.359e-02 | PSNR=25.00 dB | inner_k=5 | cum=230
+    k=  60 | e_k=1.374e-02 | resid=3.234e-02 | PSNR=25.12 dB | inner_k=5 | cum=305
+    k=  75 | e_k=1.122e-02 | resid=2.506e-02 | PSNR=25.17 dB | inner_k=5 | cum=380
+    k=  90 | e_k=9.316e-03 | resid=2.014e-02 | PSNR=25.20 dB | inner_k=5 | cum=455
+    k= 105 | e_k=7.554e-03 | resid=1.608e-02 | PSNR=25.20 dB | inner_k=5 | cum=530
+    k= 120 | e_k=6.169e-03 | resid=1.303e-02 | PSNR=25.20 dB | inner_k=5 | cum=605
+    k= 135 | e_k=4.955e-03 | resid=1.081e-02 | PSNR=25.20 dB | inner_k=5 | cum=680
+    k= 149 | e_k=4.130e-03 | resid=9.028e-03 | PSNR=25.19 dB | inner_k=5 | cum=750
+    -> results\theory\theory_motion_m5.csv | PSNR=25.1932 dB | resid=9.027985e-03 | tổng bước nội=750 | t_alg=1.574s (t_total=110.075s)
+  [chạy] motion / mlog ...
+    k=   0 | e_k=2.089e+00 | resid=2.176e+00 | PSNR=21.89 dB | inner_k=1 | cum=1
+    k=  15 | e_k=3.648e-02 | resid=1.216e-01 | PSNR=24.26 dB | inner_k=7 | cum=85
+    k=  30 | e_k=1.577e-02 | resid=5.795e-02 | PSNR=24.82 dB | inner_k=8 | cum=201
+    k=  45 | e_k=1.036e-02 | resid=3.749e-02 | PSNR=25.06 dB | inner_k=9 | cum=334
+    k=  60 | e_k=7.223e-03 | resid=2.607e-02 | PSNR=25.15 dB | inner_k=10 | cum=476
+    k=  75 | e_k=4.906e-03 | resid=1.880e-02 | PSNR=25.19 dB | inner_k=10 | cum=626
+    k=  90 | e_k=3.250e-03 | resid=1.363e-02 | PSNR=25.20 dB | inner_k=11 | cum=777
+    k= 105 | e_k=2.024e-03 | resid=1.002e-02 | PSNR=25.20 dB | inner_k=11 | cum=942
+    k= 120 | e_k=1.241e-03 | resid=7.773e-03 | PSNR=25.20 dB | inner_k=11 | cum=1107
+    k= 135 | e_k=8.775e-04 | resid=6.199e-03 | PSNR=25.19 dB | inner_k=11 | cum=1272
+    k= 149 | e_k=7.000e-04 | resid=5.159e-03 | PSNR=25.18 dB | inner_k=12 | cum=1428
+    -> results\theory\theory_motion_mlog.csv | PSNR=25.1795 dB | resid=5.158807e-03 | tổng bước nội=1428 | t_alg=2.905s (t_total=119.167s)
+  [chạy] motion / exact ...
+    k=   0 | e_k=4.895e-03 | resid=5.343e-01 | PSNR=22.29 dB | inner_k=709 | cum=709
+    k=  15 | e_k=1.685e-02 | resid=9.098e-02 | PSNR=24.35 dB | inner_k=6 | cum=1565
+    k=  30 | e_k=2.896e-02 | resid=5.503e-02 | PSNR=24.74 dB | inner_k=2 | cum=1614
+    k=  45 | e_k=2.281e-02 | resid=4.234e-02 | PSNR=24.91 dB | inner_k=2 | cum=1644
+    k=  60 | e_k=2.639e-02 | resid=3.712e-02 | PSNR=24.98 dB | inner_k=1 | cum=1659
+    k=  75 | e_k=2.357e-02 | resid=3.279e-02 | PSNR=25.03 dB | inner_k=1 | cum=1674
+    k=  90 | e_k=2.850e-02 | resid=3.005e-02 | PSNR=25.07 dB | inner_k=0 | cum=1685
+    k= 105 | e_k=2.844e-02 | resid=2.973e-02 | PSNR=25.07 dB | inner_k=0 | cum=1686
+    k= 120 | e_k=2.834e-02 | resid=2.944e-02 | PSNR=25.07 dB | inner_k=0 | cum=1687
+    k= 135 | e_k=2.845e-02 | resid=2.942e-02 | PSNR=25.07 dB | inner_k=0 | cum=1687
+    k= 149 | e_k=2.830e-02 | resid=2.916e-02 | PSNR=25.07 dB | inner_k=0 | cum=1688
+    -> results\theory\theory_motion_exact.csv | PSNR=25.0738 dB | resid=2.916451e-02 | tổng bước nội=1688 | t_alg=3.410s (t_total=319.682s)
+  [chạy] motion / epsconst ...
+    k=   0 | e_k=2.478e-02 | resid=5.357e-01 | PSNR=22.30 dB | inner_k=213 | cum=213
+    k=  15 | e_k=1.058e-01 | resid=1.447e-01 | PSNR=23.95 dB | inner_k=1 | cum=441
+    k=  30 | e_k=1.367e-01 | resid=1.406e-01 | PSNR=23.98 dB | inner_k=0 | cum=442
+    k=  45 | e_k=1.379e-01 | resid=1.405e-01 | PSNR=23.98 dB | inner_k=0 | cum=442
+    k=  60 | e_k=1.385e-01 | resid=1.404e-01 | PSNR=23.98 dB | inner_k=0 | cum=442
+    k=  75 | e_k=1.388e-01 | resid=1.404e-01 | PSNR=23.98 dB | inner_k=0 | cum=442
+    k=  90 | e_k=1.391e-01 | resid=1.404e-01 | PSNR=23.98 dB | inner_k=0 | cum=442
+    k= 105 | e_k=1.392e-01 | resid=1.403e-01 | PSNR=23.98 dB | inner_k=0 | cum=442
+    k= 120 | e_k=1.394e-01 | resid=1.403e-01 | PSNR=23.98 dB | inner_k=0 | cum=442
+    k= 135 | e_k=1.395e-01 | resid=1.403e-01 | PSNR=23.98 dB | inner_k=0 | cum=442
+    k= 149 | e_k=1.395e-01 | resid=1.403e-01 | PSNR=23.98 dB | inner_k=0 | cum=442
+    -> results\theory\theory_motion_epsconst.csv | PSNR=23.9803 dB | resid=1.403139e-01 | tổng bước nội=442 | t_alg=1.010s (t_total=312.796s)
+
+-> tổng hợp: results\theory\summary.csv
+
+========================================================================================
+cấu hình            PSNR(dB)  phần dư cuối     e_k cuối  tổng nội  t_alg(s)
+----------------------------------------------------------------------------------------
+gauss_m1             24.4075  2.654845e-02 2.055822e-02       150     0.365
+gauss_m2             24.3458  1.241933e-02 6.476143e-03       300     0.683
+gauss_m5             24.2513  5.919595e-03 1.189712e-03       750     1.539
+gauss_mlog           24.2240  4.615409e-03 1.408963e-04      1428     2.852
+gauss_exact          24.3884  2.901515e-02 2.821541e-02       387     0.900
+gauss_epsconst       23.9960  1.017640e-01 1.009626e-01       111     0.369
+motion_m1            25.1146  1.225249e-01 1.158783e-01       150     0.408
+motion_m2            25.2013  2.232079e-02 1.589394e-02       300     0.687
+motion_m5            25.1932  9.027985e-03 4.129803e-03       750     1.574
+motion_mlog          25.1795  5.158807e-03 6.999947e-04      1428     2.905
+motion_exact         25.0738  2.916451e-02 2.830098e-02      1688     3.410
+motion_epsconst      23.9803  1.403139e-01 1.395367e-01       442     1.010
+========================================================================================

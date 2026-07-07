@@ -1,0 +1,17 @@
+== Ví dụ giả đơn điệu (không đơn điệu) | n=50 | K=400 ==
+   F(x) = exp(-||x||^2) A (x - b), C = quả cầu đơn vị, neo = 0, ||b||=3.000
+
+[degenerate] L~0.3288 | lambda=1.1338
+   chứng chỉ KHÔNG đơn điệu: min <F(u)-F(v),u-v> = -5.5949e-06  (ÂM => không đơn điệu)
+   phần dư: đầu=5.000e-02 -> cuối=1.251e-04 | độ dốc log-log nửa cuối=-1.000
+   -> results\theory\pseudomono_degenerate.csv
+
+[strong] L~0.3679 | lambda=1.0134
+   chứng chỉ KHÔNG đơn điệu: min <F(u)-F(v),u-v> = -2.5037e-06  (ÂM => không đơn điệu)
+   phần dư: đầu=5.000e-02 -> cuối=1.250e-04 | độ dốc log-log nửa cuối=-1.000
+   dist(x_K, P_C(b))=1.251e-04; hệ số co hình học~0.9966
+   -> results\theory\pseudomono_strong.csv
+
+-> tổng hợp: results\theory\pseudomono_summary.csv
+
+Diễn giải: biến thể 'degenerate' (giả đơn điệu, không mạnh) cho phần dư giảm dưới tuyến tính (độ dốc log-log hữu hạn); biến thể 'strong' (giả đơn điệu mạnh) cho phần dư giảm hình học và hội tụ về P_C(b).

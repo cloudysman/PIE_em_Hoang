@@ -1,0 +1,3 @@
+variant,L,lambda,nonmono_worst,resid_first,resid_last,loglog_slope_tail,note
+degenerate,0.3288,1.1338,-5.5949e-06,5.0000e-02,1.2512e-04,-1.000,
+strong,0.3679,1.0134,-2.5037e-06,5.0000e-02,1.2505e-04,-1.000,"dist(x_K, P_C(b))=1.251e-04; hệ số co hình học~0.9966"

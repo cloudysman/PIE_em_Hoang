@@ -216,6 +216,27 @@ class TVBallConstraint(Constraint):
                     break
         return ProjResult(x, n_used, (x, p), tv_isotropic(x))
 
+    def project_to_ref(self, v, x_ref, tol_rel: float, cap: int,
+                       state=None) -> ProjResult:
+        """Chiếu với SAI SỐ ĐO ĐƯỢC: chạy CP (khởi tạo ấm nếu có state) tới khi
+        sai số tương đối so với nghiệm tham chiếu x_ref <= tol_rel, chặn ở cap.
+
+        Khác ``iters_to_tol`` ở hai điểm: (i) trả về CẢ iterate lẫn state (dùng
+        được làm bước chiếu thật trong chế độ 'chiếu chính xác' / 'eps hằng'),
+        (ii) kiểm tra TRƯỚC bước đầu — khởi tạo ấm đã đạt tol thì tốn 0 bước
+        (đếm chi phí trung thực). Đồng bộ batch: dừng khi MỌI ảnh đạt tol."""
+        tau = self.tau.to(v.device).view(v.shape[0])
+        x, p = self._init(v, state)
+        xbar = x.clone()
+        ref_norm = x_ref.flatten(1).norm(dim=1).clamp_min(1e-12)
+        rel = (x - x_ref).flatten(1).norm(dim=1) / ref_norm
+        n_used = 0
+        while not torch.all(rel <= tol_rel) and n_used < cap:
+            x, xbar, p = self._cp_step(x, xbar, p, v, tau)
+            n_used += 1
+            rel = (x - x_ref).flatten(1).norm(dim=1) / ref_norm
+        return ProjResult(x, n_used, (x, p), tv_isotropic(x))
+
     def iters_to_tol(self, v, x_ref, delta: float, cap: int, state=None) -> int:
         """Số bước CP để đạt sai số tương đối <= delta so với nghiệm chiếu HỘI TỤ
         x_ref (thước đo chi phí TRUNG THỰC của 'chiếu chính xác'). Đồng bộ batch:
