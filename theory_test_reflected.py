@@ -81,6 +81,8 @@ def main():
     ap.add_argument("--n_test", type=int, default=4, help="số ảnh kiểm tra")
     ap.add_argument("--measure_every", type=int, default=1,
                     help="đo e_k và phần dư mỗi N bước ngoài (đắt); delta_k luôn đo")
+    ap.add_argument("--alpha_bar", type=float, default=0.3,
+                    help="trần hệ số quán tính; đặt 0 để TẮT quán tính (sơ đồ đã đơn giản hóa)")
     ap.add_argument("--noise", type=float, default=0.05)
     ap.add_argument("--tau_frac", type=float, default=0.55,
                     help="tau = tau_frac * TV(ảnh sạch) (oracle, ràng buộc kích hoạt)")
@@ -129,6 +131,7 @@ def main():
             t0 = time.perf_counter()
             out = run_reflected(blur, y, tau, K=args.K, budget=budget,
                                 beta0=args.beta0, lam=lam, x_clean=x_gt,
+                                alpha_bar=args.alpha_bar,
                                 measure_every=args.measure_every, verbose=True)
             wall = time.perf_counter() - t0
             out_path = os.path.join(RESULT_DIR,
