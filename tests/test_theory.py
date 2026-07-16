@@ -103,6 +103,55 @@ def test_phan_du_bien_phan_giam(setup):
     assert vals[-1] < vals[0]
 
 
+def test_khoang_cach_doi_ngau_khong_am(setup):
+    """Khoảng cách đối ngẫu phải không âm ở mọi bước."""
+    _, tau, v = setup
+    cons = TVBallConstraint(tau=tau, box=None)
+    tau_v = cons.tau.view(v.shape[0])
+    for n in (1, 10, 100):
+        x, p = cons.project(v, tol=0.0, max_inner=n).state
+        gap, _ = cons.duality_gap(x, p, v, tau_v)
+        assert torch.all(gap >= -1e-6)
+
+
+def test_chung_chi_la_chan_tren_that_su(setup):
+    """Tính chất định nghĩa nên chứng chỉ: sqrt(2*gap) phải là CHẶN TRÊN của sai
+    số chiếu thật. Nếu tính chất này sai thì mọi tiêu chuẩn dừng dựa trên nó đều
+    vô nghĩa, nên đây là kiểm thử quan trọng nhất của chứng chỉ."""
+    _, tau, v = setup
+    cons = TVBallConstraint(tau=tau, box=None)
+    tau_v = cons.tau.view(v.shape[0])
+    ref = cons.project(v, tol=0.0, max_inner=8000).x
+    for n in (5, 25, 100, 400):
+        x, p = cons.project(v, tol=0.0, max_inner=n).state
+        bound, xf = cons.error_bound(x, p, v, tau_v)
+        err = (xf - ref).flatten(1).norm(dim=1)
+        assert torch.all(bound >= err - 1e-5), f"chặn trên bị vi phạm ở n={n}"
+
+
+def test_chieu_theo_chung_chi_dat_tieu_chuan_va_kha_thi(setup):
+    """project_to_bound phải dừng đúng khi chứng chỉ đạt ngưỡng, và trả về điểm
+    nằm trong quả cầu biến phân toàn phần."""
+    _, tau, v = setup
+    cons = TVBallConstraint(tau=tau, box=None)
+    tau_v = cons.tau.view(v.shape[0])
+    eps = 0.5
+    out = cons.project_to_bound(v, eps, cap=8000)
+    x, p = out.state
+    bound, _ = cons.error_bound(x, p, v, tau_v)
+    assert torch.all(bound <= eps + 1e-6)
+    assert torch.all(tv_isotropic(out.x) <= tau_v * 1.001)
+
+
+def test_ngan_sach_nho_hon_thi_ton_it_buoc_hon(setup):
+    """Tiêu chuẩn sai số lỏng hơn phải tốn ít bước nội hơn."""
+    _, tau, v = setup
+    cons = TVBallConstraint(tau=tau, box=None)
+    n_long = cons.project_to_bound(v, 1.0, cap=8000).n_inner
+    n_chat = cons.project_to_bound(v, 0.2, cap=8000).n_inner
+    assert n_long < n_chat
+
+
 def test_sai_so_chieu_giam_theo_ngan_sach(setup):
     """Ngân sách bước nội lớn hơn phải cho sai số chiếu nhỏ hơn."""
     x, tau, _ = setup

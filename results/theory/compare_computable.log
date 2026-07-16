@@ -1,0 +1,13 @@
+                  che do     PSNR     phan du  tong buoc noi  vi pham TV
+C:\Users\trong\AppData\Local\Temp\claude\c--Users-trong-Downloads-PIE-em-Hoang\2bf96163-73da-4142-8ed0-60cb16987721\scratchpad\compare_computable.py:42: RuntimeWarning: Mean of empty slice
+  resid = np.nanmean(tr["resid"].numpy(), axis=1)
+  adaptive(eps0=2,p=1.1)   23.969  4.3779e-02            124      1.0000
+  adaptive(eps0=5,p=1.1)   23.833  7.8226e-02             69      1.0000
+       exact_bound(0.05)   23.913  4.9180e-02            268      1.0000
+             m2 (oracle)   23.875  5.0297e-02             80      1.0038
+          exact (oracle)   23.994  2.9919e-02            352      1.0004
+
+=== Nhom TINH DUOC: tong buoc noi de dat phan du <= 5.1639e-02 ===
+    adaptive(eps0=2,p=1.1):        124  2.16x re hon
+    adaptive(eps0=5,p=1.1):  khong dat  -
+         exact_bound(0.05):        268  1.00x re hon

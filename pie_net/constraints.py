@@ -182,6 +182,46 @@ class TVBallConstraint(Constraint):
     def value(self, x):
         return tv_isotropic(x)
 
+    # ------------------------------------------------------------------ #
+    #  Chứng chỉ sai số TÍNH ĐƯỢC qua khoảng cách đối ngẫu                #
+    # ------------------------------------------------------------------ #
+    def make_feasible(self, x: torch.Tensor, tau: torch.Tensor) -> torch.Tensor:
+        """Ép x về quả cầu biến phân toàn phần bằng cách co về giá trị trung bình.
+
+        Vì TV(m + s(x-m)) = s·TV(x) với m là ảnh hằng bằng trung bình của x, chọn
+        s = tau/TV(x) cho TV đúng bằng tau. Hàng nào đã khả thi thì giữ nguyên."""
+        tv = tv_isotropic(x)
+        s = torch.clamp(tau / tv.clamp_min(1e-12), max=1.0).view(-1, 1, 1, 1)
+        m = x.flatten(1).mean(dim=1).view(-1, 1, 1, 1)
+        return m + s * (x - m)
+
+    def duality_gap(self, x: torch.Tensor, p: torch.Tensor, v: torch.Tensor,
+                    tau: torch.Tensor):
+        """Khoảng cách đối ngẫu của bài toán chiếu, tính từ cặp (x, p) của
+        Chambolle-Pock. Trả về (gap, x_kha_thi) theo từng ảnh.
+
+        Bài toán chiếu:  min_x G(x) + F(Kx),  G(x)=1/2||x-v||^2,  K=grad,
+        F = hàm chỉ của quả cầu l2,1 bán kính tau. Khi đó
+            G*(z)  = <v,z> + 1/2||z||^2,        F*(p) = tau ||p||_{2,inf},
+            P(x)   = 1/2||x-v||^2   (với x khả thi),
+            D(p)   = <v, -div p> - 1/2||div p||^2 - tau ||p||_{2,inf},
+        và gap = P(x) - D(p) >= 0. Vì G lồi mạnh tham số 1,
+            ||x - P_D(v)||^2 <= 2 (P(x) - P(P_D(v))) <= 2 gap,
+        nên sqrt(2 gap) là CHẶN TRÊN tính được cho sai số chiếu. Đây là thứ mà
+        tiêu chuẩn theo thay đổi giữa hai bước liên tiếp không cung cấp được."""
+        xf = self.make_feasible(x, tau)
+        primal = 0.5 * (xf - v).pow(2).flatten(1).sum(dim=1)
+        Kp = -div2d(p)                                   # K* p
+        dual = ((v * Kp).flatten(1).sum(dim=1)
+                - 0.5 * Kp.pow(2).flatten(1).sum(dim=1)
+                - tau * p.pow(2).sum(dim=1).sqrt().flatten(1).amax(dim=1))
+        return (primal - dual).clamp_min(0.0), xf
+
+    def error_bound(self, x, p, v, tau):
+        """Chặn trên tính được cho ||x_kha_thi - P_D(v)||: sqrt(2*gap)."""
+        gap, xf = self.duality_gap(x, p, v, tau)
+        return (2.0 * gap).sqrt(), xf
+
     def _init(self, v, state):
         """Khởi tạo (x, p) — ấm nếu có state của bước ngoài trước, lạnh nếu None."""
         if state is not None:
@@ -273,6 +313,26 @@ class TVBallConstraint(Constraint):
             n_used += 1
             rel = (x - x_ref).flatten(1).norm(dim=1) / ref_norm
         return ProjResult(x, n_used, (x, p), tv_isotropic(x))
+
+    def project_to_bound(self, v, eps: float, cap: int, state=None) -> ProjResult:
+        """Chiếu xấp xỉ với tiêu chuẩn sai số TÍNH ĐƯỢC: chạy vòng lặp nội tới khi
+        chứng chỉ sqrt(2*gap) <= eps cho MỌI ảnh, hoặc chạm trần cap.
+
+        Khác ``project_to_ref`` ở chỗ KHÔNG cần biết nghiệm chiếu chính xác, nên
+        đây là chế độ duy nhất thực thi được đúng như định lý đòi hỏi: người dùng
+        đặt lịch sai số eps_k và thuật toán tự bảo đảm. Trả về điểm đã ép khả thi,
+        vì chứng chỉ chặn sai số của điểm khả thi hóa."""
+        tau = self.tau.to(v.device).view(v.shape[0])
+        x, p = self._init(v, state)
+        xbar = x.clone()
+        t, sig = self.t, self.sigma
+        n_used = 0
+        bound, xf = self.error_bound(x, p, v, tau)
+        while not torch.all(bound <= eps) and n_used < cap:
+            x, xbar, p, t, sig = self._step(x, xbar, p, v, tau, t, sig)
+            n_used += 1
+            bound, xf = self.error_bound(x, p, v, tau)
+        return ProjResult(xf, n_used, (x, p), tv_isotropic(xf))
 
     def iters_to_tol(self, v, x_ref, delta: float, cap: int, state=None) -> int:
         """Số bước CP để đạt sai số tương đối <= delta so với nghiệm chiếu HỘI TỤ

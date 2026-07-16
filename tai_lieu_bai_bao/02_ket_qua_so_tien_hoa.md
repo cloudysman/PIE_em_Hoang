@@ -59,6 +59,35 @@ Một bẫy đo lường cần ghi lại. Nếu áp tăng tốc cho mọi chế 
 
 Quyết định: giữ Chambolle-Pock cơ bản cho mọi chế độ. Cờ tăng tốc được giữ lại trong mã nguồn như một tùy chọn đã kiểm thử và như hồ sơ của một hướng đã thử và đóng; mặc định tắt. Quan sát này cũng đáng đưa vào bài như lý do biện minh cho việc dùng bản cơ bản, thay vì để người phản biện hỏi tại sao không khai thác tính lồi mạnh.
 
+## 2c. Chứng chỉ sai số tính được và ngân sách thích nghi: kết quả dương tính
+
+Đây là tiến bộ có giá trị nhất của vòng tiến hóa, vì nó vá một lỗ hổng mức chặn mà vòng phản biện đã bắt, đồng thời cải thiện kết quả.
+
+Vấn đề. Tiêu chuẩn sai số cũ đòi biết khoảng cách tới nghiệm chiếu chính xác, tức chính đại lượng mà thuật toán được thiết kế để né. Vì vậy chế độ ngân sách cố định chỉ là heuristic nằm ngoài định lý, và cả chế độ chiếu chính xác dùng làm baseline cũng phải dựa vào nghiệm tham chiếu, là thông tin oracle mà một triển khai thật không có.
+
+Cách vá. Bài toán chiếu có hàm mục tiêu lồi mạnh với tham số 1, nên khoảng cách đối ngẫu cho một chứng chỉ tính được: khoảng cách tới nghiệm chiếu bị chặn bởi căn của hai lần khoảng cách đối ngẫu, tính trực tiếp từ cặp biến gốc và đối ngẫu mà Chambolle-Pock đã có sẵn. Từ đó dựng được chế độ ngân sách thích nghi: chạy vòng lặp nội tới khi chứng chỉ đạt lịch sai số đặt trước, với lịch giảm theo lũy thừa lớn hơn một nên dãy sai số tổng được. Đây là chế độ duy nhất thực thi được đúng như định lý đòi hỏi.
+
+Kiểm chứng chứng chỉ: chặn trên hợp lệ ở mọi số bước, không bao giờ đánh giá thấp sai số thật. Cái giá là nó bi quan, tỉ lệ giữa chặn trên và sai số thật tăng từ 2,2 lên khoảng 12 lần khi tiến gần nghiệm; đo riêng cho thấy dừng theo chứng chỉ tốn khoảng 2,6 đến 5,8 lần nhiều bước hơn dừng theo sai số thật. Đây là cái giá phải trả cho một tiêu chuẩn thực thi được, và phải nói rõ trong bài.
+
+Kết quả, đo trên mờ Gauss, ảnh cạnh 48 điểm ảnh, 40 bước ngoài, hai ảnh kiểm tra:
+
+| chế độ | PSNR (dB) | phần dư | tổng bước nội | mức vi phạm ràng buộc |
+|---|---|---|---|---|
+| ngân sách thích nghi, tính được | 23,969 | 4,38 nhân mười mũ trừ hai | 124 | 1,0000 |
+| chiếu chính xác theo chứng chỉ, tính được | 23,913 | 4,92 nhân mười mũ trừ hai | 268 | 1,0000 |
+| ngân sách cố định hai bước, dùng oracle | 23,875 | 5,03 nhân mười mũ trừ hai | 80 | 1,0038 |
+| chiếu chính xác, dùng oracle | 23,994 | 2,99 nhân mười mũ trừ hai | 352 | 1,0004 |
+
+Ba kết luận.
+
+Thứ nhất, lợi thế chi phí đứng vững trong thế giới thực thi được: ngân sách thích nghi đạt cùng mức phần dư với 124 bước nội so với 268 của chiếu chính xác theo chứng chỉ, tức rẻ hơn 2,16 lần. So với chiếu chính xác dùng oracle thì rẻ hơn khoảng 2,8 lần. Đây là con số so trong cùng một thế giới, không mượn oracle cho bên nào.
+
+Thứ hai, chế độ thích nghi cho nghiệm khả thi tuyệt đối, mức vi phạm bằng 1,0000, vì nó trả về điểm đã ép khả thi. Điều này giải quyết luôn một điểm yếu cũ: ngân sách cố định cho đầu ra vi phạm ràng buộc, ở đây là 0,38 phần trăm và trong các thí nghiệm trước lên tới 1 đến 8 phần trăm. Nhờ vậy không cần bước ép khả thi riêng khi đo.
+
+Thứ ba, chế độ thích nghi tốt hơn ngân sách cố định về cả chất lượng lẫn phần dư lẫn tính khả thi, chỉ tốn thêm bước nội (124 so với 80). Đổi lại nó nằm trong định lý, còn ngân sách cố định thì không.
+
+Lưu ý trung thực về phạm vi: các con số trên đo ở quy mô nhỏ nên mang tính định hướng; lịch sai số quá lỏng, ví dụ hệ số đầu bằng 5, không đạt mức phần dư mục tiêu, nên việc chọn lịch cần được nêu rõ trong bài.
+
 ## 3. Diễn giải trung thực
 
 Ba kết luận số ủng hộ hướng bài, với mức độ đúng như phát biểu, không phóng đại.

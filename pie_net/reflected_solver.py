@@ -80,25 +80,35 @@ def power_iteration_L(blur: BlurOperator, shape, n_iter: int = 100,
 # --------------------------------------------------------------------------- #
 @dataclass
 class Budget:
-    """kind: 'fixed' (m cố định) | 'log' (m_k = ceil(1+2 ln(k+1))) |
-    'exact' (chiếu chính xác khởi tạo ấm, sai số đo được <= delta) |
-    'epsconst' (eps hằng, không giảm — minh họa mức sàn)."""
+    """Chế độ ngân sách bước nội.
+
+    Hai nhóm, khác nhau ở chỗ tiêu chuẩn dừng có TÍNH ĐƯỢC trong thực tế hay không.
+
+    Nhóm dùng nghiệm tham chiếu (KHÔNG tính được; chỉ để đối chiếu, vì một triển
+    khai thật không biết nghiệm chiếu):
+      'fixed'    : m bước nội cố định, khởi tạo ấm.
+      'log'      : m_k = ceil(1 + 2 ln(k+1)), ngân sách tăng chậm theo log.
+      'exact'    : chạy tới khi sai số so nghiệm tham chiếu <= delta.
+      'epsconst' : sai số hằng so nghiệm tham chiếu.
+
+    Nhóm TÍNH ĐƯỢC (dùng chứng chỉ sqrt(2*gap) từ khoảng cách đối ngẫu, thực thi
+    được đúng như định lý đòi hỏi):
+      'adaptive'    : lịch sai số eps_k = eps0/(k+1)^p, tổng được khi p > 1.
+      'exact_bound' : chứng chỉ <= eps_const, đóng vai chiếu chính xác tính được.
+    """
     kind: str = "fixed"
     m: int = 2                    # cho kind='fixed'
     delta: float = 1e-3           # cho kind='exact' (sai số tương đối đo được)
-    eps_const: float = 5e-3       # cho kind='epsconst' (sai số tương đối HẰNG)
-    cap: int = 3000               # trần bước nội cho exact/epsconst
+    eps_const: float = 5e-3       # cho 'epsconst' và 'exact_bound'
+    eps0: float = 1.0             # cho 'adaptive': eps_k = eps0/(k+1)^p
+    p: float = 1.1                # cho 'adaptive': p > 1 để dãy sai số tổng được
+    cap: int = 3000               # trần bước nội
 
     def label(self) -> str:
         if self.kind == "fixed":
             return f"m{self.m}"
-        if self.kind == "log":
-            return "mlog"
-        if self.kind == "exact":
-            return "exact"
-        if self.kind == "epsconst":
-            return "epsconst"
-        raise ValueError(self.kind)
+        return {"log": "mlog", "exact": "exact", "epsconst": "epsconst",
+                "adaptive": "adaptive", "exact_bound": "exact_bound"}[self.kind]
 
     def fixed_budget_at(self, k: int) -> int:
         """Ngân sách bước nội tại bước ngoài k (0-based) cho fixed/log."""
@@ -256,6 +266,16 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
         elif budget.kind == "epsconst":
             res = cons.project_to_ref(u, x_ref, budget.eps_const, budget.cap,
                                       state=alg_state)
+            m_k = res.n_inner
+        elif budget.kind == "adaptive":
+            # tiêu chuẩn TÍNH ĐƯỢC: lịch sai số eps_k, tổng được khi p > 1
+            eps_k = budget.eps0 / (k + 1.0) ** budget.p
+            res = cons.project_to_bound(u, eps_k, budget.cap, state=alg_state)
+            m_k = res.n_inner
+        elif budget.kind == "exact_bound":
+            # chiếu chính xác nhưng dừng theo chứng chỉ TÍNH ĐƯỢC
+            res = cons.project_to_bound(u, budget.eps_const, budget.cap,
+                                        state=alg_state)
             m_k = res.n_inner
         else:
             raise ValueError(budget.kind)
