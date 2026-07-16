@@ -163,6 +163,7 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
                   ref_check_ks: Optional[List[int]] = None,
                   resid_chunk: int = 100, resid_cap: int = 3000,
                   resid_target0: float = 1e-3, measure_every: int = 1,
+                  accel: bool = False,
                   verbose: bool = False) -> ReflectedResult:
     """Chạy K bước ngoài của sơ đồ phản xạ bốn pha trên quả cầu TV.
 
@@ -170,7 +171,15 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
     BẮT BUỘC box=None trong TVBallConstraint (chạy lý thuyết)."""
     dev, dtype = y.device, y.dtype
     B = y.shape[0]
-    cons = TVBallConstraint(tau=tau.detach(), box=None)   # KHÔNG kẹp hộp
+    # KHÔNG kẹp hộp (chạy lý thuyết).
+    # cons: phép chiếu của THUẬT TOÁN. accel=True dùng lịch bước tăng tốc khai thác
+    #   tính lồi mạnh của bài toán chiếu; áp cho MỌI chế độ ngân sách, kể cả chiếu
+    #   chính xác khởi tạo ấm, nên so sánh chi phí vẫn công bằng.
+    # cons_ref: phép chiếu dùng để ĐO (tham chiếu và phần dư), LUÔN dùng bản cơ bản.
+    #   Lý do: lịch tăng tốc làm bước nguyên thủy co về không nên ở độ chính xác cao
+    #   nó chậm hơn bản cơ bản; phép đo cần độ chính xác cao nên không dùng tăng tốc.
+    cons = TVBallConstraint(tau=tau.detach(), box=None, accel=accel)
+    cons_ref = TVBallConstraint(tau=tau.detach(), box=None, accel=False)
 
     if lam is None:
         L = power_iteration_L(blur, (1, 1, y.shape[2], y.shape[3]),
@@ -225,14 +234,14 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
         ref_check = torch.full((B,), float("nan"), device=dev, dtype=dtype)
         x_ref = None
         if need_ref:
-            res_ref = cons.project(u, tol=0.0, max_inner=ref_steps, state=ref_state)
+            res_ref = cons_ref.project(u, tol=0.0, max_inner=ref_steps, state=ref_state)
             x_ref = res_ref.x
             ref_state = res_ref.state
             if k in ref_check_ks:
                 # kiểm định ổn định: chạy tiếp tới ref_check_steps, ghi chênh lệch
-                extra = cons.project(u, tol=0.0,
-                                     max_inner=ref_check_steps - ref_steps,
-                                     state=res_ref.state)
+                extra = cons_ref.project(u, tol=0.0,
+                                         max_inner=ref_check_steps - ref_steps,
+                                         state=res_ref.state)
                 ref_check = _per_image_norm(extra.x - x_ref)
 
         # -------------------- THUẬT TOÁN: chiếu xấp xỉ y^k -------------------- #
@@ -265,7 +274,7 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
             # phần dư biến phân tại x^{k+1}, tham chiếu THÍCH NGHI
             target = max(min(resid_target0, r_min_seen / 10.0), 5e-7)
             v_res = x_next - lam * F(x_next)
-            p_hi, resid_state, _ = _hiacc_project(cons, v_res, resid_state,
+            p_hi, resid_state, _ = _hiacc_project(cons_ref, v_res, resid_state,
                                                   target, resid_chunk, resid_cap)
             resid = _per_image_norm(x_next - p_hi)
             r_min_seen = min(r_min_seen, resid.min().item())

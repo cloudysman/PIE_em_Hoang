@@ -1,73 +1,67 @@
-# PIE-Net — Pseudomonotone Inexact-Projection Equilibrium Networks
+# PIE-Net — mạng chiếu xấp xỉ giả đơn điệu cho bài toán ngược trong xử lý ảnh
 
-Hiện thực hóa (implementation) bằng PyTorch cho đề tài **"Mạng cân bằng chiếu xấp xỉ
-giả đơn điệu cho bài toán ngược trong xử lý ảnh (PIE-Net)"** theo file thuyết minh
-`PIE-Net_thuyet_minh.docx`.
+Mã nguồn, thực nghiệm và tài liệu của đề tài "Mạng cân bằng chiếu xấp xỉ giả đơn điệu cho bài toán ngược trong xử lý ảnh". Bài toán ngược y = Bx + ε được đặt dưới dạng bất đẳng thức biến phân trên một tập ràng buộc, và giải bằng một sơ đồ chiếu có quán tính và độ nhớt.
 
-Mô hình hóa bài toán ngược `y = B x + ε` dưới dạng **bất đẳng thức biến phân (VI)
-giả đơn điệu**, giải bằng thuật toán quán tính – chiếu xấp xỉ – độ nhớt, và huấn
-luyện đầu-cuối như một mạng cân bằng (deep unfolding).
+Kho này gồm hai giai đoạn: giai đoạn thực nghiệm ban đầu, đã kết thúc với kết quả âm tính được ghi nhận đầy đủ; và giai đoạn lý thuyết hiện tại, tập trung vào tính chất hội tụ và chi phí của bản thân sơ đồ lặp.
 
-## Ánh xạ mã nguồn ↔ thuyết minh
+## Trạng thái và kết quả trung thực
 
-| Gói công việc | Nội dung | File |
-|---|---|---|
-| **WP1** | Toán tử `F_θ = ρ_θ · M_φ`, `M_φ = Bᵀ(Bx−y) + G_φ`; Mệnh đề 1 (giả đơn điệu theo cấu trúc); chứng nhận đơn điệu G_φ qua hàm phạt Jacobian | `pie_net/operators.py` |
-| **WP2** | Lớp chiếu xấp xỉ khả vi (Procedure 2.1, dừng sớm + unroll cho gradient đúng); biến thể L-free (Tseng linesearch) | `pie_net/projection.py`, `pie_net/solver.py` |
-| **WP2** | Thuật toán PIE-Net 4 pha: quán tính → chiếu xấp xỉ → hiệu chỉnh phản xạ → trộn độ nhớt | `pie_net/solver.py` (`PIENet`) |
-| **WP3** | Bằng chứng thực nghiệm cho T2: phần dư VI `r(x)=‖x−P_D(x−F_θ(x))‖ → 0` (last-iterate) | `solver.solve_long`, `metrics.vi_residual` |
-| **WP4** | Khử mờ ảnh + ablation; thí nghiệm then chốt `ρ_θ` học được vs `ρ` hằng | `pie_net/data.py`, `pie_net/train.py`, `run_experiment.py` |
+Giai đoạn thực nghiệm kiểm bốn khẳng định của thiết kế ban đầu qua năm thí nghiệm, mỗi thí nghiệm có tiêu chí đạt hay không đạt đặt trước khi chạy. Kết quả: chỉ một khẳng định đạt.
 
-## Cài đặt & chạy
+- Hệ số vô hướng học được không cải thiện chất lượng khôi phục so với hệ số hằng được tinh chỉnh tốt (28,31 so với 28,91 dB), và tự hội tụ về hằng số xấp xỉ 1. Điều này có tính cấu trúc: một vô hướng dương nhân với toán tử không làm thay đổi tập nghiệm của bất đẳng thức biến phân.
+- Thành phần học được không vượt phiên bản không học trên quả cầu biến phân toàn phần, kể cả sau khi được cho điều kiện huấn luyện tốt hơn.
+- Ràng buộc cứng nhất quán dữ liệu thua phương pháp Plug-and-Play ở cả hai chế độ (thua 0,59 dB khi khớp mức nhiễu và 0,88 dB khi lệch), vì ép nghiệm bám quả cầu quanh dữ liệu quan sát chính là nạp nhiễu trở lại.
+- Khẳng định duy nhất đứng vững là lợi thế chi phí của phép chiếu xấp xỉ có khởi tạo ấm.
 
-Yêu cầu: `torch`, `numpy`, `scipy`, `scikit-image`, `matplotlib` (đã có sẵn trong môi trường).
+Vì các kết quả âm tính có tính cấu trúc chứ không do lỗi cài đặt hay thiếu tinh chỉnh, hướng thực nghiệm đã được đóng lại. Trọng tâm chuyển sang một đóng góp lý thuyết về sơ đồ lặp, trong đó mã nguồn đóng vai trò minh họa số. Chi tiết trong `Bao_cao_thuc_nghiem_PIE-Net.docx` và thư mục `tai_lieu_bai_bao/`.
+
+Lưu ý về một khẳng định đã được sửa: các phiên bản trước của tài liệu này nói phần dư biến phân tiến về không. Số liệu chỉ chứng minh phần dư giảm từ 2,48 xuống 0,199 qua 200 bước và giảm không đơn điệu, nên khẳng định cũ vượt quá điều số liệu cho phép và đã được gỡ.
+
+## Cấu trúc mã nguồn
+
+Phần lý thuyết, dùng cho hướng hiện tại:
+
+| Tệp | Nội dung |
+|---|---|
+| `pie_net/constraints.py` | Phép chiếu lên quả cầu biến phân toàn phần bằng Chambolle-Pock, khởi tạo ấm qua biến đối ngẫu, đếm bước nội. Có chế độ lịch bước tăng tốc khai thác tính lồi mạnh của bài toán chiếu. |
+| `pie_net/reflected_solver.py` | Sơ đồ phản xạ với phép chiếu xấp xỉ: bước phản xạ kiểu Malitsky (toán tử chỉ tính một lần mỗi bước ngoài), độ nhớt, và bốn chế độ ngân sách bước nội. Đo sai số chiếu và phần dư biến phân tách khỏi chi phí thuật toán. |
+| `theory_test_reflected.py` | Chạy lưới cấu hình theo loại mờ và chế độ ngân sách, ghi vết đầy đủ. |
+| `theory_test_pseudomono.py` | Ví dụ giả đơn điệu nhưng không đơn điệu, kèm chứng chỉ số. |
+| `analyze_theory.py` | Tính độ dốc, tính tổng được của sai số chiếu, và bảng chi phí. |
+| `tests/` | Kiểm thử các tính chất toán học cốt lõi. |
+
+Phần thực nghiệm ban đầu, giữ lại làm hồ sơ:
+
+| Tệp | Nội dung |
+|---|---|
+| `pie_net/operators.py` | Toán tử chi phí dạng tích của một vô hướng dương học được với một toán tử đơn điệu. |
+| `pie_net/solver.py`, `pie_net/tv_solver.py` | Sơ đồ bốn pha: quán tính, chiếu xấp xỉ, hiệu chỉnh kiểu Tseng, trộn độ nhớt. Lưu ý pha thứ ba là hiệu chỉnh kiểu Tseng, không phải bước phản xạ; các tài liệu trước gọi sai tên. |
+| `run_experiment.py`, `quick_test_tv.py`, `milestone_test.py`, `steelman_m2.py`, `pivot_decisive_test.py`, `pivot_pnp_test.py` | Năm thí nghiệm của báo cáo. |
+
+## Cách chạy
+
+Yêu cầu: torch, numpy, scikit-image, matplotlib.
+
+Phần lý thuyết:
 
 ```bash
-python run_experiment.py                 # đầy đủ (GPU nếu có)
-python run_experiment.py --quick         # chạy nhanh để kiểm thử
-python run_experiment.py --blur motion   # mờ chuyển động thay vì Gauss
-python run_experiment.py --device cpu
+python theory_test_reflected.py --K 150 --size 64 --measure_every 5   # lưới đầy đủ
+python theory_test_reflected.py --alpha_bar 0                         # tắt quán tính
+python theory_test_pseudomono.py                                      # ví dụ giả đơn điệu
+python analyze_theory.py                                              # bảng độ dốc và chi phí
+pytest tests/ -q                                                      # kiểm thử
 ```
 
-Kết quả lưu ở thư mục `results/`:
-- `metrics.csv` — bảng PSNR / SSIM / phần dư VI / số vòng lặp / thời gian.
-- `convergence.png` — phần dư VI → 0 và PSNR theo bước lặp (minh chứng T2).
-- `reconstructions.png` — ảnh gốc / ảnh mờ / khôi phục (ρ học được vs ρ hằng).
+Phần thực nghiệm ban đầu, các lệnh tái lập nằm ở mục 13.2 của báo cáo.
 
-## Thành phần chính
+## Kết quả số của hướng lý thuyết
 
-**Toán tử (WP1).** `M_φ(x) = Bᵀ(Bx−y) + G_φ(x)` với hạng dữ liệu đơn điệu chính xác
-(`BᵀB ⪰ 0`, adjoint cài đặt đúng bằng nhân quay 180° + zero-pad) và `G_φ` là CNN
-được phạt đơn điệu theo hướng Jacobian. `ρ_θ(x)` là **vô hướng** dương ∈ [ρ_min, ρ_max]
-(softmax-bounded) — đúng điều kiện Mệnh đề 1 (chỉ số dương nhân toán tử đơn điệu mới
-bảo toàn giả đơn điệu).
+Đo trên ảnh xám cạnh 64 điểm ảnh, 150 bước ngoài, thuần suy diễn, không có thành phần học.
 
-**Thuật toán (WP2).** Một bước lặp:
-```
-(1) w^k = x^k + α_k (x^k − x^{k−1})                 # quán tính
-(2) y^k = P_D^{ε_k}( w^k − λ_k F_θ(w^k) )           # chiếu xấp xỉ
-(3) z^k = y^k − λ_k ( F_θ(y^k) − F_θ(w^k) )         # hiệu chỉnh phản xạ
-(4) x^{k+1} = β_k f(x^k) + (1 − β_k) z^k            # trộn độ nhớt
-```
+Lợi thế đo được là chi phí, không phải chất lượng khôi phục. Để đạt cùng một mức phần dư biến phân, phép chiếu xấp xỉ với ngân sách bước nội nhỏ tốn ít hơn phép chiếu chính xác có khởi tạo ấm khoảng 2,5 đến 2,8 lần trên mờ Gauss, và khoảng 4 đến 7 lần trên mờ chuyển động, nơi bài toán chiếu khó hơn. Đây là một hệ số hằng, không phải khác biệt bậc.
 
-**Lưu ý trung thực** (đúng tinh thần thuyết minh):
-- `ρ_θ` là *preconditioner* học được, **không đổi tập nghiệm VI** (vô hướng dương).
-  Giá trị của nó là động học hội tụ / số vòng lặp, không phải "prior giàu hơn".
-  Thực nghiệm xác nhận: `ρ_θ` học được hội tụ về ≈ 1.0 và PSNR **xấp xỉ bằng**
-  `ρ` hằng được tinh chỉnh tốt (đúng như Rủi ro 1 trong thuyết minh dự liệu).
-- Với ràng buộc hộp `[0,1]`, chiếu chính xác là `clamp`; lớp chiếu xấp xỉ ở đây minh
-  họa cơ chế vòng lặp nội có kiểm soát sai số `ε_k` và xử lý gradient (unroll) — phần
-  quan trọng khi tập ràng buộc tổng quát.
-- **Semi-convergence (quan trọng).** PIE-Net ở đây vận hành như **mạng deep
-  unfolding**: ảnh khôi phục là điểm-lặp ở chân trời hữu hạn `x^K` (K≈12),
-  đạt ~28–29 dB. Khi chạy thuật toán tới *điểm bất động chính xác* của F_θ
-  (xem `convergence.png`): phần dư VI **→ 0 (Định lý T2 đúng — thuật toán hội tụ)**,
-  nhưng PSNR đạt đỉnh ở chân trời hữu hạn rồi **giảm**, vì nghiệm-VI chính xác của
-  F_θ là nghiệm bám dữ liệu (khuếch đại nhiễu). Đây là hiện tượng đã biết của các
-  phương pháp lặp học được; "dừng sớm" đóng vai trò chính quy hóa ngầm.
-- Để *điểm bất động* trùng với ảnh khôi phục (đúng nghĩa "mạng cân bằng / DEQ" với
-  vi phân ẩn) cần huấn luyện ở chế độ cân bằng sâu — `PIENet.forward_equilibrium`
-  (DEQ warm-up + đuôi có gradient) đã được cài sẵn làm hướng phát triển; ở quy mô
-  demo nó nâng PSNR điểm-bất-động đáng kể nhưng chưa bằng chế độ unfolding.
-- Lý thuyết T1/T2 (WP3) là kết quả giải tích; ở đây ta cung cấp **bằng chứng số**
-  cho phần "thuật toán hội tụ" (phần dư VI → 0).
+Ví dụ giả đơn điệu xác nhận toán tử thực sự không đơn điệu (tìm được cặp điểm với tích vô hướng âm) trong khi thuật toán vẫn hội tụ, nên định lý phát biểu cho lớp giả đơn điệu không rộng hơn ví dụ minh họa.
+
+## Tài liệu
+
+Thư mục `tai_lieu_bai_bao/` chứa: kết luận điều hành và định vị so với tài liệu, khung bài báo, báo cáo số liệu, bản thảo chứng minh kèm biên bản phản biện, và lộ trình chứng minh. Đọc `00_ket_luan_dieu_hanh.md` trước.

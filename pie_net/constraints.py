@@ -21,6 +21,7 @@ mọi tập ràng buộc và đếm số bước nội thực sự đã dùng.
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Optional, Tuple
 
@@ -162,13 +163,21 @@ class TVBallConstraint(Constraint):
     với sigma*t*||K||^2 <= 1, ||grad||^2 <= 8. Khởi tạo ấm = (x, p) bước trước.
     """
 
-    def __init__(self, tau: torch.Tensor, box: Optional[Tuple[float, float]] = (0.0, 1.0)):
+    def __init__(self, tau: torch.Tensor, box: Optional[Tuple[float, float]] = (0.0, 1.0),
+                 accel: bool = False):
         # tau: (B,) bán kính TV theo từng ảnh (ví dụ = TV ảnh sạch, oracle).
         self.tau = tau
         self.box = box                                  # ràng buộc hộp phụ (tùy chọn)
         self.L = (8.0) ** 0.5                            # ||grad||
         self.sigma = 1.0 / self.L
         self.t = 1.0 / self.L
+        # accel=True: lịch bước TĂNG TỐC (Chambolle-Pock 2011, thuật toán 2) khai
+        # thác việc G(x)=1/2||x-v||^2 LỒI MẠNH với tham số gamma=1, cho tốc độ
+        # O(1/N^2) thay vì O(1/N). Lịch (t_n, sigma_n) được ĐẶT LẠI ở mỗi lần gọi
+        # project vì mỗi bước ngoài là một bài toán chiếu mới; khởi tạo ấm vẫn giữ
+        # nguyên qua biến (x, p).
+        self.accel = accel
+        self.gamma = 1.0                                 # G lồi mạnh tham số 1
 
     def value(self, x):
         return tv_isotropic(x)
@@ -196,6 +205,32 @@ class TVBallConstraint(Constraint):
         xbar = 2.0 * x - x_prev
         return x, xbar, p
 
+    def _cp_step_accel(self, x, xbar, p, v, tau, t, sigma):
+        """MỘT bước Chambolle-Pock TĂNG TỐC (thuật toán 2), khai thác G lồi mạnh.
+
+        Khác bản cơ bản ở chỗ (t, sigma) thay đổi theo bước và hệ số ngoại suy
+        theta không còn bằng 1:
+            theta = 1/sqrt(1 + 2 gamma t),  t <- theta t,  sigma <- sigma/theta,
+            xbar  = x + theta (x - x_prev).
+        Tích sigma*t*||K||^2 <= 1 được bảo toàn vì t giảm đúng bằng phần sigma tăng.
+        """
+        x_prev = x
+        q = p + sigma * grad2d(xbar)                    # đối ngẫu: prox F* (l2,1-ball)
+        p = q - sigma * _project_l21_ball(q / sigma, tau)
+        x = (x + t * div2d(p) + t * v) / (1.0 + t)      # nguyên thủy: prox G (bậc hai)
+        if self.box is not None:
+            x = x.clamp(self.box[0], self.box[1])
+        theta = 1.0 / math.sqrt(1.0 + 2.0 * self.gamma * t)
+        xbar = x + theta * (x - x_prev)
+        return x, xbar, p, theta * t, sigma / theta
+
+    def _step(self, x, xbar, p, v, tau, t, sigma):
+        """Một bước nội, chọn bản cơ bản hay bản tăng tốc theo cờ ``accel``."""
+        if self.accel:
+            return self._cp_step_accel(x, xbar, p, v, tau, t, sigma)
+        x, xbar, p = self._cp_step(x, xbar, p, v, tau)
+        return x, xbar, p, t, sigma
+
     def project(self, v, tol: float = 0.0, max_inner: int = 200,
                 state=None) -> ProjResult:
         """Chạy CP tối đa max_inner bước (tol=0 -> đúng max_inner bước, dùng cho
@@ -204,10 +239,11 @@ class TVBallConstraint(Constraint):
         tau = self.tau.to(v.device).view(v.shape[0])
         x, p = self._init(v, state)
         xbar = x.clone()
+        t, sig = self.t, self.sigma          # đặt lại lịch bước cho bài toán chiếu này
         n_used = 0
         for it in range(max_inner):
             x_prev = x
-            x, xbar, p = self._cp_step(x, xbar, p, v, tau)
+            x, xbar, p, t, sig = self._step(x, xbar, p, v, tau, t, sig)
             n_used = it + 1
             if tol > 0.0:
                 rel = ((x - x_prev).flatten(1).norm(dim=1) /
@@ -228,11 +264,12 @@ class TVBallConstraint(Constraint):
         tau = self.tau.to(v.device).view(v.shape[0])
         x, p = self._init(v, state)
         xbar = x.clone()
+        t, sig = self.t, self.sigma          # đặt lại lịch bước cho bài toán chiếu này
         ref_norm = x_ref.flatten(1).norm(dim=1).clamp_min(1e-12)
         rel = (x - x_ref).flatten(1).norm(dim=1) / ref_norm
         n_used = 0
         while not torch.all(rel <= tol_rel) and n_used < cap:
-            x, xbar, p = self._cp_step(x, xbar, p, v, tau)
+            x, xbar, p, t, sig = self._step(x, xbar, p, v, tau, t, sig)
             n_used += 1
             rel = (x - x_ref).flatten(1).norm(dim=1) / ref_norm
         return ProjResult(x, n_used, (x, p), tv_isotropic(x))
