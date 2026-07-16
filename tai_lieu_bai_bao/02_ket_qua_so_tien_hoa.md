@@ -47,6 +47,18 @@ Ví dụ giả đơn điệu không đơn điệu:
 | suy biến | −5,59 nhân mười mũ trừ sáu | 5,0 nhân mười mũ trừ hai | 1,25 nhân mười mũ trừ bốn |
 | không suy biến | −2,50 nhân mười mũ trừ sáu | 5,0 nhân mười mũ trừ hai | 1,25 nhân mười mũ trừ bốn; hội tụ về hình chiếu điểm neo |
 
+## 2b. Thử nghiệm lịch bước tăng tốc: kết quả âm tính
+
+Ý tưởng đã thử: bài toán chiếu lên quả cầu biến phân toàn phần có hàm mục tiêu lồi mạnh với tham số 1, nên về nguyên tắc dùng được lịch bước tăng tốc của Chambolle-Pock (thuật toán 2) để giảm số bước nội. Điều này vừa hứa hẹn giảm chi phí vừa vá giả thiết tốc độ của mệnh đề chi phí.
+
+Kết quả: không cải thiện. Với cùng ngân sách bước nội, bản tăng tốc cho phần dư cao hơn bản cơ bản. Để đạt cùng mức phần dư trên mờ Gauss, số bước nội của bản tăng tốc so với bản cơ bản là 1,00 lần ở ngân sách hai bước, 0,84 lần ở ngân sách năm bước, 0,76 lần ở ngân sách log, và 0,69 lần ở chiếu chính xác; nghĩa là tăng tốc tốn nhiều hơn ở hầu hết chế độ.
+
+Nguyên nhân: lịch tăng tốc làm bước nguyên thủy co lại ngay từ những bước đầu và được đặt lại ở mỗi bước ngoài, nên trong chế độ khởi tạo ấm với ngân sách nhỏ nó không kịp phát huy. Đo riêng trên bài toán chiếu từ khởi tạo lạnh xác nhận đúng cơ chế này: bản tăng tốc nhanh hơn 2,61 lần ở sai số tương đối một phần trăm và 1,82 lần ở một phần nghìn, nhưng chậm hơn, còn 0,82 lần, ở một phần trăm nghìn. Nó có lợi khi chiếu lạnh chạy dài ở độ chính xác thấp, đúng chế độ mà phương pháp này không dùng.
+
+Một bẫy đo lường cần ghi lại. Nếu áp tăng tốc cho mọi chế độ, hệ số tiết kiệm so với chiếu chính xác trông tăng từ 2,37 lên 3,46 lần. Nhưng đó là vì baseline chiếu chính xác bị làm chậm đi, từ 384 lên 560 bước nội, chứ không phải vì phép chiếu xấp xỉ tốt lên. Báo con số 3,46 lần sẽ là phóng đại giả tạo. Theo nguyên tắc cho baseline cơ hội mạnh nhất mà báo cáo thực nghiệm đã đặt ra, baseline đúng là bản cơ bản, và hệ số tiết kiệm thật ở cấu hình này là khoảng 2,4 lần.
+
+Quyết định: giữ Chambolle-Pock cơ bản cho mọi chế độ. Cờ tăng tốc được giữ lại trong mã nguồn như một tùy chọn đã kiểm thử và như hồ sơ của một hướng đã thử và đóng; mặc định tắt. Quan sát này cũng đáng đưa vào bài như lý do biện minh cho việc dùng bản cơ bản, thay vì để người phản biện hỏi tại sao không khai thác tính lồi mạnh.
+
 ## 3. Diễn giải trung thực
 
 Ba kết luận số ủng hộ hướng bài, với mức độ đúng như phát biểu, không phóng đại.

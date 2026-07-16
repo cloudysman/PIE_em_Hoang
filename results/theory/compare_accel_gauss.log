@@ -1,0 +1,21 @@
+C:\Users\trong\AppData\Local\Temp\claude\c--Users-trong-Downloads-PIE-em-Hoang\2bf96163-73da-4142-8ed0-60cb16987721\scratchpad\compare_accel.py:34: RuntimeWarning: Mean of empty slice
+  resid = np.nanmean(tr["resid"].numpy(), axis=1)
+  [co ban  ] m2    | PSNR=24.346 dB | phan du cuoi=1.2427e-02 | tong buoc noi=300
+  [co ban  ] m5    | PSNR=24.251 dB | phan du cuoi=5.9262e-03 | tong buoc noi=750
+  [co ban  ] mlog  | PSNR=24.224 dB | phan du cuoi=4.6194e-03 | tong buoc noi=1428
+  [co ban  ] exact | PSNR=24.388 dB | phan du cuoi=2.9008e-02 | tong buoc noi=389
+  [tang toc] m2    | PSNR=24.358 dB | phan du cuoi=1.3686e-02 | tong buoc noi=300
+  [tang toc] m5    | PSNR=24.282 dB | phan du cuoi=7.5967e-03 | tong buoc noi=750
+  [tang toc] mlog  | PSNR=24.252 dB | phan du cuoi=5.8818e-03 | tong buoc noi=1428
+  [tang toc] exact | PSNR=24.388 dB | phan du cuoi=2.8996e-02 | tong buoc noi=563
+
+=== BANG CHI PHI (gauss): tong buoc noi de dat phan du <= 3.0458e-02 ===
+  che do     co ban   tang toc  accel nhanh hon
+      m2        162        162            1.00x
+      m5        255        305            0.84x
+    mlog        289        379            0.76x
+   exact        384        560            0.69x
+
+=== HE SO TIET KIEM so voi chieu chinh xac khoi tao am (cung che do) ===
+  [co ban  ] exact=384 buoc | m2=2.37x | m5=1.51x | mlog=1.33x
+  [tang toc] exact=560 buoc | m2=3.46x | m5=1.84x | mlog=1.48x
