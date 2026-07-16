@@ -3,16 +3,23 @@
 Một bước lặp gồm 4 pha:
     (1) quán tính        w^k = x^k + alpha_k (x^k - x^{k-1})
     (2) chiếu xấp xỉ     y^k = P_D^{eps_k}( w^k - lambda_k F_theta(w^k) )
-    (3) hiệu chỉnh px     z^k = y^k - lambda_k ( F_theta(y^k) - F_theta(w^k) )
+    (3) hiệu chỉnh Tseng  z^k = y^k - lambda_k ( F_theta(y^k) - F_theta(w^k) )
     (4) trộn độ nhớt     x^{k+1} = beta_k f(x^k) + (1 - beta_k) z^k
 
 với f là ánh xạ co (viscosity), {beta_k} -> 0 và không khả tổng, {alpha_k} quán
 tính, {lambda_k} bước, {eps_k} sai số chiếu. Biến thể L-free thay bước cố định
 bằng linesearch kiểu Tseng (không cần hằng số Lipschitz của mạng).
 
-Hội tụ điểm-lặp-cuối (Định lý T2) được kiểm chứng thực nghiệm qua phần dư VI
-        r(x) = || x - P_D( x - F_theta(x) ) ||
-giảm dần theo bước lặp (xem ``forward(..., return_history=True)``).
+Lưu ý danh pháp: pha (3) là hiệu chỉnh kiểu Tseng (forward-backward-forward, tính
+toán tử HAI lần), KHÔNG phải bước phản xạ kiểu Malitsky (dùng điểm phản xạ
+2x^k - x^{k-1} và chỉ tính toán tử một lần). Các tài liệu trước của đề tài gọi
+nhầm pha này là "hiệu chỉnh phản xạ"; sơ đồ phản xạ đúng nghĩa nằm ở
+``reflected_solver.py``.
+
+Về phần dư biến phân r(x) = || x - P_D( x - F_theta(x) ) ||: thực nghiệm chỉ cho
+thấy r giảm theo bước lặp (từ 2.48 xuống 0.199 qua 200 bước, giảm KHÔNG đơn điệu),
+KHÔNG chứng minh r tiến về 0. Mọi khẳng định mạnh hơn mức này là quá lời so với số
+liệu (xem ``forward(..., return_history=True)``).
 """
 
 from __future__ import annotations
@@ -179,10 +186,15 @@ class PIENet(nn.Module):
     @torch.no_grad()
     def solve_long(self, y, K_long: int = 200, lam: float = 0.4,
                    use_tseng: bool = True, x0=None, ref=None):
-        """Minh chứng Định lý T2: lấy toán tử F_theta ĐÃ HUẤN LUYỆN và chạy
+        """Quan sát hành vi dài hạn: lấy toán tử F_theta ĐÃ HUẤN LUYỆN và chạy
         *thuật toán thuần* (không phải unroll cắt ngắn) trong nhiều bước với
-        bước Tseng (L-free, có bảo đảm hội tụ), cho thấy phần dư VI -> 0 và
-        điểm-lặp-cuối hội tụ. Trả về (x, history)."""
+        bước Tseng. Trả về (x, history).
+
+        Trung thực về điều quan sát được: trong 200 bước, phần dư biến phân giảm
+        từ 2.48 xuống 0.199 và giảm không đơn điệu; đây KHÔNG phải bằng chứng
+        phần dư tiến về 0. Đồng thời PSNR đạt đỉnh quanh bước 26 rồi giảm còn
+        6.77 dB ở bước 200 — hiện tượng bán hội tụ kinh điển của bài toán đặt
+        không chỉnh: nghiệm chính xác của F_theta bám dữ liệu có nhiễu."""
         if x0 is None:
             x0 = self.cost.blur.adjoint(y).clamp(self.lo, self.hi)
         anchor = x0
