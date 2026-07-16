@@ -195,6 +195,18 @@ class TVBallConstraint(Constraint):
         m = x.flatten(1).mean(dim=1).view(-1, 1, 1, 1)
         return m + s * (x - m)
 
+    def primal_dual_values(self, x: torch.Tensor, p: torch.Tensor,
+                           v: torch.Tensor, tau: torch.Tensor):
+        """Giá trị hàm mục tiêu gốc và đối ngẫu tại cặp (x, p). Trả về
+        (primal, dual, x_kha_thi) theo từng ảnh. Xem ``duality_gap`` cho công thức."""
+        xf = self.make_feasible(x, tau)
+        primal = 0.5 * (xf - v).pow(2).flatten(1).sum(dim=1)
+        Kp = -div2d(p)                                   # K* p
+        dual = ((v * Kp).flatten(1).sum(dim=1)
+                - 0.5 * Kp.pow(2).flatten(1).sum(dim=1)
+                - tau * p.pow(2).sum(dim=1).sqrt().flatten(1).amax(dim=1))
+        return primal, dual, xf
+
     def duality_gap(self, x: torch.Tensor, p: torch.Tensor, v: torch.Tensor,
                     tau: torch.Tensor):
         """Khoảng cách đối ngẫu của bài toán chiếu, tính từ cặp (x, p) của
@@ -327,12 +339,24 @@ class TVBallConstraint(Constraint):
         xbar = x.clone()
         t, sig = self.t, self.sigma
         n_used = 0
-        bound, xf = self.error_bound(x, p, v, tau)
+
+        # Theo dõi giá trị gốc TỐT NHẤT và đối ngẫu TỐT NHẤT đã gặp, thay vì chỉ
+        # dùng bước hiện tại. Vì giá trị gốc tốt nhất không tăng và giá trị đối
+        # ngẫu tốt nhất không giảm, khoảng cách thu được không lớn hơn khoảng cách
+        # tức thời, nên chứng chỉ chặt hơn mà vẫn hợp lệ. Chi phí thêm không đáng kể.
+        primal, dual, xf = self.primal_dual_values(x, p, v, tau)
+        best_primal, best_dual, best_xf = primal, dual, xf
+        bound = (2.0 * (best_primal - best_dual).clamp_min(0.0)).sqrt()
         while not torch.all(bound <= eps) and n_used < cap:
             x, xbar, p, t, sig = self._step(x, xbar, p, v, tau, t, sig)
             n_used += 1
-            bound, xf = self.error_bound(x, p, v, tau)
-        return ProjResult(xf, n_used, (x, p), tv_isotropic(xf))
+            primal, dual, xf = self.primal_dual_values(x, p, v, tau)
+            better = primal < best_primal                      # (B,)
+            best_xf = torch.where(better.view(-1, 1, 1, 1), xf, best_xf)
+            best_primal = torch.minimum(best_primal, primal)
+            best_dual = torch.maximum(best_dual, dual)
+            bound = (2.0 * (best_primal - best_dual).clamp_min(0.0)).sqrt()
+        return ProjResult(best_xf, n_used, (x, p), tv_isotropic(best_xf))
 
     def iters_to_tol(self, v, x_ref, delta: float, cap: int, state=None) -> int:
         """Số bước CP để đạt sai số tương đối <= delta so với nghiệm chiếu HỘI TỤ
