@@ -92,15 +92,48 @@ Lưu ý trung thực về phạm vi: các con số trên đo ở quy mô nhỏ n
 
 Chạy trên máy chủ có GPU NVIDIA L40S, ảnh cạnh 96 điểm ảnh, 150 bước ngoài, 8 ảnh kiểm tra, 18 cấu hình cho mỗi loại mờ. Mọi chế độ đều nằm trong thế giới thực thi được: cả chế độ thích nghi lẫn chiếu chính xác đều dừng theo chứng chỉ tính được, không bên nào dùng nghiệm tham chiếu. Mốc so sánh là chiếu chính xác theo chứng chỉ với ngưỡng 0,02, và mức phần dư mục tiêu lấy từ chính mốc đó.
 
-Cấu hình tốt nhất trên mờ Gauss là lịch với hệ số đầu 2,0 và số mũ 1,01: đạt mức phần dư mục tiêu với 448 bước nội so với 5763 của chiếu chính xác, tức rẻ hơn 12,86 lần. Trên mờ chuyển động, lịch với hệ số đầu 4,0 và số mũ 1,01 đạt 570 bước so với 8494, tức rẻ hơn 14,90 lần; ở cấu hình này PSNR gần như bằng chiếu chính xác (26,8253 so với 26,8265 dB) trong khi phần dư còn thấp hơn (1,047 so với 1,141 nhân mười mũ trừ hai). Mọi cấu hình đều cho mức vi phạm ràng buộc bằng 1,0000, tức khả thi tuyệt đối.
+Cảnh báo quan trọng, thêm sau vòng phản biện: các hệ số dưới đây chỉ đúng ở đơn vị bước nội và không chuyển thành lợi thế thời gian. Xem mục 2e trước khi trích bất kỳ con số nào ở đây.
 
-Đây là con số tốt nhất của dự án, và nó mạnh hơn hẳn các con số trước (2,5 đến 2,8 lần trên mờ Gauss và 4 đến 7 lần trên mờ chuyển động), đồng thời đo trong điều kiện chặt hơn vì không bên nào mượn thông tin oracle.
+Cấu hình tốt nhất trên mờ Gauss là lịch với hệ số đầu 2,0 và số mũ 1,01: đạt mức phần dư mục tiêu với 448 bước nội so với 5763 của chiếu chính xác, tức rẻ hơn 12,86 lần tính theo bước nội. Trên mờ chuyển động, lịch với hệ số đầu 4,0 và số mũ 1,01 đạt 570 bước so với 8494, tức rẻ hơn 14,90 lần theo bước nội; ở cấu hình này PSNR gần như bằng chiếu chính xác (26,8253 so với 26,8265 dB) trong khi phần dư còn thấp hơn (1,047 so với 1,141 nhân mười mũ trừ hai). Mọi cấu hình đều cho mức vi phạm ràng buộc bằng 1,0000, tức khả thi tuyệt đối.
+
+Tính theo bước nội thì đây là con số cao nhất của dự án, nhưng mục 2e cho thấy nó không phản ánh chi phí thực.
 
 Mặt trái, phải nêu ngang hàng với kết quả trên: việc chọn lịch quyết định tất cả, và lịch sai lầm còn tệ hơn không dùng chế độ thích nghi. Lịch quá siết, tức hệ số đầu nhỏ hoặc số mũ lớn, làm chi phí bùng nổ: với hệ số đầu 0,5 và số mũ 1,5 trên mờ Gauss, tổng bước nội lên tới 522808 và chỉ đạt 0,02 lần so với mốc, tức tốn gấp khoảng 50 lần chiếu chính xác. Nguyên nhân là lịch tuyệt đối siết sai số về không nhanh hơn mức bài toán cần, trong khi chứng chỉ lại bi quan, nên vòng lặp nội chạy thừa rất nhiều.
 
 Quy luật rút ra từ bảng: số mũ nên lấy sát 1 từ phía trên, đủ để dãy sai số tổng được nhưng không siết thừa; hệ số đầu nên lấy lớn, cỡ 2 đến 4. Các cấu hình có số mũ 1,5 đều thất bại ở mọi hệ số đầu.
 
 Một lưu ý về phạm vi của hệ số: con số 12,86 và 14,90 lần được đo tại một mức phần dư mục tiêu cụ thể, lấy từ mốc chiếu chính xác với ngưỡng 0,02. Nếu đòi mức phần dư thấp hơn nhiều, chế độ thích nghi buộc phải dùng lịch siết hơn và khi đó nó thua chiếu chính xác. Nói cách khác, tồn tại một vùng vận hành mà chế độ thích nghi thắng lớn và một vùng mà nó thua; bài phải trình bày cả đường đánh đổi chứ không chỉ điểm thắng.
+
+## 2e. Hội đồng phản biện mô phỏng bác bỏ hệ số 12,86 và 14,90 lần
+
+Bốn phản biện mô phỏng độc lập đều cho phán quyết từ chối và đều xác nhận hồ sơ chưa nộp được ở đâu. Quan trọng nhất, họ bắt được một lỗi nghiêm trọng trong chính con số ở mục 2d. Ghi lại đầy đủ ở đây vì đây là bài học phương pháp luận, không phải chi tiết nhỏ.
+
+Lỗi thứ nhất, mức chặn: hệ số chỉ tồn tại ở đơn vị bước nội và bốc hơi ở thời gian thực. Đọc thẳng từ hai tệp kết quả:
+
+| loại mờ | cấu hình | bước nội | thời gian (giây) | hệ số theo bước nội | hệ số theo thời gian |
+|---|---|---|---|---|---|
+| Gauss | thích nghi 2,0 và 1,01 | 486 | 46,9 | 11,88 | 1,19 |
+| Gauss | chiếu chính xác 0,02 | 5772 | 55,8 | 1 | 1 |
+| chuyển động | thích nghi 4,0 và 1,01 | 596 | 31,4 | 14,27 | 1,18 |
+| chuyển động | chiếu chính xác 0,02 | 8503 | 37,1 | 1 | 1 |
+
+Nguyên nhân: mỗi bước nội của chế độ thích nghi phải tính chứng chỉ, tức thêm một lần tính hàm mục tiêu gốc và đối ngẫu cùng một phép ép khả thi, nên đắt hơn nhiều một bước Chambolle-Pock trần. Tiết kiệm được mười hai lần số bước nhưng mỗi bước đắt lên khoảng mười lần thì lợi thế gần như triệt tiêu. Đây đúng là điều mà báo cáo thực nghiệm gốc đã yêu cầu ở phần đo chi phí trung thực: phải báo cả tổng bước nội lẫn thời gian chạy thực, vì tổng bước nội không phản ánh độ nặng của mỗi bước. Hồ sơ đã vi phạm chính nguyên tắc của mình.
+
+Cần nói thêm cho chính xác: cột thời gian hiện gồm cả chi phí đo đạc dùng chung cho mọi chế độ, nên nó chưa phải phép so thời gian thuật toán sạch. Bộ giải có sẵn trường thời gian thuật toán tách riêng nhưng chương trình dò lịch không ghi trường đó. Vì vậy kết luận đúng ở mức hiện tại là: chưa có bằng chứng nào cho thấy lợi thế bước nội chuyển thành lợi thế thời gian, và dấu hiệu ban đầu là không. Phải đo lại trước khi tuyên bố bất cứ điều gì.
+
+Lỗi thứ hai, mức chặn: mục tiêu so sánh định nghĩa vòng tròn. Mức phần dư mục tiêu được lấy từ chính phần dư cuối của chiếu chính xác rồi nới 5 phần trăm. Đây là chọn hậu nghiệm, và nó có lợi cơ học cho bên thách thức.
+
+Lỗi thứ ba, mức chặn: bất đối xứng ngân sách dò tham số. Phương pháp đề xuất được dò 16 cấu hình, còn mốc so sánh chỉ 2. Theo đúng nguyên tắc cho baseline cơ hội mạnh nhất mà báo cáo gốc đặt ra, mốc phải được dò với cùng ngân sách.
+
+Lỗi thứ tư: chứng chỉ qua khoảng cách đối ngẫu không phải đóng góp mới. Bất đẳng thức khoảng cách tới nghiệm bị chặn bởi căn hai lần khoảng cách đối ngẫu dưới tính lồi mạnh là kiến thức chuẩn trong tối ưu, không phải phát hiện. Nó là một nhận xét triển khai đúng đắn và hữu ích, nhưng không đứng được như một đóng góp lý thuyết.
+
+Lỗi thứ năm, và là điểm sắc nhất mà cả năm góc khảo sát trước lẫn bốn phản biện chứng minh đều bỏ sót: nghịch lý dễ thì không mới, mới thì chưa chứng minh được. Lộ trình ở tệp 04 định chứng minh bằng cách xem phép chiếu xấp xỉ như một nhiễu ngoài tổng được rồi viện định lý bền vững với nhiễu năm 2017 cộng Malitsky 2015. Nếu làm được thì định lý thu được là hệ quả trực tiếp một dòng của hai kết quả đã in, và người phản biện sẽ viết đúng câu đó. Ngược lại, nếu giữ cấu trúc đủ mới để không viện được định lý bền vững thì phải chứng minh lại từ đầu, và đó chính là chỗ bản thảo cũ đã sụp. Hồ sơ đang đi giữa hai vực mà không nhận ra. Cửa duy nhất được chỉ ra: tìm một chỗ mà nhiễu chiếu không rút gọn về nhiễu ngoài tổng được, ví dụ nhiễu phụ thuộc trạng thái hoặc tiêu chuẩn sai số tương đối theo phần dư, khi đó sai số trở thành đại lượng phụ thuộc quỹ đạo.
+
+Lỗi thứ sáu, rủi ro tồn vong: bài "A modified generalized version of projected reflected gradient method in Hilbert spaces" đăng năm 2023 ở chính tạp chí đang nhắm, chưa được đọc toàn văn. Chữ tổng quát hóa trong dòng này thường bao hàm cả nhiễu hoặc xấp xỉ. Nếu bài đó đã có phép chiếu xấp xỉ thì toàn bộ điểm mới còn lại biến mất. Phải đọc trước mọi việc khác.
+
+Lỗi thứ bảy: hồ sơ tự mâu thuẫn về chính thuật toán. Tệp 04 chốt bỏ bước quán tính, trong khi tệp 01 vẫn mô tả sơ đồ có quán tính.
+
+Điểm được ghi nhận là mạnh: tính trung thực của hồ sơ, được cả bốn phản biện nêu như tài sản thật; nghiệm khả thi tuyệt đối ở toàn bộ 36 cấu hình; nhận định điều kiện sai số chia hệ số neo tiến về không là cần chứ không chỉ tổng được; bộ kiểm thử kiểm tính chất toán học; và ví dụ giả đơn điệu có chứng chỉ số.
 
 ## 3. Diễn giải trung thực
 
