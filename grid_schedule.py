@@ -88,7 +88,7 @@ def main():
     print(f"   L={L:.6f} -> lambda={lam:.4f}")
     print(f"   mức phần dư mục tiêu (ấn định TRƯỚC): {MUC_TIEU}")
 
-    # Hai nhóm được dò với CÙNG ngân sách: 8 cấu hình mỗi nhóm.
+    # Ba nhóm, mỗi nhóm được dò với CÙNG ngân sách 8 cấu hình.
     cfgs = []
     for eps0 in (1.0, 2.0, 4.0, 8.0):
         for p in (1.01, 1.1):
@@ -97,6 +97,9 @@ def main():
     for ec in (0.005, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.2):
         cfgs.append((f"chieu_chinh_xac {ec}", "chieu_chinh_xac",
                      Budget(kind="exact_bound", eps_const=ec, cap=args.cap)))
+    for c in (0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.8, 1.2):
+        cfgs.append((f"tuong_doi c{c}", "tuong_doi",
+                     Budget(kind="relative", c_rel=c, cap=args.cap)))
 
     rows, data = [], {}
     for name, nhom, b in cfgs:
@@ -132,23 +135,26 @@ def main():
                 continue
             if nhom not in tot or bi < tot[nhom][0]:
                 tot[nhom] = (bi, ti, name)
-        for nhom in ("thich_nghi", "chieu_chinh_xac"):
+        for nhom in ("thich_nghi", "tuong_doi", "chieu_chinh_xac"):
             if nhom in tot:
                 bi, ti, name = tot[nhom]
                 print(f"{target:>12.1e} | {nhom:>16s} | {bi:>9.0f} | {ti:>15.2f} | {name:>22s}")
-        if len(tot) == 2:
-            b_tn, t_tn, _ = tot["thich_nghi"]
+        if "chieu_chinh_xac" in tot:
             b_cx, t_cx, _ = tot["chieu_chinh_xac"]
-            hs_b, hs_t = b_cx / b_tn, t_cx / t_tn
-            print(f"{'':>12s} | {'-> hệ số':>16s} | {hs_b:>8.2f}x | {hs_t:>14.2f}x |"
-                  f"  (bước nội / THỜI GIAN)")
-            ket_qua.append({"muc_phan_du": f"{target:.1e}",
-                            "buoc_noi_thich_nghi": f"{b_tn:.0f}",
-                            "buoc_noi_chieu_chinh_xac": f"{b_cx:.0f}",
-                            "he_so_buoc_noi": f"{hs_b:.2f}",
-                            "t_thich_nghi": f"{t_tn:.2f}",
-                            "t_chieu_chinh_xac": f"{t_cx:.2f}",
-                            "he_so_thoi_gian": f"{hs_t:.2f}"})
+            row = {"muc_phan_du": f"{target:.1e}",
+                   "buoc_noi_chieu_chinh_xac": f"{b_cx:.0f}",
+                   "t_chieu_chinh_xac": f"{t_cx:.2f}"}
+            for nhom, nhan in (("thich_nghi", "thich_nghi"), ("tuong_doi", "tuong_doi")):
+                if nhom in tot:
+                    b_, t_, _ = tot[nhom]
+                    hs_b, hs_t = b_cx / b_, t_cx / t_
+                    print(f"{'':>12s} | {('-> ' + nhan):>16s} | {hs_b:>8.2f}x | {hs_t:>14.2f}x |"
+                          f"  (bước nội / THỜI GIAN)")
+                    row[f"buoc_noi_{nhan}"] = f"{b_:.0f}"
+                    row[f"t_{nhan}"] = f"{t_:.2f}"
+                    row[f"he_so_buoc_noi_{nhan}"] = f"{hs_b:.2f}"
+                    row[f"he_so_thoi_gian_{nhan}"] = f"{hs_t:.2f}"
+            ket_qua.append(row)
 
     for path, rr in ((f"grid_fair_{args.blur}.csv", rows),
                      (f"grid_fair_{args.blur}_pareto.csv", ket_qua)):

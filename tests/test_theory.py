@@ -152,6 +152,38 @@ def test_ngan_sach_nho_hon_thi_ton_it_buoc_hon(setup):
     assert n_long < n_chat
 
 
+def test_tieu_chuan_tuong_doi_chay_va_kha_thi(setup):
+    """Chế độ tiêu chuẩn tương đối phải chạy được và cho nghiệm khả thi.
+
+    Khác chế độ lịch tuyệt đối ở chỗ sai số cho phép phụ thuộc TRẠNG THÁI (tỉ lệ
+    với độ dài bước gradient), nên nó không rút gọn về một dãy nhiễu cho trước."""
+    x, tau, _ = setup
+    blur = BlurOperator(gaussian_kernel(9, 1.6))
+    y = blur(x) + 0.05 * torch.randn_like(x)
+    out = run_reflected(blur, y, tau, K=20, budget=Budget(kind="relative", c_rel=0.3),
+                        beta0=0.05, alpha_bar=0.0, x_clean=x,
+                        ref_steps=200, resid_cap=400, measure_every=10)
+    tv = out.trace["tv_ratio"]
+    assert torch.all(tv[torch.isfinite(tv)] <= 1.001)
+    resid = out.trace["resid"]
+    vals = resid[torch.isfinite(resid)]
+    assert vals[-1] < vals[0]
+
+
+def test_tieu_chuan_tuong_doi_long_hon_thi_re_hon(setup):
+    """Hệ số tương đối lớn hơn nghĩa là cho phép sai số lớn hơn, phải tốn ít bước hơn."""
+    x, tau, _ = setup
+    blur = BlurOperator(gaussian_kernel(9, 1.6))
+    y = blur(x) + 0.05 * torch.randn_like(x)
+    inner = {}
+    for c in (0.05, 0.5):
+        out = run_reflected(blur, y, tau, K=15, budget=Budget(kind="relative", c_rel=c),
+                            beta0=0.05, alpha_bar=0.0, x_clean=x,
+                            ref_steps=150, resid_cap=300, measure_every=15)
+        inner[c] = out.total_inner
+    assert inner[0.5] < inner[0.05]
+
+
 def test_sai_so_chieu_giam_theo_ngan_sach(setup):
     """Ngân sách bước nội lớn hơn phải cho sai số chiếu nhỏ hơn."""
     x, tau, _ = setup

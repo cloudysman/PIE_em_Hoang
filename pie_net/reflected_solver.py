@@ -93,8 +93,20 @@ class Budget:
 
     Nhóm TÍNH ĐƯỢC (dùng chứng chỉ sqrt(2*gap) từ khoảng cách đối ngẫu, thực thi
     được đúng như định lý đòi hỏi):
-      'adaptive'    : lịch sai số eps_k = eps0/(k+1)^p, tổng được khi p > 1.
+      'adaptive'    : lịch sai số TUYỆT ĐỐI eps_k = eps0/(k+1)^p, tổng được khi p > 1.
       'exact_bound' : chứng chỉ <= eps_const, đóng vai chiếu chính xác tính được.
+      'relative'    : tiêu chuẩn sai số TƯƠNG ĐỐI, eps_k = c * ||u^k - w^k||, trong đó
+                      ||u^k - w^k|| = lambda*||F(r^k)|| là độ dài bước gradient tại
+                      bước ngoài k. Sai số cho phép tự nới khi còn xa nghiệm và tự
+                      siết khi đã gần, nên rẻ hơn lịch tuyệt đối vốn siết theo k bất
+                      kể trạng thái. Đây là dạng tiêu chuẩn tương đối theo chuẩn toán
+                      tử, cùng họ với tiêu chuẩn của Diaz Millan-Ferreira-Ugon (COAP
+                      2024). Quan trọng về mặt lý thuyết: sai số khi đó PHỤ THUỘC
+                      TRẠNG THÁI, không rút gọn về một dãy nhiễu ngoài cho trước, nên
+                      định lý không còn là hệ quả trực tiếp của định lý bền vững với
+                      nhiễu. Tính tổng được của dãy sai số thu được KHÔNG hiển nhiên
+                      và phải chứng minh cùng phân tích hội tụ; đây là phần cần người
+                      hướng dẫn, chưa chứng minh.
     """
     kind: str = "fixed"
     m: int = 2                    # cho kind='fixed'
@@ -102,13 +114,16 @@ class Budget:
     eps_const: float = 5e-3       # cho 'epsconst' và 'exact_bound'
     eps0: float = 1.0             # cho 'adaptive': eps_k = eps0/(k+1)^p
     p: float = 1.1                # cho 'adaptive': p > 1 để dãy sai số tổng được
+    c_rel: float = 0.1            # cho 'relative': eps_k = c_rel * ||u^k - w^k||
+    eps_floor: float = 1e-6       # sàn sai số cho 'relative', tránh siết vô hạn
     cap: int = 3000               # trần bước nội
 
     def label(self) -> str:
         if self.kind == "fixed":
             return f"m{self.m}"
         return {"log": "mlog", "exact": "exact", "epsconst": "epsconst",
-                "adaptive": "adaptive", "exact_bound": "exact_bound"}[self.kind]
+                "adaptive": "adaptive", "exact_bound": "exact_bound",
+                "relative": "relative"}[self.kind]
 
     def fixed_budget_at(self, k: int) -> int:
         """Ngân sách bước nội tại bước ngoài k (0-based) cho fixed/log."""
@@ -287,6 +302,14 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
             # chiếu chính xác nhưng dừng theo chứng chỉ TÍNH ĐƯỢC
             res = cons.project_to_bound(u, budget.eps_const, budget.cap,
                                         state=alg_state)
+            m_k = res.n_inner
+        elif budget.kind == "relative":
+            # tiêu chuẩn TƯƠNG ĐỐI: sai số cho phép tỉ lệ với độ dài bước gradient
+            # ||u^k - w^k|| = lambda*||F(r^k)||, tức PHỤ THUỘC TRẠNG THÁI. Lấy chuẩn
+            # nhỏ nhất trên batch để mọi ảnh đều thỏa tiêu chuẩn của riêng nó.
+            step_len = _per_image_norm(u - w).min().item()
+            eps_k = max(budget.c_rel * step_len, budget.eps_floor)
+            res = cons.project_to_bound(u, eps_k, budget.cap, state=alg_state)
             m_k = res.n_inner
         else:
             raise ValueError(budget.kind)
