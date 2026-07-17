@@ -190,7 +190,23 @@ Cái chưa ai làm là: phép chiếu xấp xỉ khả thi trên sơ đồ phả
 
 Kết luận của phản biện, viết nguyên ý: viết chỗ đó, đừng quảng cáo chỗ khác.
 
-### 8.7. Việc cần làm, theo thứ tự
+### 8.7. Đã thử việc số một, và nó thất bại: tiêu chuẩn nới lỏng không kiểm được trên quả cầu biến phân toàn phần
+
+Phản biện đề xuất thay mô hình sai số quả cầu bằng bất đẳng thức chiếu nới lỏng, để sai số vào ở bậc hai và dung sai chỉ cần là hằng số. Đã cài và đo. Kết quả: không thực thi được. Ghi lại để không ai thử lại.
+
+Ba bước đã kiểm.
+
+Bước một, xác nhận rào cản có thật: quả cầu biến phân toàn phần không bị chặn. Ảnh hằng giá trị 1000 có biến phân toàn phần bằng 2,56 nhân mười mũ trừ bốn, tức xấp xỉ không, trong khi chuẩn của nó là 16000. Nên cận trên trên toàn tập ràng buộc có thể vô hạn, và tiêu chuẩn nới lỏng không kiểm được.
+
+Bước hai, một điều chỉnh đúng nhưng chưa đủ: lấy tập ràng buộc là quả cầu biến phân toàn phần giao hộp thì nó bị chặn, và ràng buộc hộp vốn là ràng buộc vật lý tự nhiên của ảnh. Nhân đây phải sửa một niềm tin sai đã tồn tại lâu trong hồ sơ: cả tài liệu lẫn một vòng phản biện trước đều cho rằng phép kẹp hộp phá cấu trúc prox nên phải bỏ khi chạy lý thuyết. Kiểm bằng tìm kiếm vét cạn cho thấy công thức kẹp chính xác là prox của tổng nửa chuẩn bình phương với hàm chỉ của hộp, sai lệch chỉ 1 nhân mười mũ trừ bốn do lưới; lý do là hộp tách được theo từng tọa độ. Vậy dùng ràng buộc hộp là đúng toán.
+
+Bước ba, và đây là chỗ thất bại: để kiểm tiêu chuẩn, phải lấy cận trên trên tập ràng buộc. Cận trên tính được rẻ duy nhất là thay tập ràng buộc bằng hộp bao ngoài. Nhưng cận này quá thô đến mức vô dụng: đo trên bài chiếu thật, ngay cả khi chạy 2000 bước nội tức gần như chiếu chính xác, vế trái vẫn là 120,25 trong khi vế phải với dung sai 0,25 chỉ là 0,31; tiêu chuẩn không bao giờ thỏa. Nguyên nhân có tính cấu trúc: quả cầu biến phân toàn phần giao hộp nhỏ hơn hộp rất nhiều, nên thay tập ràng buộc bằng hộp làm cận trên phồng lên. Phép chiếu chính xác thỏa bất đẳng thức với dấu không dương trên tập ràng buộc thật, nhưng trên hộp thì không.
+
+Kết luận: muốn kiểm tiêu chuẩn nới lỏng phải tính hàm tựa của quả cầu biến phân toàn phần giao hộp, tức giải thêm một bài toán tối ưu lồi ở mỗi lần kiểm, đắt ngang chính phép chiếu. Đường này không đi được với tập ràng buộc hiện tại.
+
+Hệ quả cho hướng đi: hoặc tìm cách xuất bất đẳng thức nới lỏng trực tiếp từ cặp biến gốc và đối ngẫu của bộ giải nội, thay vì kiểm bằng cận trên; hoặc chấp nhận mô hình sai số quả cầu cùng giả thiết tổng được, và khi đó phải chấp nhận rằng định lý là hệ quả của định lý bền vững, tức bài không có tính mới ở chỗ này và phải tìm tính mới ở chỗ khác. Đây là quyết định cần bàn.
+
+### 8.8. Việc cần làm, theo thứ tự
 
 1. Thay mô hình sai số quả cầu ở Bổ đề 4 bằng bất đẳng thức chiếu nới lỏng kiểu Díaz Millán, để sai số vào ở bậc hai. Xóa mục 5 và giả thiết A5.
 2. Kiểm bộ giải nội có xuất được trực tiếp bất đẳng thức nới lỏng không, lưu ý quả cầu biến phân toàn phần không bị chặn.

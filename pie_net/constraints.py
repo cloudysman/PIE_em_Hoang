@@ -234,6 +234,69 @@ class TVBallConstraint(Constraint):
         gap, xf = self.duality_gap(x, p, v, tau)
         return (2.0 * gap).sqrt(), xf
 
+    # ------------------------------------------------------------------ #
+    #  Tiêu chuẩn chiếu xấp xỉ NỚI LỎNG (sai số vào ở BẬC HAI)            #
+    # ------------------------------------------------------------------ #
+    def relaxed_residual(self, w, u, v):
+        """Vế trái và vế phải của bất đẳng thức chiếu nới lỏng.
+
+        Định nghĩa (theo Diaz Millan, Ferreira, Ugon): w là phép chiếu xấp xỉ khả thi
+        của v với điểm gốc u và dung sai gamma nếu w thuộc D và
+            <v - w, y - w> <= gamma * ||w - u||^2   với mọi y thuộc D.
+        Chiếu chính xác ứng với gamma = 0. Điểm mấu chốt so với tiêu chuẩn kiểu quả
+        cầu: sai số vào chứng minh ở BẬC HAI theo dịch chuyển ||w-u||, nên bị phần âm
+        của bổ đề một bước hấp thụ; nhờ đó dung sai chỉ cần là HẰNG SỐ, không cần một
+        dãy tổng được tiến về không.
+
+        Vế trái đòi lấy cận trên trên toàn D. Quả cầu biến phân toàn phần KHÔNG bị
+        chặn (mọi ảnh hằng đều có biến phân toàn phần bằng không), nên cận trên trên
+        nó có thể vô hạn. Ta dùng D = quả cầu biến phân toàn phần GIAO hộp, khi đó
+        D bị chặn và
+            sup_{y thuộc D} <z, y - w> <= sup_{y thuộc hộp} <z, y - w>
+                                        = tổng theo điểm ảnh của max(z_i(hi - w_i), z_i(lo - w_i)),
+        là một cận trên TÍNH ĐƯỢC và rẻ. Cận này thô vì thay D bằng hộp bao ngoài, nên
+        tiêu chuẩn thu được là điều kiện ĐỦ, không phải cần và đủ.
+
+        Trả về (ve_trai, ve_phai_khi_gamma_bang_1) theo từng ảnh; tiêu chuẩn là
+        ve_trai <= gamma * ve_phai_khi_gamma_bang_1.
+
+        KẾT QUẢ ÂM TÍNH, đã đo, giữ lại làm hồ sơ: cận trên qua hộp bao ngoài QUÁ THÔ
+        nên tiêu chuẩn này KHÔNG dùng được trên quả cầu biến phân toàn phần giao hộp.
+        Đo trên bài chiếu thật: chạy 2000 bước nội, tức gần như chiếu chính xác, vế
+        trái vẫn là 120,25 trong khi vế phải với dung sai 0,25 chỉ 0,31 — không bao giờ
+        thỏa. Lý do: tập ràng buộc nhỏ hơn hộp rất nhiều, nên thay nó bằng hộp làm cận
+        trên phồng lên; phép chiếu chính xác thỏa bất đẳng thức trên tập ràng buộc thật
+        nhưng không thỏa trên hộp. Muốn kiểm đúng phải tính hàm tựa của tập ràng buộc,
+        tức giải thêm một bài toán tối ưu lồi mỗi lần kiểm, đắt ngang chính phép chiếu.
+        Xem mục 8.7 của tai_lieu_bai_bao/05_chung_minh_hoi_tu_yeu.md.
+        """
+        if self.box is None:
+            raise ValueError("tiêu chuẩn nới lỏng cần tập ràng buộc BỊ CHẶN; "
+                             "hãy dùng quả cầu biến phân toàn phần giao hộp (box khác None)")
+        lo, hi = self.box
+        z = v - w
+        sup_box = torch.maximum(z * (hi - w), z * (lo - w)).flatten(1).sum(dim=1)
+        disp2 = (w - u).pow(2).flatten(1).sum(dim=1)
+        return sup_box, disp2
+
+    def project_to_gamma(self, v, u, gamma: float, cap: int, state=None) -> ProjResult:
+        """Chiếu xấp xỉ theo tiêu chuẩn NỚI LỎNG với dung sai HẰNG gamma.
+
+        Chạy vòng lặp nội tới khi bất đẳng thức nới lỏng thỏa cho mọi ảnh, hoặc chạm
+        trần. Vì dung sai là hằng số, chi phí mỗi bước ngoài không tăng theo số bước
+        ngoài — khác hẳn các chế độ siết dần vốn đắt dần."""
+        tau = self.tau.to(v.device).view(v.shape[0])
+        x, p = self._init(v, state)
+        xbar = x.clone()
+        t, sig = self.t, self.sigma
+        n_used = 0
+        lhs, disp2 = self.relaxed_residual(x, u, v)
+        while not torch.all(lhs <= gamma * disp2) and n_used < cap:
+            x, xbar, p, t, sig = self._step(x, xbar, p, v, tau, t, sig)
+            n_used += 1
+            lhs, disp2 = self.relaxed_residual(x, u, v)
+        return ProjResult(x, n_used, (x, p), tv_isotropic(x))
+
     def _init(self, v, state):
         """Khởi tạo (x, p) — ấm nếu có state của bước ngoài trước, lạnh nếu None."""
         if state is not None:
