@@ -88,6 +88,20 @@ Thứ ba, chế độ thích nghi tốt hơn ngân sách cố định về cả 
 
 Lưu ý trung thực về phạm vi: các con số trên đo ở quy mô nhỏ nên mang tính định hướng; lịch sai số quá lỏng, ví dụ hệ số đầu bằng 5, không đạt mức phần dư mục tiêu, nên việc chọn lịch cần được nêu rõ trong bài.
 
+## 2d. Dò lịch sai số trên GPU: kết quả tốt nhất của dự án, và mặt trái của nó
+
+Chạy trên máy chủ có GPU NVIDIA L40S, ảnh cạnh 96 điểm ảnh, 150 bước ngoài, 8 ảnh kiểm tra, 18 cấu hình cho mỗi loại mờ. Mọi chế độ đều nằm trong thế giới thực thi được: cả chế độ thích nghi lẫn chiếu chính xác đều dừng theo chứng chỉ tính được, không bên nào dùng nghiệm tham chiếu. Mốc so sánh là chiếu chính xác theo chứng chỉ với ngưỡng 0,02, và mức phần dư mục tiêu lấy từ chính mốc đó.
+
+Cấu hình tốt nhất trên mờ Gauss là lịch với hệ số đầu 2,0 và số mũ 1,01: đạt mức phần dư mục tiêu với 448 bước nội so với 5763 của chiếu chính xác, tức rẻ hơn 12,86 lần. Trên mờ chuyển động, lịch với hệ số đầu 4,0 và số mũ 1,01 đạt 570 bước so với 8494, tức rẻ hơn 14,90 lần; ở cấu hình này PSNR gần như bằng chiếu chính xác (26,8253 so với 26,8265 dB) trong khi phần dư còn thấp hơn (1,047 so với 1,141 nhân mười mũ trừ hai). Mọi cấu hình đều cho mức vi phạm ràng buộc bằng 1,0000, tức khả thi tuyệt đối.
+
+Đây là con số tốt nhất của dự án, và nó mạnh hơn hẳn các con số trước (2,5 đến 2,8 lần trên mờ Gauss và 4 đến 7 lần trên mờ chuyển động), đồng thời đo trong điều kiện chặt hơn vì không bên nào mượn thông tin oracle.
+
+Mặt trái, phải nêu ngang hàng với kết quả trên: việc chọn lịch quyết định tất cả, và lịch sai lầm còn tệ hơn không dùng chế độ thích nghi. Lịch quá siết, tức hệ số đầu nhỏ hoặc số mũ lớn, làm chi phí bùng nổ: với hệ số đầu 0,5 và số mũ 1,5 trên mờ Gauss, tổng bước nội lên tới 522808 và chỉ đạt 0,02 lần so với mốc, tức tốn gấp khoảng 50 lần chiếu chính xác. Nguyên nhân là lịch tuyệt đối siết sai số về không nhanh hơn mức bài toán cần, trong khi chứng chỉ lại bi quan, nên vòng lặp nội chạy thừa rất nhiều.
+
+Quy luật rút ra từ bảng: số mũ nên lấy sát 1 từ phía trên, đủ để dãy sai số tổng được nhưng không siết thừa; hệ số đầu nên lấy lớn, cỡ 2 đến 4. Các cấu hình có số mũ 1,5 đều thất bại ở mọi hệ số đầu.
+
+Một lưu ý về phạm vi của hệ số: con số 12,86 và 14,90 lần được đo tại một mức phần dư mục tiêu cụ thể, lấy từ mốc chiếu chính xác với ngưỡng 0,02. Nếu đòi mức phần dư thấp hơn nhiều, chế độ thích nghi buộc phải dùng lịch siết hơn và khi đó nó thua chiếu chính xác. Nói cách khác, tồn tại một vùng vận hành mà chế độ thích nghi thắng lớn và một vùng mà nó thua; bài phải trình bày cả đường đánh đổi chứ không chỉ điểm thắng.
+
 ## 3. Diễn giải trung thực
 
 Ba kết luận số ủng hộ hướng bài, với mức độ đúng như phát biểu, không phóng đại.
