@@ -104,7 +104,19 @@ Vì sao chọn dịch chuyển của bước chiếu chứ không phải dịch 
 
 Điều cần chứng minh: tổng các dₖ hữu hạn, khi đó tổng các εₖ hữu hạn và giả thiết A5 thỏa.
 
-Bằng chứng số hiện có, chưa phải chứng minh: đo trên bài khôi phục ảnh với 600 bước ngoài, dịch chuyển của bước chiếu giảm với độ dốc log-log −1,479 khi có neo và −1,686 khi không neo, tức nhanh hơn 1/k, nên tổng hội tụ; kiểm chéo cho thấy tổng tích lũy đã bão hòa, từ 8,4705 ở nửa quãng lên 8,8398 ở cuối, tỉ lệ 1,044. Một lượt với 3000 bước đang chạy để kiểm đuôi tiệm cận.
+Bằng chứng số hiện có, chưa phải chứng minh. Lượt đo dài với 3000 bước ngoài trên GPU cho kết quả quyết định, và nó khác hẳn lượt ngắn:
+
+| cấu hình | độ dốc log-log của dịch chuyển bước chiếu | tổng tích lũy, nửa quãng và cuối | kết luận |
+|---|---|---|---|
+| có neo, mờ chuyển động | −1,011 | 13,9732 và 14,2359 | sát ngưỡng, không dựa được |
+| tắt neo, mờ Gauss | −2,342 | 11,7212 và 11,7973 | tổng được rõ ràng |
+| tắt neo, mờ chuyển động | −2,838 | 12,7002 và 12,7033 | tổng được rõ ràng |
+
+Điểm quan trọng nhất: khi có neo, độ dốc tụt về −1,011, tức sát ngưỡng phân kỳ. Ở lượt ngắn 600 bước, độ dốc đo được là −1,479 và trông an toàn; phải chạy tới 3000 bước mới lộ ra rằng nó đang tiến về −1. Đây đúng là lo ngại ban đầu: bước neo áp đặt dịch chuyển cỡ nghịch đảo số bước, mà chuỗi đó phân kỳ. Bài học: đừng kết luận tính tổng được từ quỹ đạo ngắn.
+
+Ngược lại, khi tắt neo, tức đúng sơ đồ của tài liệu này, độ dốc là −2,3 đến −2,8 và tổng bão hòa dứt khoát, tỉ lệ 1,000 đến 1,006. Tổng được ở đây là thật.
+
+Hệ quả cho thiết kế: quyết định bỏ bước neo đúng ở cả hai mặt cùng lúc. Nó vừa nối lại chuỗi phép chiếu để bổ đề một bước dùng được, vừa cứu chính tính tổng được. Nếu giữ neo, giả thiết tổng được sẽ nằm ngay ranh giới phân kỳ và không thể dựa vào. Đây là lập luận nên đưa vào bài để biện minh cho việc chọn sơ đồ không neo, thay vì để người phản biện hỏi tại sao không nhắm hội tụ mạnh.
 
 Hướng chứng minh dự kiến: từ bổ đề một bước, sau khi ghép Lyapunov, thu được bất đẳng thức dạng φₖ₊₁ ≤ φₖ − c′ dₖ² + (số hạng nhiễu tổng được). Cộng dồn cho tổng các dₖ² hữu hạn. Từ tổng bình phương hữu hạn KHÔNG suy ra ngay tổng dₖ hữu hạn; cần thêm lập luận, ví dụ một điều kiện chặn sai số quanh tập nghiệm, hoặc thay tiêu chuẩn thành εₖ = c·dₖ₋₁² hay εₖ = c·dₖ₋₁·γₖ với dãy γₖ tổng được. Cần kiểm: đây là mắt xích còn thiếu và là chỗ quan trọng nhất cần người hướng dẫn quyết định.
 
