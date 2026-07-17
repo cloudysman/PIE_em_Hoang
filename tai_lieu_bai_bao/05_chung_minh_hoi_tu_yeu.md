@@ -204,7 +204,24 @@ Bước ba, và đây là chỗ thất bại: để kiểm tiêu chuẩn, phải
 
 Kết luận: muốn kiểm tiêu chuẩn nới lỏng phải tính hàm tựa của quả cầu biến phân toàn phần giao hộp, tức giải thêm một bài toán tối ưu lồi ở mỗi lần kiểm, đắt ngang chính phép chiếu. Đường này không đi được với tập ràng buộc hiện tại.
 
-Hệ quả cho hướng đi: hoặc tìm cách xuất bất đẳng thức nới lỏng trực tiếp từ cặp biến gốc và đối ngẫu của bộ giải nội, thay vì kiểm bằng cận trên; hoặc chấp nhận mô hình sai số quả cầu cùng giả thiết tổng được, và khi đó phải chấp nhận rằng định lý là hệ quả của định lý bền vững, tức bài không có tính mới ở chỗ này và phải tìm tính mới ở chỗ khác. Đây là quyết định cần bàn.
+Hệ quả cho hướng đi: còn đúng hai nhánh, và nhánh thứ nhất cũng đã được kiểm và đóng lại, xem ngay dưới đây.
+
+### 8.7bis. Nhánh còn lại cũng đóng: không xuất được bất đẳng thức nới lỏng từ chứng chỉ
+
+Nhánh thứ nhất là xuất bất đẳng thức nới lỏng từ chứng chỉ sai số thay vì kiểm bằng cận trên. Nhánh này chết vì lý do BẬC, chứng minh được trên giấy.
+
+Đặt w là điểm chiếu xấp xỉ, tức w = P_D(v) + e với chuẩn của e không vượt ε. Với mọi y thuộc D:
+
+    ⟨v − w, y − w⟩ = ⟨v − P_D(v), y − P_D(v)⟩ − ⟨v − P_D(v), e⟩ − ⟨e, y − P_D(v)⟩ + ‖e‖²
+                   ≤ 0 + ε‖v − P_D(v)‖ + ε·đường kính(D) + ε²,
+
+trong đó số hạng đầu không dương nhờ đặc trưng phép chiếu. Vậy vế trái bị chặn bởi ε nhân một hằng số, tức BẬC NHẤT theo ε. Nhưng tiêu chuẩn nới lỏng đòi vế trái không vượt γ‖w − u‖², tức BẬC HAI theo dịch chuyển. Do đó phải chọn ε cỡ bình phương dịch chuyển chia cho hằng số, tức siết theo bậc hai.
+
+Số liệu xác nhận mức độ: trên bài chiếu thật, tại bước ngoài thứ 199 dịch chuyển là 2,0236 nhân mười mũ trừ ba, trong khi sai số cần thiết với dung sai 0,25 chỉ là 2,0894 nhân mười mũ trừ tám — phải siết chặt hơn năm bậc so với dịch chuyển, và tỉ lệ này còn xấu đi khi tiến tới nghiệm (từ 8,8 nhân mười mũ trừ ba ở bước đầu xuống 1,0 nhân mười mũ trừ năm ở bước 199). Chi phí vòng lặp nội bùng nổ.
+
+Kết luận: cả hai cách kiểm tiêu chuẩn nới lỏng đều không dùng được. Qua cận trên thì quá thô; qua chứng chỉ thì sai bậc. Tiêu chuẩn nới lỏng, tuy đúng về lý thuyết, không thực thi được trên bài toán chiếu lên quả cầu biến phân toàn phần bằng bộ giải hiện có.
+
+Do đó chỉ còn một đường: chấp nhận mô hình sai số quả cầu cùng giả thiết tổng được, thứ mà số liệu với 3000 bước đã xác nhận là thỏa khi bỏ neo. Cái giá là phải thừa nhận định lý hội tụ là hệ quả của định lý bền vững với nhiễu, tức không có tính mới ở chỗ đó. Tính mới còn lại của bài phải nằm ở phần khác, cụ thể là phần khuếch đại sai số ở điểm gốc qua bước phản xạ với hệ số nghịch đảo bước nhảy, như phản biện đã chỉ ở mục 8.6.
 
 ### 8.8. Việc cần làm, theo thứ tự
 
