@@ -1,17 +1,25 @@
 cau_hinh,nhom,psnr,phan_du_cuoi,tong_buoc_noi,thoi_gian_thuat_toan_s,vi_pham_tv,thoi_gian_tong_s
-thich_nghi e1.0 p1.01,thich_nghi,26.7972,5.861378e-03,250118,423.822,1.0000,475.6
-thich_nghi e1.0 p1.1,thich_nghi,26.7966,5.798217e-03,360876,613.682,1.0000,665.2
-thich_nghi e2.0 p1.01,thich_nghi,26.8037,6.611746e-03,1638,2.920,1.0000,54.8
-thich_nghi e2.0 p1.1,thich_nghi,26.7981,5.950137e-03,144156,245.658,1.0000,296.3
-thich_nghi e4.0 p1.01,thich_nghi,26.8253,1.046734e-02,596,1.226,1.0000,55.1
-thich_nghi e4.0 p1.1,thich_nghi,26.8110,7.601188e-03,910,1.839,1.0000,57.6
-thich_nghi e8.0 p1.01,thich_nghi,26.8487,1.873599e-02,327,0.731,1.0000,52.5
-thich_nghi e8.0 p1.1,thich_nghi,26.8351,1.198616e-02,493,1.033,1.0000,54.5
-chieu_chinh_xac 0.005,chieu_chinh_xac,26.7965,5.794278e-03,600000,712.205,1.0000,741.8
-chieu_chinh_xac 0.01,chieu_chinh_xac,26.7965,5.794205e-03,591795,677.664,1.0000,705.1
-chieu_chinh_xac 0.02,chieu_chinh_xac,26.8265,1.140973e-02,8503,9.538,1.0000,36.7
-chieu_chinh_xac 0.03,chieu_chinh_xac,26.8332,1.675320e-02,5880,7.918,1.0000,35.5
-chieu_chinh_xac 0.05,chieu_chinh_xac,26.7905,3.134511e-02,3059,3.530,1.0000,31.0
-chieu_chinh_xac 0.08,chieu_chinh_xac,26.6769,5.072777e-02,1840,2.181,1.0000,26.7
-chieu_chinh_xac 0.12,chieu_chinh_xac,26.4936,7.618093e-02,1180,1.453,1.0000,27.3
-chieu_chinh_xac 0.2,chieu_chinh_xac,25.9985,1.393085e-01,655,0.825,1.0000,25.4
+thich_nghi e1.0 p1.01,thich_nghi,26.7972,5.861378e-03,250118,438.244,1.0000,490.9
+thich_nghi e1.0 p1.1,thich_nghi,26.7966,5.798217e-03,360876,607.077,1.0000,657.2
+thich_nghi e2.0 p1.01,thich_nghi,26.8037,6.611746e-03,1638,3.090,1.0000,56.4
+thich_nghi e2.0 p1.1,thich_nghi,26.7981,5.950137e-03,144156,241.377,1.0000,293.9
+thich_nghi e4.0 p1.01,thich_nghi,26.8253,1.046734e-02,596,1.304,1.0000,57.7
+thich_nghi e4.0 p1.1,thich_nghi,26.8110,7.601188e-03,910,1.731,1.0000,56.2
+thich_nghi e8.0 p1.01,thich_nghi,26.8487,1.873599e-02,327,0.757,1.0000,54.2
+thich_nghi e8.0 p1.1,thich_nghi,26.8351,1.198616e-02,493,1.055,1.0000,55.2
+chieu_chinh_xac 0.005,chieu_chinh_xac,26.7965,5.794278e-03,600000,1006.072,1.0000,1053.6
+chieu_chinh_xac 0.01,chieu_chinh_xac,26.7965,5.794205e-03,591795,999.097,1.0000,1047.4
+chieu_chinh_xac 0.02,chieu_chinh_xac,26.8265,1.140973e-02,8503,14.476,1.0000,62.9
+chieu_chinh_xac 0.03,chieu_chinh_xac,26.8332,1.675320e-02,5880,9.765,1.0000,56.3
+chieu_chinh_xac 0.05,chieu_chinh_xac,26.7905,3.134511e-02,3059,5.310,1.0000,51.5
+chieu_chinh_xac 0.08,chieu_chinh_xac,26.6769,5.072777e-02,1840,3.214,1.0000,50.3
+chieu_chinh_xac 0.12,chieu_chinh_xac,26.4936,7.618093e-02,1180,2.062,1.0000,45.9
+chieu_chinh_xac 0.2,chieu_chinh_xac,25.9985,1.393085e-01,655,1.267,1.0000,46.2
+tuong_doi c0.02,tuong_doi,26.7965,5.794071e-03,598945,716.968,1.0000,747.8
+tuong_doi c0.05,tuong_doi,26.8051,6.861390e-03,9984,10.958,1.0000,38.4
+tuong_doi c0.1,tuong_doi,26.8298,1.285552e-02,4057,4.696,1.0000,33.3
+tuong_doi c0.2,tuong_doi,26.7992,2.962396e-02,1887,2.531,1.0000,27.8
+tuong_doi c0.3,tuong_doi,26.7097,4.624344e-02,1159,1.445,1.0000,28.5
+tuong_doi c0.5,tuong_doi,26.4437,8.383022e-02,628,0.989,1.0000,26.8
+tuong_doi c0.8,tuong_doi,25.6686,1.874230e-01,378,0.575,0.9997,26.5
+tuong_doi c1.2,tuong_doi,25.1643,2.757838e-01,250,0.416,0.9995,23.8

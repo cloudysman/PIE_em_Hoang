@@ -163,6 +163,29 @@ Thứ hai, một hiện vật phải loại: ở mức phần dư 1,0e-2 trên m
 
 Thứ ba, phạm vi vẫn giới hạn: một tập ràng buộc, hai loại mờ, và chưa so với bất kỳ phương pháp đã công bố nào. Lợi thế đo được là lợi thế so với chính chiếu chính xác của cùng sơ đồ, không phải so với các phương pháp trong tài liệu.
 
+## 2g. Cái giá của tính mới: tiêu chuẩn tương đối so với lịch tuyệt đối
+
+Vòng phản biện chỉ ra một nghịch lý quyết định số phận bài: nếu sai số chiếu chỉ là một dãy nhiễu ngoài cho trước và tổng được, thì định lý hội tụ chỉ là hệ quả trực tiếp của định lý bền vững với nhiễu (2017) áp lên Malitsky (2015), tức không có tính mới; còn nếu giữ cấu trúc đủ mới để không viện được định lý bền vững thì phải chứng minh lại từ đầu, đúng chỗ bản thảo cũ đã sụp. Cửa duy nhất được chỉ ra là làm sai số phụ thuộc trạng thái.
+
+Cửa đó đã được cài và đo. Chế độ tiêu chuẩn tương đối đặt sai số cho phép tỉ lệ với độ dài bước gradient tại mỗi bước ngoài, tức tỉ lệ với chuẩn của toán tử tại điểm phản xạ. Sai số khi ấy phụ thuộc quỹ đạo nên không rút gọn về một dãy cho trước; đây cùng họ với tiêu chuẩn tương đối của bài COAP 2024. Ba nhóm được dò với cùng ngân sách tám cấu hình, mọi mức phần dư mục tiêu ấn định trước.
+
+Kết quả, hệ số so với chiếu chính xác theo chứng chỉ, đo bằng thời gian thuật toán:
+
+| mức phần dư | lịch tuyệt đối, mờ Gauss | tiêu chuẩn tương đối, mờ Gauss | lịch tuyệt đối, mờ chuyển động | tiêu chuẩn tương đối, mờ chuyển động |
+|---|---|---|---|---|
+| 3,0e-2 | 5,14 | 3,26 | 7,42 | 1,80 |
+| 2,0e-2 | 7,76 | 4,13 | 8,93 | 2,59 |
+| 1,5e-2 | 10,05 | 4,34 | 10,58 | 2,57 |
+| 1,2e-2 | 9,60 | 3,48 | 12,90 | 1,84 |
+
+Kết luận, và đây là đánh đổi cốt lõi của bài: tính mới có giá. Lịch tuyệt đối nhanh nhất, 7,9 đến 12,9 lần so với chiếu chính xác, nhưng định lý đi kèm nó là hệ quả một dòng của hai kết quả đã in nên không bán được. Tiêu chuẩn tương đối mở được cửa tính mới nhưng lợi thế chi phí tụt đáng kể, còn 3,3 đến 4,3 lần trên mờ Gauss và chỉ 1,8 đến 2,6 lần trên mờ chuyển động. Tính theo bước nội, trên mờ chuyển động ở mức phần dư 1,2e-2 nó thậm chí tốn hơn chiếu chính xác, hệ số 0,87.
+
+Nói cách khác, cái giá của việc thoát nghịch lý là mất khoảng hai đến năm lần lợi thế chi phí. Tiêu chuẩn tương đối vẫn nhanh hơn chiếu chính xác, nhưng khiêm tốn hơn hẳn.
+
+Khuyến nghị cho quyết định chiến lược: nếu mục tiêu là một bài có tính mới bảo vệ được, phải chọn tiêu chuẩn tương đối và chấp nhận hệ số khiêm tốn hơn, vì hệ số lớn của lịch tuyệt đối đi kèm một định lý không bán được. Đây là lựa chọn cần bàn với người hướng dẫn.
+
+Hai lưu ý trung thực. Thứ nhất, tính tổng được của dãy sai số dưới tiêu chuẩn tương đối không còn hiển nhiên như lịch tuyệt đối; nó phải được chứng minh cùng phân tích hội tụ, và đây chính là phần chưa làm. Thứ hai, phải loại hiện vật ở mức phần dư 1,0e-2 trên mờ chuyển động, nơi hệ số hiện ra là 563 và 489 lần cho lịch tuyệt đối và 44 và 91 lần cho tiêu chuẩn tương đối; con số này chỉ do cấu hình chiếu chính xác ngưỡng chặt chạm trần bước nội (435795 bước, 739 giây), không phải kết quả thật.
+
 ## 3. Diễn giải trung thực
 
 Ba kết luận số ủng hộ hướng bài, với mức độ đúng như phát biểu, không phóng đại.
