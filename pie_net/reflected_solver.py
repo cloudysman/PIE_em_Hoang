@@ -95,18 +95,24 @@ class Budget:
     được đúng như định lý đòi hỏi):
       'adaptive'    : lịch sai số TUYỆT ĐỐI eps_k = eps0/(k+1)^p, tổng được khi p > 1.
       'exact_bound' : chứng chỉ <= eps_const, đóng vai chiếu chính xác tính được.
-      'relative'    : tiêu chuẩn sai số TƯƠNG ĐỐI, eps_k = c * ||u^k - w^k||, trong đó
-                      ||u^k - w^k|| = lambda*||F(r^k)|| là độ dài bước gradient tại
-                      bước ngoài k. Sai số cho phép tự nới khi còn xa nghiệm và tự
-                      siết khi đã gần, nên rẻ hơn lịch tuyệt đối vốn siết theo k bất
-                      kể trạng thái. Đây là dạng tiêu chuẩn tương đối theo chuẩn toán
-                      tử, cùng họ với tiêu chuẩn của Diaz Millan-Ferreira-Ugon (COAP
-                      2024). Quan trọng về mặt lý thuyết: sai số khi đó PHỤ THUỘC
-                      TRẠNG THÁI, không rút gọn về một dãy nhiễu ngoài cho trước, nên
-                      định lý không còn là hệ quả trực tiếp của định lý bền vững với
-                      nhiễu. Tính tổng được của dãy sai số thu được KHÔNG hiển nhiên
-                      và phải chứng minh cùng phân tích hội tụ; đây là phần cần người
-                      hướng dẫn, chưa chứng minh.
+      'relative'    : tiêu chuẩn sai số TƯƠNG ĐỐI theo CHUẨN TOÁN TỬ,
+                      eps_k = c * ||u^k - w^k|| = c*lambda*||F(r^k)||.
+                      CẢNH BÁO LÝ THUYẾT: tại nghiệm của bất đẳng thức biến phân có
+                      ràng buộc kích hoạt, F(x*) nói chung KHÁC 0 (chỉ có điều kiện
+                      biến phân <F(x*), x-x*> >= 0), nên eps_k tiến về một HẰNG SỐ
+                      DƯƠNG chứ không về 0, và dãy sai số KHÔNG tổng được. Chế độ này
+                      vì thế nằm ngoài giả thiết của định lý; giữ lại để đối chiếu.
+      'relative_res': tiêu chuẩn TƯƠNG ĐỐI theo DỊCH CHUYỂN phép chiếu,
+                      eps_k = c * ||y^{k-1} - w^{k-1}||, tức tỉ lệ với độ dịch chuyển
+                      mà bước chiếu tạo ra ở bước ngoài trước. Khác 'relative' ở chỗ
+                      đại lượng này THỰC SỰ tiến về 0 khi dãy lặp tiến tới nghiệm (nó
+                      là đại lượng cùng loại với phần dư biến phân), nên eps_k tiến về
+                      0 và dãy sai số có cơ hội tổng được.
+                      Ý nghĩa lý thuyết: sai số PHỤ THUỘC TRẠNG THÁI, không rút gọn về
+                      một dãy nhiễu ngoài cho trước, nên định lý không còn là hệ quả
+                      trực tiếp của định lý bền vững với nhiễu — đây là cửa để có tính
+                      mới. TRUNG THỰC: tính tổng được KHÔNG hiển nhiên, phải chứng minh
+                      cùng phân tích hội tụ; phần này CHƯA làm, cần người hướng dẫn.
     """
     kind: str = "fixed"
     m: int = 2                    # cho kind='fixed'
@@ -123,7 +129,7 @@ class Budget:
             return f"m{self.m}"
         return {"log": "mlog", "exact": "exact", "epsconst": "epsconst",
                 "adaptive": "adaptive", "exact_bound": "exact_bound",
-                "relative": "relative"}[self.kind]
+                "relative": "relative", "relative_res": "relative_res"}[self.kind]
 
     def fixed_budget_at(self, k: int) -> int:
         """Ngân sách bước nội tại bước ngoài k (0-based) cho fixed/log."""
@@ -237,6 +243,8 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
 
     total_inner = 0
     r_min_seen = float("inf")   # phần dư nhỏ nhất đã quan sát (điều khiển target)
+    # dịch chuyển ||y - w|| của bước ngoài TRƯỚC, dùng cho tiêu chuẩn 'relative_res'
+    proj_disp_prev = None
     keys = ["e_abs", "e_rel", "delta", "resid", "psnr", "inner_k",
             "inner_cum", "tv_ratio", "ref_check", "alpha", "beta", "m_k"]
     tr: Dict[str, List[torch.Tensor]] = {k: [] for k in keys}
@@ -304,11 +312,19 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
                                         state=alg_state)
             m_k = res.n_inner
         elif budget.kind == "relative":
-            # tiêu chuẩn TƯƠNG ĐỐI: sai số cho phép tỉ lệ với độ dài bước gradient
-            # ||u^k - w^k|| = lambda*||F(r^k)||, tức PHỤ THUỘC TRẠNG THÁI. Lấy chuẩn
-            # nhỏ nhất trên batch để mọi ảnh đều thỏa tiêu chuẩn của riêng nó.
+            # tiêu chuẩn TƯƠNG ĐỐI theo chuẩn toán tử (xem cảnh báo ở Budget: eps_k
+            # không tiến về 0 nên nằm ngoài giả thiết định lý; giữ để đối chiếu).
             step_len = _per_image_norm(u - w).min().item()
             eps_k = max(budget.c_rel * step_len, budget.eps_floor)
+            res = cons.project_to_bound(u, eps_k, budget.cap, state=alg_state)
+            m_k = res.n_inner
+        elif budget.kind == "relative_res":
+            # tiêu chuẩn TƯƠNG ĐỐI theo DỊCH CHUYỂN phép chiếu ở bước ngoài trước.
+            # Đại lượng này tiến về 0 khi tiến tới nghiệm, nên eps_k cũng tiến về 0.
+            # Bước đầu chưa có dịch chuyển trước, dùng độ dài bước gradient làm mốc.
+            base = (proj_disp_prev if proj_disp_prev is not None
+                    else _per_image_norm(u - w).min().item())
+            eps_k = max(budget.c_rel * base, budget.eps_floor)
             res = cons.project_to_bound(u, eps_k, budget.cap, state=alg_state)
             m_k = res.n_inner
         else:
@@ -316,6 +332,8 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
         yk = res.x
         alg_state = res.state
         total_inner += res.n_inner
+        # dịch chuyển do bước chiếu tạo ra, dùng làm mốc sai số cho bước ngoài sau
+        proj_disp_prev = _per_image_norm(yk - w).min().item()
         x_next = beta_k * anchor + (1.0 - beta_k) * yk    # trộn độ nhớt (f hằng)
         _sync()
         t_alg += time.perf_counter() - t0

@@ -97,9 +97,12 @@ def main():
     for ec in (0.005, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.2):
         cfgs.append((f"chieu_chinh_xac {ec}", "chieu_chinh_xac",
                      Budget(kind="exact_bound", eps_const=ec, cap=args.cap)))
-    for c in (0.02, 0.05, 0.1, 0.2, 0.3, 0.5, 0.8, 1.2):
-        cfgs.append((f"tuong_doi c{c}", "tuong_doi",
+    for c in (0.05, 0.2, 0.5, 1.2):
+        cfgs.append((f"tuong_doi_F c{c}", "tuong_doi_F",
                      Budget(kind="relative", c_rel=c, cap=args.cap)))
+    for c in (0.05, 0.1, 0.2, 0.5, 1.0, 2.0, 4.0, 8.0):
+        cfgs.append((f"tuong_doi_dc c{c}", "tuong_doi_dc",
+                     Budget(kind="relative_res", c_rel=c, cap=args.cap)))
 
     rows, data = [], {}
     for name, nhom, b in cfgs:
@@ -135,7 +138,7 @@ def main():
                 continue
             if nhom not in tot or bi < tot[nhom][0]:
                 tot[nhom] = (bi, ti, name)
-        for nhom in ("thich_nghi", "tuong_doi", "chieu_chinh_xac"):
+        for nhom in ("thich_nghi", "tuong_doi_F", "tuong_doi_dc", "chieu_chinh_xac"):
             if nhom in tot:
                 bi, ti, name = tot[nhom]
                 print(f"{target:>12.1e} | {nhom:>16s} | {bi:>9.0f} | {ti:>15.2f} | {name:>22s}")
@@ -144,7 +147,9 @@ def main():
             row = {"muc_phan_du": f"{target:.1e}",
                    "buoc_noi_chieu_chinh_xac": f"{b_cx:.0f}",
                    "t_chieu_chinh_xac": f"{t_cx:.2f}"}
-            for nhom, nhan in (("thich_nghi", "thich_nghi"), ("tuong_doi", "tuong_doi")):
+            for nhom, nhan in (("thich_nghi", "thich_nghi"),
+                               ("tuong_doi_F", "tuong_doi_F"),
+                               ("tuong_doi_dc", "tuong_doi_dc")):
                 if nhom in tot:
                     b_, t_, _ = tot[nhom]
                     hs_b, hs_t = b_cx / b_, t_cx / t_
