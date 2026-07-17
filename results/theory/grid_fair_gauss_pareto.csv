@@ -1,6 +1,6 @@
-muc_phan_du,buoc_noi_chieu_chinh_xac,t_chieu_chinh_xac,buoc_noi_thich_nghi,t_thich_nghi,he_so_buoc_noi_thich_nghi,he_so_thoi_gian_thich_nghi,buoc_noi_tuong_doi,t_tuong_doi,he_so_buoc_noi_tuong_doi,he_so_thoi_gian_tuong_doi
-3.0e-02,3796,2.33,198,0.45,19.17,5.14,659,0.71,5.76,3.26
-2.0e-02,3858,4.83,275,0.62,14.03,7.76,1118,1.17,3.45,4.13
-1.5e-02,5738,7.27,357,0.72,16.07,10.05,1169,1.67,4.91,4.34
-1.2e-02,8509,8.83,476,0.92,17.88,9.60,1873,2.54,4.54,3.48
-1.0e-02,8566,10.21,649,1.30,13.20,7.87,1926,3.14,4.45,3.26
+muc_phan_du,buoc_noi_chieu_chinh_xac,t_chieu_chinh_xac,buoc_noi_thich_nghi,t_thich_nghi,he_so_buoc_noi_thich_nghi,he_so_thoi_gian_thich_nghi,buoc_noi_tuong_doi_F,t_tuong_doi_F,he_so_buoc_noi_tuong_doi_F,he_so_thoi_gian_tuong_doi_F,buoc_noi_tuong_doi_dc,t_tuong_doi_dc,he_so_buoc_noi_tuong_doi_dc,he_so_thoi_gian_tuong_doi_dc
+3.0e-02,3796,2.48,198,0.52,19.17,4.73,659,0.86,5.76,2.89,336,0.69,11.30,3.61
+2.0e-02,3858,5.13,275,0.70,14.03,7.38,1743,1.60,2.21,3.20,422,0.94,9.14,5.48
+1.5e-02,5738,8.61,357,0.88,16.07,9.74,1812,2.09,3.17,4.13,986,2.14,5.82,4.03
+1.2e-02,8509,9.73,476,1.12,17.88,8.68,1873,2.57,4.54,3.78,1689,36.83,5.04,0.26
+1.0e-02,8566,11.25,649,1.43,13.20,7.89,1926,3.18,4.45,3.54,14561,41.04,0.59,0.27

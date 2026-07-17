@@ -1,25 +1,29 @@
 cau_hinh,nhom,psnr,phan_du_cuoi,tong_buoc_noi,thoi_gian_thuat_toan_s,vi_pham_tv,thoi_gian_tong_s
-thich_nghi e1.0 p1.01,thich_nghi,26.6699,6.525721e-03,1393,1.863,1.0000,27.9
-thich_nghi e1.0 p1.1,thich_nghi,26.6547,5.802789e-03,186279,277.069,1.0000,306.1
-thich_nghi e2.0 p1.01,thich_nghi,26.7422,1.149203e-02,486,0.945,1.0000,42.6
-thich_nghi e2.0 p1.1,thich_nghi,26.6952,7.896587e-03,781,1.485,1.0000,44.7
-thich_nghi e4.0 p1.01,thich_nghi,26.7926,1.897261e-02,280,0.639,1.0000,43.8
-thich_nghi e4.0 p1.1,thich_nghi,26.7628,1.350927e-02,375,0.769,1.0000,43.3
-thich_nghi e8.0 p1.01,thich_nghi,26.8251,3.024495e-02,192,0.483,1.0000,42.0
-thich_nghi e8.0 p1.1,thich_nghi,26.8145,2.230047e-02,233,0.562,1.0000,43.8
-chieu_chinh_xac 0.005,chieu_chinh_xac,26.6496,5.611894e-03,600000,987.611,1.0000,1030.6
-chieu_chinh_xac 0.01,chieu_chinh_xac,26.6862,7.571433e-03,8660,13.799,1.0000,56.7
-chieu_chinh_xac 0.02,chieu_chinh_xac,26.7484,1.272417e-02,5772,9.399,1.0000,51.6
-chieu_chinh_xac 0.03,chieu_chinh_xac,26.7829,1.880420e-02,3864,6.243,1.0000,47.7
-chieu_chinh_xac 0.05,chieu_chinh_xac,26.7998,3.452637e-02,1863,3.639,1.0000,46.6
-chieu_chinh_xac 0.08,chieu_chinh_xac,26.7483,5.762496e-02,1145,1.948,1.0000,43.4
-chieu_chinh_xac 0.12,chieu_chinh_xac,26.6298,8.531623e-02,760,1.421,1.0000,41.9
-chieu_chinh_xac 0.2,chieu_chinh_xac,26.2472,1.544576e-01,475,0.944,0.9994,40.4
-tuong_doi c0.02,tuong_doi,26.6496,5.612031e-03,587883,967.091,1.0000,1009.5
-tuong_doi c0.05,tuong_doi,26.6496,5.612062e-03,531579,866.154,1.0000,908.3
-tuong_doi c0.1,tuong_doi,26.6497,5.612693e-03,153294,247.993,1.0000,289.9
-tuong_doi c0.2,tuong_doi,26.7073,8.909259e-03,1953,3.592,1.0000,46.7
-tuong_doi c0.3,tuong_doi,26.7485,1.266452e-02,1203,2.166,1.0000,44.2
-tuong_doi c0.5,tuong_doi,26.7925,2.179940e-02,700,1.323,1.0000,43.4
-tuong_doi c0.8,tuong_doi,26.7886,4.417863e-02,429,0.904,1.0000,42.9
-tuong_doi c1.2,tuong_doi,26.7487,6.224573e-02,305,0.699,1.0000,43.0
+thich_nghi e1.0 p1.01,thich_nghi,26.6699,6.525721e-03,1393,1.939,1.0000,28.0
+thich_nghi e1.0 p1.1,thich_nghi,26.6547,5.802789e-03,186279,280.666,1.0000,311.7
+thich_nghi e2.0 p1.01,thich_nghi,26.7422,1.149203e-02,486,1.152,1.0000,47.5
+thich_nghi e2.0 p1.1,thich_nghi,26.6952,7.896587e-03,781,1.632,1.0000,47.0
+thich_nghi e4.0 p1.01,thich_nghi,26.7926,1.897261e-02,280,0.714,1.0000,45.2
+thich_nghi e4.0 p1.1,thich_nghi,26.7628,1.350927e-02,375,0.941,1.0000,47.1
+thich_nghi e8.0 p1.01,thich_nghi,26.8251,3.024495e-02,192,0.595,1.0000,47.2
+thich_nghi e8.0 p1.1,thich_nghi,26.8145,2.230047e-02,233,0.648,1.0000,45.6
+chieu_chinh_xac 0.005,chieu_chinh_xac,26.6496,5.611894e-03,600000,1083.459,1.0000,1129.6
+chieu_chinh_xac 0.01,chieu_chinh_xac,26.6862,7.571433e-03,8660,15.197,1.0000,58.5
+chieu_chinh_xac 0.02,chieu_chinh_xac,26.7484,1.272417e-02,5772,11.140,1.0000,54.4
+chieu_chinh_xac 0.03,chieu_chinh_xac,26.7829,1.880420e-02,3864,6.632,1.0000,49.1
+chieu_chinh_xac 0.05,chieu_chinh_xac,26.7998,3.452637e-02,1863,3.567,1.0000,47.5
+chieu_chinh_xac 0.08,chieu_chinh_xac,26.7483,5.762496e-02,1145,2.228,1.0000,45.9
+chieu_chinh_xac 0.12,chieu_chinh_xac,26.6298,8.531623e-02,760,1.488,1.0000,42.7
+chieu_chinh_xac 0.2,chieu_chinh_xac,26.2472,1.544576e-01,475,1.046,0.9994,43.2
+tuong_doi_F c0.05,tuong_doi_F,26.6496,5.612062e-03,531579,944.951,1.0000,989.6
+tuong_doi_F c0.2,tuong_doi_F,26.7073,8.909259e-03,1953,3.640,1.0000,49.0
+tuong_doi_F c0.5,tuong_doi_F,26.7925,2.179940e-02,700,1.584,1.0000,45.9
+tuong_doi_F c1.2,tuong_doi_F,26.7487,6.224573e-02,305,0.793,1.0000,46.2
+tuong_doi_dc c0.05,tuong_doi_dc,26.6496,5.612165e-03,561961,1001.651,1.0000,1046.6
+tuong_doi_dc c0.1,tuong_doi_dc,26.6496,5.612134e-03,527655,942.602,1.0000,988.2
+tuong_doi_dc c0.2,tuong_doi_dc,26.6497,5.613040e-03,482560,857.185,1.0000,901.9
+tuong_doi_dc c0.5,tuong_doi_dc,26.6513,5.663351e-03,390530,695.562,1.0000,740.9
+tuong_doi_dc c1.0,tuong_doi_dc,26.6659,6.309352e-03,238198,419.831,1.0000,464.3
+tuong_doi_dc c2.0,tuong_doi_dc,26.7147,9.135867e-03,22567,42.166,1.0000,88.9
+tuong_doi_dc c4.0,tuong_doi_dc,26.7585,1.306062e-02,1063,2.358,1.0000,52.4
+tuong_doi_dc c8.0,tuong_doi_dc,26.7877,1.688199e-02,466,1.071,1.0000,47.1

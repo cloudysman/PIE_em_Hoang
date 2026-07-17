@@ -186,6 +186,33 @@ Khuyến nghị cho quyết định chiến lược: nếu mục tiêu là một
 
 Hai lưu ý trung thực. Thứ nhất, tính tổng được của dãy sai số dưới tiêu chuẩn tương đối không còn hiển nhiên như lịch tuyệt đối; nó phải được chứng minh cùng phân tích hội tụ, và đây chính là phần chưa làm. Thứ hai, phải loại hiện vật ở mức phần dư 1,0e-2 trên mờ chuyển động, nơi hệ số hiện ra là 563 và 489 lần cho lịch tuyệt đối và 44 và 91 lần cho tiêu chuẩn tương đối; con số này chỉ do cấu hình chiếu chính xác ngưỡng chặt chạm trần bước nội (435795 bước, 739 giây), không phải kết quả thật.
 
+## 2h. Bốn nhóm, và vùng vận hành của cửa tính mới
+
+Lượt đo đầy đủ nhất: bốn nhóm, hai loại mờ, 28 cấu hình mỗi loại, ảnh cạnh 96 điểm ảnh, 150 bước ngoài, 8 ảnh, trên GPU. Mọi nhóm dùng chứng chỉ tính được, mức phần dư mục tiêu ấn định trước, thời gian thuật toán tách riêng và đồng bộ hóa GPU.
+
+Bốn nhóm: lịch tuyệt đối (sai số giảm theo số bước, không phụ thuộc trạng thái); tương đối theo chuẩn toán tử; tương đối theo dịch chuyển của phép chiếu; và chiếu chính xác theo chứng chỉ làm mốc.
+
+Hệ số nhanh hơn chiếu chính xác, tính theo thời gian thuật toán:
+
+| mức phần dư | lịch tuyệt đối, Gauss | tương đối chuẩn toán tử, Gauss | tương đối dịch chuyển, Gauss | lịch tuyệt đối, chuyển động | tương đối chuẩn toán tử, chuyển động | tương đối dịch chuyển, chuyển động |
+|---|---|---|---|---|---|---|
+| 3,0e-2 | 4,73 | 2,89 | 3,61 | 7,15 | 1,32 | 4,17 |
+| 2,0e-2 | 7,38 | 3,20 | 5,48 | 8,60 | 0,84 | 5,06 |
+| 1,5e-2 | 9,74 | 4,13 | 4,03 | 12,08 | 1,15 | 0,14 |
+| 1,2e-2 | 8,68 | 3,78 | 0,26 | 14,72 | 1,37 | 0,18 |
+
+Ba kết luận.
+
+Thứ nhất, tương đối theo dịch chuyển tốt hơn hẳn tương đối theo chuẩn toán tử ở vùng chính xác vừa, và nó cũng là bản duy nhất đúng về lý thuyết trong hai bản tương đối. Ở mức phần dư 2,0e-2 nó đạt 5,48 lần trên mờ Gauss và 5,06 lần trên mờ chuyển động, so với 3,20 và 0,84 lần của bản theo chuẩn toán tử. Bản theo chuẩn toán tử thậm chí có lúc chậm hơn cả chiếu chính xác, hệ số 0,84.
+
+Thứ hai, và đây là giới hạn quan trọng nhất: tương đối theo dịch chuyển sụp ở vùng chính xác cao. Ở mức phần dư 1,2e-2, hệ số rơi xuống 0,26 trên mờ Gauss và 0,18 trên mờ chuyển động, tức chậm hơn chiếu chính xác từ bốn tới sáu lần. Nguyên nhân có tính cấu trúc, không phải chỉnh tham số được: khi dãy lặp tiến tới nghiệm, dịch chuyển của phép chiếu tiến về không, nên sai số cho phép cũng tiến về không, và vòng lặp nội bị siết ngày càng chặt. Chính tính chất làm cho dãy sai số có cơ hội tổng được, tức thứ ta cần cho lý thuyết, lại là thứ làm chi phí bùng nổ ở độ chính xác cao. Đây là đánh đổi nội tại của tiêu chuẩn tương đối.
+
+Thứ ba, lịch tuyệt đối vẫn nhanh nhất ở mọi mức, 4,7 đến 14,7 lần, nhưng định lý đi kèm nó là hệ quả một dòng của hai kết quả đã in, nên không bán được.
+
+Vùng vận hành của cửa tính mới, phát biểu rõ để đưa vào bài: tiêu chuẩn tương đối theo dịch chuyển đáng dùng khi mức phần dư mục tiêu ở khoảng 2,0e-2 đến 3,0e-2, nơi nó cho 3,6 đến 5,5 lần nhanh hơn chiếu chính xác đồng thời giữ được tính phụ thuộc trạng thái. Ngoài vùng đó, ở độ chính xác cao hơn, nó thua chiếu chính xác và không nên dùng. Bài phải trình bày đúng vùng này chứ không được chọn một điểm đẹp.
+
+Loại hiện vật: ở mức 1,0e-2 trên mờ chuyển động, bảng hiện 476,69 và 59,67 lần; đây chỉ do cấu hình chiếu chính xác chạm trần bước nội, không phải kết quả thật.
+
 ## 3. Diễn giải trung thực
 
 Ba kết luận số ủng hộ hướng bài, với mức độ đúng như phát biểu, không phóng đại.
