@@ -135,6 +135,34 @@ Lỗi thứ bảy: hồ sơ tự mâu thuẫn về chính thuật toán. Tệp 0
 
 Điểm được ghi nhận là mạnh: tính trung thực của hồ sơ, được cả bốn phản biện nêu như tài sản thật; nghiệm khả thi tuyệt đối ở toàn bộ 36 cấu hình; nhận định điều kiện sai số chia hệ số neo tiến về không là cần chứ không chỉ tổng được; bộ kiểm thử kiểm tính chất toán học; và ví dụ giả đơn điệu có chứng chỉ số.
 
+## 2f. Đo lại theo giao thức công bằng: con số cuối cùng và đáng tin nhất
+
+Sau khi vòng phản biện bác bỏ hệ số ở mục 2d, giao thức đo đã được viết lại để sửa cả ba lỗi, rồi chạy lại toàn bộ trên GPU. Đây là con số nên dùng; mọi con số ở mục 2d và 2e đều bị thay thế bởi mục này.
+
+Ba lỗi đã sửa. Thứ nhất, thời gian: bộ giải nay đồng bộ hóa GPU trước và sau mỗi đoạn tính (nếu không, phép đo chỉ tính thời gian xếp lệnh vào hàng đợi chứ không phải thời gian tính thật), và chương trình dò ghi thời gian thuật toán đã tách khỏi chi phí đo đạc. Thứ hai, mức phần dư mục tiêu nay là một danh sách ấn định trước, độc lập với mọi cấu hình, thay vì lấy từ phần dư cuối của baseline. Thứ ba, hai nhóm được dò với cùng ngân sách tám cấu hình, thay vì mười sáu chọi hai.
+
+Kết quả trên mờ Gauss, ảnh cạnh 96 điểm ảnh, 150 bước ngoài, 8 ảnh:
+
+| mức phần dư | bước nội, thích nghi | bước nội, chiếu chính xác | hệ số bước nội | thời gian, thích nghi | thời gian, chiếu chính xác | hệ số thời gian |
+|---|---|---|---|---|---|---|
+| 3,0e-2 | 198 | 3796 | 19,17 | 0,47 | 2,37 | 5,08 |
+| 2,0e-2 | 275 | 3858 | 14,03 | 0,65 | 4,90 | 7,51 |
+| 1,5e-2 | 357 | 5738 | 16,07 | 0,80 | 7,37 | 9,20 |
+| 1,2e-2 | 476 | 8509 | 17,88 | 0,94 | 9,15 | 9,73 |
+| 1,0e-2 | 649 | 8566 | 13,20 | 1,33 | 10,58 | 7,94 |
+
+Trên mờ chuyển động: hệ số bước nội từ 17,23 đến 23,62 và hệ số thời gian từ 6,24 đến 8,68, ở bốn mức phần dư từ 3,0e-2 đến 1,2e-2.
+
+Kết luận: lợi thế là thật và tồn tại ở cả hai thước đo. Tính theo thời gian thuật toán, chế độ thích nghi nhanh hơn chiếu chính xác khoảng 5 đến 9,7 lần trên mờ Gauss và 6,2 đến 8,7 lần trên mờ chuyển động, ổn định qua mọi mức phần dư mục tiêu ấn định trước.
+
+Ba lưu ý trung thực đi kèm.
+
+Thứ nhất, vì sao mục 2e kết luận lợi thế bốc hơi còn 1,18 lần: mục đó lấy cột thời gian tổng, mà cột này gồm chi phí đo đạc dùng chung cho mọi chế độ. Chi phí đo đạc lớn gấp vài chục lần bản thân thuật toán (khoảng 45 giây so với khoảng 1 giây), nên nó nhấn chìm mọi khác biệt. Phản biện đúng khi đòi phải đo thời gian, nhưng con số 1,18 lần là hệ quả của việc dùng sai cột, không phải sự thật về thuật toán. Con số ở mục này mới là con số đúng.
+
+Thứ hai, một hiện vật phải loại: ở mức phần dư 1,0e-2 trên mờ chuyển động, tỉ lệ hiện ra là 563 lần theo bước nội và 312 lần theo thời gian. Đây không phải kết quả thật mà do các cấu hình chiếu chính xác ngưỡng chặt chạm trần bước nội (591795 và 600000 đúng bằng 150 nhân trần 4000), tức chúng không đạt được ngưỡng chứng chỉ trong trần cho phép. Không được trích con số này.
+
+Thứ ba, phạm vi vẫn giới hạn: một tập ràng buộc, hai loại mờ, và chưa so với bất kỳ phương pháp đã công bố nào. Lợi thế đo được là lợi thế so với chính chiếu chính xác của cùng sơ đồ, không phải so với các phương pháp trong tài liệu.
+
 ## 3. Diễn giải trung thực
 
 Ba kết luận số ủng hộ hướng bài, với mức độ đúng như phát biểu, không phóng đại.

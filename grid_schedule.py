@@ -1,12 +1,19 @@
-"""Dò lịch sai số cho chế độ ngân sách thích nghi, và so với các chế độ khác.
+"""So chi phí giữa chế độ ngân sách thích nghi và chiếu chính xác, theo giao thức công bằng.
 
-Chế độ thích nghi dừng vòng lặp nội theo chứng chỉ tính được sqrt(2*gap) <= eps_k
-với lịch eps_k = eps0/(k+1)^p. Lịch càng siết (p lớn, eps0 nhỏ) thì sai số càng
-nhỏ nhưng càng tốn bước nội; câu hỏi là cấu hình nào cho chi phí thấp nhất ở cùng
-mức phần dư biến phân. Điều kiện tổng được đòi p > 1.
+Bản trước có ba lỗi phương pháp luận mà vòng phản biện đã bắt; bản này sửa cả ba:
 
-Chạy được trên GPU. Ví dụ:
-    python3 grid_schedule.py --device cuda --K 150 --size 96 --n_test 8
+1. Chỉ đếm bước nội. Bước nội của chế độ thích nghi đắt hơn nhiều vì phải tính chứng
+   chỉ, nên hệ số theo bước nội thổi phồng lợi thế. Bản này báo CẢ tổng bước nội lẫn
+   thời gian THUẬT TOÁN (đã tách khỏi chi phí đo đạc, và đồng bộ hóa trên GPU).
+2. Mục tiêu so sánh định nghĩa vòng tròn: mức phần dư mục tiêu lấy từ chính phần dư
+   cuối của baseline, tức chọn hậu nghiệm có lợi cho bên thách thức. Bản này dùng một
+   danh sách mức phần dư ẤN ĐỊNH TRƯỚC, độc lập với mọi cấu hình.
+3. Bất đối xứng ngân sách dò: phương pháp đề xuất được dò 16 cấu hình, baseline chỉ 2.
+   Bản này dò baseline trên cùng số cấu hình.
+
+Kết quả báo dưới dạng đường đánh đổi chi phí theo mức phần dư, cho cả hai thước đo.
+
+    python3 grid_schedule.py --device cuda --K 150 --size 96 --n_test 8 --blur gauss
 """
 
 from __future__ import annotations
@@ -32,18 +39,24 @@ from pie_net.reflected_solver import Budget, power_iteration_L, run_reflected
 
 OUT_DIR = os.path.join("results", "theory")
 
+# Mức phần dư mục tiêu ẤN ĐỊNH TRƯỚC, độc lập với kết quả của mọi cấu hình.
+MUC_TIEU = [3.0e-2, 2.0e-2, 1.5e-2, 1.2e-2, 1.0e-2]
+
 
 def make_blur(name: str) -> BlurOperator:
     return BlurOperator(gaussian_kernel(9, 1.6) if name == "gauss"
                         else motion_kernel(9, 30.0))
 
 
-def inner_to_target(resid, inner, target):
-    """Tổng bước nội cộng dồn tại thời điểm phần dư (đo được) lần đầu <= target."""
+def chi_phi_toi_muc(resid, inner, t_alg_total, K_do, target):
+    """Chi phí (bước nội, và thời gian thuật toán ước lượng) tại thời điểm phần dư
+    đo được lần đầu đạt mức target. Thời gian được nội suy theo tỉ lệ bước ngoài,
+    vì thời gian thuật toán chỉ có ở mức tổng."""
     for i in range(len(resid)):
         if np.isfinite(resid[i]) and resid[i] <= target:
-            return float(inner[i])
-    return float("nan")
+            ti = t_alg_total * (i + 1) / max(K_do, 1)
+            return float(inner[i]), float(ti)
+    return float("nan"), float("nan")
 
 
 def main():
@@ -70,23 +83,23 @@ def main():
     y = degrade(x_gt, blur, noise_std=args.noise, seed=2024)
     L = power_iteration_L(blur, (1, 1, args.size, args.size), n_iter=100, device=dev)
     lam = 0.9 * (2.0 ** 0.5 - 1.0) / max(L, 1e-12)
-    print(f"== dò lịch sai số | blur={args.blur} | K={args.K} | size={args.size} "
-          f"| n_test={args.n_test} | device={dev} ==")
+    print(f"== so chi phí, giao thức công bằng | blur={args.blur} | K={args.K} "
+          f"| size={args.size} | n_test={args.n_test} | device={dev} ==")
     print(f"   L={L:.6f} -> lambda={lam:.4f}")
+    print(f"   mức phần dư mục tiêu (ấn định TRƯỚC): {MUC_TIEU}")
 
-    # lịch thích nghi: p > 1 để dãy sai số tổng được
+    # Hai nhóm được dò với CÙNG ngân sách: 8 cấu hình mỗi nhóm.
     cfgs = []
-    for eps0 in (0.5, 1.0, 2.0, 4.0):
-        for p in (1.01, 1.05, 1.1, 1.5):
-            cfgs.append((f"adaptive e{eps0}_p{p}",
+    for eps0 in (1.0, 2.0, 4.0, 8.0):
+        for p in (1.01, 1.1):
+            cfgs.append((f"thich_nghi e{eps0} p{p}", "thich_nghi",
                          Budget(kind="adaptive", eps0=eps0, p=p, cap=args.cap)))
-    # mốc đối chiếu: chiếu chính xác theo chứng chỉ (cùng thế giới tính được)
-    for ec in (0.02, 0.05):
-        cfgs.append((f"exact_bound {ec}",
+    for ec in (0.005, 0.01, 0.02, 0.03, 0.05, 0.08, 0.12, 0.2):
+        cfgs.append((f"chieu_chinh_xac {ec}", "chieu_chinh_xac",
                      Budget(kind="exact_bound", eps_const=ec, cap=args.cap)))
 
-    rows, curves = [], {}
-    for name, b in cfgs:
+    rows, data = [], {}
+    for name, nhom, b in cfgs:
         t0 = time.perf_counter()
         out = run_reflected(blur, y, tau, K=args.K, budget=b, beta0=args.beta0,
                             lam=lam, x_clean=x_gt, alpha_bar=0.0,
@@ -98,32 +111,52 @@ def main():
         psnr = np.nanmean(tr["psnr"].numpy(), axis=1)[-1]
         tv = np.nanmean(tr["tv_ratio"].numpy(), axis=1)[-1]
         rf = resid[np.isfinite(resid)][-1]
-        curves[name] = (resid, inner)
-        rows.append({"cau_hinh": name, "psnr": f"{psnr:.4f}",
+        data[name] = (nhom, resid, inner, out.time_alg, args.K)
+        rows.append({"cau_hinh": name, "nhom": nhom, "psnr": f"{psnr:.4f}",
                      "phan_du_cuoi": f"{rf:.6e}", "tong_buoc_noi": out.total_inner,
-                     "vi_pham_tv": f"{tv:.4f}", "giay": f"{time.perf_counter()-t0:.1f}"})
-        print(f"  {name:>22s} | PSNR={psnr:7.3f} | phần dư={rf:.4e} | "
-              f"bước nội={out.total_inner:6d} | TV={tv:.4f} | {rows[-1]['giay']}s")
+                     "thoi_gian_thuat_toan_s": f"{out.time_alg:.3f}",
+                     "vi_pham_tv": f"{tv:.4f}",
+                     "thoi_gian_tong_s": f"{time.perf_counter()-t0:.1f}"})
+        print(f"  {name:>22s} | PSNR={psnr:7.3f} | phần dư={rf:.3e} | "
+              f"bước nội={out.total_inner:7d} | t_thuật_toán={out.time_alg:7.2f}s | TV={tv:.4f}")
 
-    # bảng chi phí: mốc là chiếu chính xác theo chứng chỉ chặt nhất
-    base_name = "exact_bound 0.02"
-    base_resid = float(rows[[r["cau_hinh"] for r in rows].index(base_name)]["phan_du_cuoi"])
-    target = base_resid * 1.05
-    base_inner = inner_to_target(*curves[base_name], target)
-    print(f"\n=== chi phí để đạt phần dư <= {target:.4e} (mốc: {base_name} = {base_inner:.0f} bước) ===")
-    for r in rows:
-        v = inner_to_target(*curves[r["cau_hinh"]], target)
-        r["buoc_toi_muc_tieu"] = f"{v:.0f}" if np.isfinite(v) else "khong dat"
-        r["re_hon_moc"] = (f"{base_inner/v:.2f}x" if np.isfinite(v) and v > 0
-                           and np.isfinite(base_inner) else "-")
-        print(f"  {r['cau_hinh']:>22s}: {r['buoc_toi_muc_tieu']:>10s}  {r['re_hon_moc']}")
+    # Đường đánh đổi: ở mỗi mức phần dư mục tiêu, lấy cấu hình RẺ NHẤT của mỗi nhóm.
+    print("\n=== so sánh công bằng: cấu hình rẻ nhất của mỗi nhóm ở từng mức phần dư ===")
+    print(f"{'mức phần dư':>12s} | {'nhóm':>16s} | {'bước nội':>9s} | {'t_thuật_toán(s)':>15s} | {'cấu hình':>22s}")
+    ket_qua = []
+    for target in MUC_TIEU:
+        tot = {}
+        for name, (nhom, resid, inner, t_alg, K) in data.items():
+            bi, ti = chi_phi_toi_muc(resid, inner, t_alg, K, target)
+            if not np.isfinite(bi):
+                continue
+            if nhom not in tot or bi < tot[nhom][0]:
+                tot[nhom] = (bi, ti, name)
+        for nhom in ("thich_nghi", "chieu_chinh_xac"):
+            if nhom in tot:
+                bi, ti, name = tot[nhom]
+                print(f"{target:>12.1e} | {nhom:>16s} | {bi:>9.0f} | {ti:>15.2f} | {name:>22s}")
+        if len(tot) == 2:
+            b_tn, t_tn, _ = tot["thich_nghi"]
+            b_cx, t_cx, _ = tot["chieu_chinh_xac"]
+            hs_b, hs_t = b_cx / b_tn, t_cx / t_tn
+            print(f"{'':>12s} | {'-> hệ số':>16s} | {hs_b:>8.2f}x | {hs_t:>14.2f}x |"
+                  f"  (bước nội / THỜI GIAN)")
+            ket_qua.append({"muc_phan_du": f"{target:.1e}",
+                            "buoc_noi_thich_nghi": f"{b_tn:.0f}",
+                            "buoc_noi_chieu_chinh_xac": f"{b_cx:.0f}",
+                            "he_so_buoc_noi": f"{hs_b:.2f}",
+                            "t_thich_nghi": f"{t_tn:.2f}",
+                            "t_chieu_chinh_xac": f"{t_cx:.2f}",
+                            "he_so_thoi_gian": f"{hs_t:.2f}"})
 
-    path = os.path.join(OUT_DIR, f"grid_schedule_{args.blur}.csv")
-    with open(path, "w", newline="", encoding="utf-8") as f:
-        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
-        w.writeheader()
-        w.writerows(rows)
-    print(f"\n-> {path}")
+    for path, rr in ((f"grid_fair_{args.blur}.csv", rows),
+                     (f"grid_fair_{args.blur}_pareto.csv", ket_qua)):
+        if rr:
+            with open(os.path.join(OUT_DIR, path), "w", newline="", encoding="utf-8") as f:
+                w = csv.DictWriter(f, fieldnames=list(rr[0].keys()))
+                w.writeheader(); w.writerows(rr)
+            print(f"-> {os.path.join(OUT_DIR, path)}")
 
 
 if __name__ == "__main__":

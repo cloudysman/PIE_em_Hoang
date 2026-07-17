@@ -1,0 +1,17 @@
+cau_hinh,nhom,psnr,phan_du_cuoi,tong_buoc_noi,thoi_gian_thuat_toan_s,vi_pham_tv,thoi_gian_tong_s
+thich_nghi e1.0 p1.01,thich_nghi,26.6699,6.525721e-03,1393,2.025,1.0000,30.0
+thich_nghi e1.0 p1.1,thich_nghi,26.6547,5.802789e-03,186279,251.682,1.0000,279.1
+thich_nghi e2.0 p1.01,thich_nghi,26.7422,1.149203e-02,486,0.966,1.0000,43.8
+thich_nghi e2.0 p1.1,thich_nghi,26.6952,7.896587e-03,781,1.526,1.0000,45.2
+thich_nghi e4.0 p1.01,thich_nghi,26.7926,1.897261e-02,280,0.671,1.0000,44.7
+thich_nghi e4.0 p1.1,thich_nghi,26.7628,1.350927e-02,375,0.852,1.0000,45.4
+thich_nghi e8.0 p1.01,thich_nghi,26.8251,3.024495e-02,192,0.522,1.0000,45.0
+thich_nghi e8.0 p1.1,thich_nghi,26.8145,2.230047e-02,233,0.577,1.0000,44.5
+chieu_chinh_xac 0.005,chieu_chinh_xac,26.6496,5.611894e-03,600000,982.005,1.0000,1024.4
+chieu_chinh_xac 0.01,chieu_chinh_xac,26.6862,7.571433e-03,8660,14.293,1.0000,56.9
+chieu_chinh_xac 0.02,chieu_chinh_xac,26.7484,1.272417e-02,5772,9.533,1.0000,51.3
+chieu_chinh_xac 0.03,chieu_chinh_xac,26.7829,1.880420e-02,3864,6.336,1.0000,47.5
+chieu_chinh_xac 0.05,chieu_chinh_xac,26.7998,3.452637e-02,1863,3.105,1.0000,44.5
+chieu_chinh_xac 0.08,chieu_chinh_xac,26.7483,5.762496e-02,1145,2.049,1.0000,43.6
+chieu_chinh_xac 0.12,chieu_chinh_xac,26.6298,8.531623e-02,760,1.385,1.0000,41.2
+chieu_chinh_xac 0.2,chieu_chinh_xac,26.2472,1.544576e-01,475,0.967,0.9994,41.2

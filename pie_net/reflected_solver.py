@@ -212,6 +212,14 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
     ref_state = None            # luồng ấm RIÊNG của chiếu tham chiếu P_ref (đo e_k)
     resid_state = None          # luồng ấm RIÊNG của P_hiacc (đo phần dư)
 
+    # Đo thời gian trên GPU phải đồng bộ hóa, nếu không phép đo chỉ tính thời gian
+    # xếp lệnh vào hàng đợi chứ không phải thời gian tính thật.
+    _cuda = (str(dev).startswith("cuda") or getattr(dev, "type", "") == "cuda")
+
+    def _sync():
+        if _cuda:
+            torch.cuda.synchronize()
+
     total_inner = 0
     r_min_seen = float("inf")   # phần dư nhỏ nhất đã quan sát (điều khiển target)
     keys = ["e_abs", "e_rel", "delta", "resid", "psnr", "inner_k",
@@ -225,6 +233,7 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
         tau_k = beta_k / (k + 1.0)
 
         # ------------------- THUẬT TOÁN (tính vào chi phí) ------------------- #
+        _sync()
         t0 = time.perf_counter()
         dx = x - x_prev
         ndx = _per_image_norm(dx)                                     # (B,)
@@ -233,6 +242,7 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
         r = 2.0 * w - w_prev                                          # phản xạ Malitsky
         Fr = F(r)                                                     # F MỘT lần/bước
         u = w - lam * Fr
+        _sync()
         t_alg += time.perf_counter() - t0
 
         # Các phép ĐO ĐẠC đắt (chiếu tham chiếu, chiếu độ chính xác cao) chỉ
@@ -255,6 +265,7 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
                 ref_check = _per_image_norm(extra.x - x_ref)
 
         # -------------------- THUẬT TOÁN: chiếu xấp xỉ y^k -------------------- #
+        _sync()
         t0 = time.perf_counter()
         if budget.kind in ("fixed", "log"):
             m_k = budget.fixed_budget_at(k)
@@ -283,6 +294,7 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
         alg_state = res.state
         total_inner += res.n_inner
         x_next = beta_k * anchor + (1.0 - beta_k) * yk    # trộn độ nhớt (f hằng)
+        _sync()
         t_alg += time.perf_counter() - t0
 
         # ----------------------------- ĐO ĐẠC ----------------------------- #
