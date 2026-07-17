@@ -245,8 +245,12 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
     r_min_seen = float("inf")   # phần dư nhỏ nhất đã quan sát (điều khiển target)
     # dịch chuyển ||y - w|| của bước ngoài TRƯỚC, dùng cho tiêu chuẩn 'relative_res'
     proj_disp_prev = None
+    # proj_disp = ||y^k - w^k||: dịch chuyển mà bước chiếu tạo ra. Đây là đại lượng
+    # điều khiển tiêu chuẩn 'relative_res' (eps_k tỉ lệ với nó), nên tổng của nó quyết
+    # định dãy sai số có tổng được hay không — tức quyết định cả tính mới của bài.
     keys = ["e_abs", "e_rel", "delta", "resid", "psnr", "inner_k",
-            "inner_cum", "tv_ratio", "ref_check", "alpha", "beta", "m_k"]
+            "inner_cum", "tv_ratio", "ref_check", "alpha", "beta", "m_k",
+            "proj_disp"]
     tr: Dict[str, List[torch.Tensor]] = {k: [] for k in keys}
     t_alg = 0.0
     t0_total = time.perf_counter()
@@ -369,6 +373,7 @@ def run_reflected(blur: BlurOperator, y: torch.Tensor, tau: torch.Tensor,
         tr["alpha"].append(alpha_k)
         tr["beta"].append(torch.full((B,), beta_k))
         tr["m_k"].append(torch.full((B,), float(m_k)))
+        tr["proj_disp"].append(_per_image_norm(yk - w))
 
         # ------------------------ cập nhật trạng thái ------------------------ #
         w_prev = w
