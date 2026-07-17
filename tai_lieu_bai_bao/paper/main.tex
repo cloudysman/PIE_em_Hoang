@@ -130,9 +130,12 @@ the very object the outer method avoids computing.
       \cite{Malitsky2015} with the bounded-perturbation-resilience mechanism of
       \cite{Censor2017}, and not a new mechanism; the technical content lies in
       the fact that PRG is not Fej\'er monotone, so the perturbation must be
-      carried through the reflection step, where an error at the base point is
-      amplified by the factor two of the reflection and enters through the
-      projection inequality of the previous step with a factor $1/\lambda$.
+      carried through the reflection step. An error at the base point enters
+      through the projection inequality of the previous step, and tracking it
+      through the reflection is the part that must be carried out from scratch;
+      whether it carries an amplifying factor $1/\lambda$ or cancels to first
+      order is left to the full write-up, since convergence only requires it to
+      be summable.
 \item \emph{A computable certificate (Section~\ref{sec:cert}).} The projection
       subproblem $\min_x \tfrac12 \norm{x-v}^2$ subject to $x \in D$ is
       $1$-strongly convex, hence
@@ -303,30 +306,44 @@ converges weakly to a point of $S$.
 \end{theorem}
 
 \begin{proof}[Proof sketch and status]
-Combining Lemmas~\ref{lem:onestep}--\ref{lem:tele} and following the energy
-argument of \cite[Lemma~9 and Theorem~4.2]{Malitsky2015} with the potential
+Use the potential
 \[
 \varphi_k = \norm{x^k-z}^2 + \lambda L \norm{x^k - r^{k-1}}^2 - 2\lambda
-a_{k-1},
+a_{k-1} \ge 0 .
 \]
-one obtains $\varphi_{k+1} \le \varphi_k + 2\lambda a_k - c\,\norm{x^k - \bar
-x^{k+1}}^2 + \delta_k$ with $c > 0$ under Assumption~\ref{as:step}. The
-perturbation of Lemma~\ref{lem:pert} contributes $\delta_k = O(\varepsilon_k)$
-on bounded sequences, and the error at the \emph{base point}, $x^k = \bar x^k +
-e^{k-1}$, contributes further cross terms which are $O(\varepsilon_{k-1}/
-\lambda)$ because the projection inequality of the previous step is divided by
-$\lambda$, and which are amplified by the factor two of the reflection. All of
-these are summable, so Lemma~\ref{lem:qf} applies to $\varphi_k$; since $a_k
-\le 0$, summing also gives $\sum_k (-a_k) < \infty$ and hence $a_k \to 0$,
+For the \emph{exact} projection case the argument is complete: combining
+Lemmas~\ref{lem:onestep}--\ref{lem:tele} and adding
+$\lambda L\norm{\bar x^{k+1}-r^k}^2 - 2\lambda a_k$ to both sides gives, using
+the identity $c_2 - \lambda L = c_1$ with $c_1 = 1-\lambda L(1+\sqrt2)$ and
+$c_2 = 1-\sqrt2\lambda L$,
+\[
+\varphi_{k+1} \le \varphi_k - c_1\norm{x^k-x^{k-1}}^2
+- c_1\norm{\bar x^{k+1}-r^k}^2 + 2\lambda a_k ,
+\]
+and $a_k \le 0$ makes $\varphi_k$ nonincreasing. This part has been verified
+line by line. The inexact projection $x^{k+1} = \bar x^{k+1} + e^k$ adds two
+perturbations: one through the squares in $\varphi_{k+1}$, contributing
+$O(\varepsilon_k)$ times unbounded norm factors; and one at the \emph{base
+point} $x^k = \bar x^k + e^{k-1}$, entering through the previous projection
+inequality and contributing $\nu_k \le C\varepsilon_{k-1}$. The first is handled
+by a multiplicative quasi-Fej\'er reduction, $2\varepsilon_k\norm{\bar
+x^{k+1}-z} \le \varepsilon_k(1+\norm{\bar x^{k+1}-z}^2) \le
+\varepsilon_k(1+\varphi_{k+1})$, giving $\varphi_{k+1} \le (1+\alpha_k)\varphi_k
+- c_1(\cdots) + 2\lambda a_k + \beta_k$ with $\sum_k \alpha_k, \sum_k \beta_k <
+\infty$. Then Lemma~\ref{lem:qf} (multiplicative form) applies; since $a_k \le
+0$, summing also gives $\sum_k (-a_k) < \infty$ and hence $a_k \to 0$,
 from which $\norm{x^k - z}$ converges. The negative term gives $\norm{x^k -
 \bar x^{k+1}} \to 0$ and hence $\norm{x^k - x^{k-1}} \to 0$; weak cluster
 points then belong to $S$ by Minty's lemma, and Opial's lemma concludes.
 
-\emph{Status.} The four lemmas above are complete. The assembly of the
-potential $\varphi_k$ carrying the base-point error, and the two limit steps at
-the end, are written here at the level of a proof sketch and are the part of
-the argument that must be verified line by line before submission. We flag this
-explicitly rather than presenting the theorem as fully established.
+\emph{Status.} The four lemmas and the exact-projection assembly (the identity
+$c_2-\lambda L=c_1$ and the resulting nonincreasing $\varphi_k$) are complete
+and have been checked line by line. What remains for the full write-up is the
+explicit constant $C$ in $\nu_k$ (in particular whether it carries a factor
+$1/\lambda$), the precise statement of the multiplicative quasi-Fej\'er lemma so
+that it does not absorb the negative term, and, in infinite dimension, the weak
+limit step. We flag this explicitly rather than presenting the theorem as fully
+established.
 \end{proof}
 
 \begin{remark}[honest positioning]
