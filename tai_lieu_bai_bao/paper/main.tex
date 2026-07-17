@@ -1,0 +1,566 @@
+%% A projected reflected gradient method with feasible inexact projections:
+%% a computable error certificate and a cost analysis.
+%%
+%% Target: Optimization (Q2) or Journal of Applied and Numerical Optimization.
+%% Compile: pdflatex main && bibtex main && pdflatex main && pdflatex main
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{assumption}{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\HH}{\mathcal{H}}
+\newcommand{\inner}[2]{\langle #1, #2 \rangle}
+\newcommand{\norm}[1]{\lVert #1 \rVert}
+\newcommand{\proj}[1]{P_{#1}}
+\newcommand{\TV}{\mathrm{TV}}
+
+\title{A projected reflected gradient method with feasible inexact
+projections: a computable error certificate and a cost analysis}
+
+\author{Dao Trong Hieu\thanks{Corresponding author. E-mail:
+tronghieu.ghe@gmail.com}}
+
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+We study the projected reflected gradient (PRG) method of Malitsky for
+monotone variational inequalities in the practically relevant regime where the
+projection onto the feasible set has no closed form and must be computed by an
+inner solver, so that only an \emph{inexact} projection is available. Our
+contribution is threefold. First, we analyse PRG with feasible inexact
+projections and show that weak convergence is preserved under a summable error
+sequence; the argument combines the one-step inequality of PRG with the
+bounded-perturbation-resilience mechanism, and we state explicitly that the
+convergence statement is an extension of known results rather than a new
+mechanism. Second, and this is the practically useful part, we give a
+\emph{computable} error certificate for the inexact projection: when the
+projection subproblem is strongly convex, the duality gap of the subproblem
+bounds the distance to the exact projection, which yields a stopping rule that
+an implementation can actually check. Existing inexact-projection schemes
+either assume the error sequence abstractly or rely on knowledge of the exact
+projection, which is precisely the quantity the method is designed to avoid.
+Third, we use the certificate to define an adaptive inner budget and we give a
+cost analysis together with an extensive numerical study on projections onto a
+total-variation ball, where the inner solver is a Chambolle--Pock iteration
+with dual warm starting. On image deblurring problems the adaptive scheme
+reaches a prescribed variational residual level with $13$--$19$ times fewer
+inner iterations and $5$--$10$ times less algorithm wall-clock time than the
+certified exact projection, while returning strictly feasible iterates. We
+report both cost measures, we fix the target residual levels in advance, and we
+tune the baseline with the same budget as the proposed scheme; we also document
+the configurations in which the adaptive scheme \emph{loses}.
+\end{abstract}
+
+\noindent\textbf{Keywords:} variational inequality; projected reflected
+gradient; inexact projection; duality gap; total variation; image deblurring.
+
+\noindent\textbf{MSC (2020):} 47J20; 65K15; 90C25; 68U10.
+
+\section{Introduction}
+\label{sec:intro}
+
+Let $\HH$ be a real Hilbert space, $D \subseteq \HH$ a nonempty closed convex
+set and $F : \HH \to \HH$ an operator. The variational inequality problem
+$\mathrm{VI}(F,D)$ is
+\begin{equation}
+\label{eq:vi}
+\text{find } x^\ast \in D \quad\text{such that}\quad
+\inner{F(x^\ast)}{x - x^\ast} \ge 0 \quad \text{for all } x \in D .
+\end{equation}
+We write $S$ for the solution set and assume throughout that $S \neq
+\emptyset$.
+
+Projection-type methods for \eqref{eq:vi} are classical. Among them the
+projected reflected gradient (PRG) method of Malitsky \cite{Malitsky2015} is
+attractive because it needs only \emph{one} projection and \emph{one} operator
+evaluation per iteration, in contrast with extragradient-type schemes that need
+two. Its iteration is
+\begin{equation}
+\label{eq:prg}
+x^{k+1} = \proj{D}\bigl( x^k - \lambda F(2x^k - x^{k-1}) \bigr),
+\end{equation}
+and it converges weakly for monotone Lipschitz $F$ provided $\lambda \in
+(0,(\sqrt{2}-1)/L)$.
+
+\paragraph{The gap this paper addresses.}
+Analyses of \eqref{eq:prg} assume that $\proj{D}$ is available exactly. In the
+applications that motivate constrained variational inequalities this is false.
+A representative case, and the one we study numerically, is the total-variation
+ball $D = \{x : \TV(x) \le \tau\}$ arising in image reconstruction: projecting
+onto $D$ has no closed form and requires an inner iterative solver, so every
+outer iteration works with an inexact projection. Two questions follow, and the
+literature answers neither for PRG:
+\begin{enumerate}
+\item Does PRG still converge when $\proj{D}$ is replaced by an inexact
+      projection with controlled error?
+\item How does one \emph{check}, inside an implementation, that the error
+      tolerance has been met, without knowing the exact projection?
+\end{enumerate}
+Question~2 is the more consequential one and is usually left open. Inexact
+projection schemes such as \cite{DiazMillan2024} control the error through a
+relative criterion, and abstract analyses assume a summable error sequence
+$\sum_k \varepsilon_k < \infty$; in both cases the practical stopping rule for
+the inner solver is either assumed or requires the exact projection, which is
+the very object the outer method avoids computing.
+
+\paragraph{Contributions and an honest positioning.}
+\begin{itemize}
+\item \emph{Convergence (Section~\ref{sec:conv}).} We show that PRG with
+      feasible inexact projections and a summable error sequence retains weak
+      convergence for monotone Lipschitz operators. We state plainly that this
+      is an extension obtained by combining the one-step inequality of
+      \cite{Malitsky2015} with the bounded-perturbation-resilience mechanism of
+      \cite{Censor2017}, and not a new mechanism; the technical content lies in
+      the fact that PRG is not Fej\'er monotone, so the perturbation must be
+      carried through the reflection step, where an error at the base point is
+      amplified by the factor two of the reflection and enters through the
+      projection inequality of the previous step with a factor $1/\lambda$.
+\item \emph{A computable certificate (Section~\ref{sec:cert}).} The projection
+      subproblem $\min_x \tfrac12 \norm{x-v}^2$ subject to $x \in D$ is
+      $1$-strongly convex, hence
+      $\norm{x - \proj{D}(v)}^2 \le 2\,\mathrm{gap}(x,p)$, where the gap is
+      computed from the primal--dual pair produced by the inner solver. This
+      turns ``$\varepsilon_k$-inexact projection'' from an assumption into a
+      checkable stopping rule. The inequality itself is standard convex
+      analysis; the contribution is its use as the interface between the outer
+      convergence theory and the inner solver, which is exactly what is missing
+      in the inexact-projection literature.
+\item \emph{Adaptive budget and cost analysis (Sections~\ref{sec:cost}
+      and~\ref{sec:num}).} The certificate defines an adaptive inner budget:
+      iterate the inner solver until the certificate meets a prescribed
+      schedule $\varepsilon_k$. We analyse the resulting inner cost and report
+      an extensive numerical study.
+\end{itemize}
+
+\paragraph{What this paper does not claim.}
+We do not claim a new convergence mechanism, and we do not claim strong
+convergence: adding an anchoring step to obtain strong convergence breaks the
+projection chain that the one-step inequality of PRG relies on, and our numerical
+evidence in Section~\ref{sec:num} shows that anchoring also pushes the
+summability of the error sequence to the boundary of divergence. We also do not
+claim an advantage in reconstruction quality over learned or plug-and-play
+methods; the advantage we measure is in \emph{cost at a fixed accuracy}.
+
+\section{Preliminaries}
+\label{sec:prelim}
+
+We use the following standing assumptions.
+
+\begin{assumption}
+\label{as:D}
+$D \subseteq \HH$ is nonempty, closed and convex, and $S \neq \emptyset$.
+\end{assumption}
+
+\begin{assumption}
+\label{as:F}
+$F$ is monotone on $\HH$, i.e.\ $\inner{F(u)-F(v)}{u-v}\ge 0$ for all $u,v \in
+\HH$, and Lipschitz continuous on $\HH$ with constant $L$.
+\end{assumption}
+
+Monotonicity is required on all of $\HH$ rather than on $D$ only, because the
+reflected point $2x^k - x^{k-1}$ generally lies outside $D$; the same
+requirement appears in \cite{Malitsky2015}. In our numerical setting
+$F(x) = B^{\!\top}(Bx-y)$ is affine with $B^{\!\top}B \succeq 0$, hence
+monotone and Lipschitz on $\HH$.
+
+\begin{assumption}
+\label{as:step}
+$\lambda \in \bigl(0, (\sqrt{2}-1)/L\bigr)$.
+\end{assumption}
+
+We recall two standard facts. For $v \in \HH$ and $z \in D$,
+\begin{equation}
+\label{eq:projchar}
+\inner{v - \proj{D}(v)}{z - \proj{D}(v)} \le 0 ,
+\end{equation}
+and for $a,b \in \HH$, $2\inner{a}{b} = \norm{a}^2 + \norm{b}^2 -
+\norm{a-b}^2$.
+
+\begin{lemma}[quasi-Fej\'er, \cite{Combettes2001}]
+\label{lem:qf}
+Let $\{s_k\}$ be nonnegative with $s_{k+1} \le s_k + \delta_k$ and $\sum_k
+\delta_k < \infty$. Then $\{s_k\}$ converges.
+\end{lemma}
+
+\section{The algorithm}
+\label{sec:alg}
+
+\begin{definition}[feasible inexact projection]
+\label{def:inexact}
+Given $v \in \HH$ and $\varepsilon \ge 0$, a point $w$ is an
+$\varepsilon$-inexact feasible projection of $v$ onto $D$, written $w \in
+\proj{D}^{\varepsilon}(v)$, if $w \in D$ and $\norm{w - \proj{D}(v)} \le
+\varepsilon$.
+\end{definition}
+
+Feasibility of $w$ is not cosmetic. It is what allows us to use
+$\inner{F(z)}{x^k - z} \ge 0$ for $z \in S$ in Lemma~\ref{lem:tele} below;
+without it the telescoping term loses its sign. Section~\ref{sec:cert}
+shows how the inner solver produces feasible iterates and certifies
+$\varepsilon$.
+
+\begin{center}
+\fbox{\begin{minipage}{0.92\textwidth}
+\textbf{Algorithm 1 (PRG with feasible inexact projections).}\\[2pt]
+Choose $x^{-1} = x^0 \in D$, $\lambda$ as in Assumption~\ref{as:step}, and a
+sequence $\{\varepsilon_k\}$ with $\sum_k \varepsilon_k < \infty$.\\
+For $k = 0,1,2,\dots$:
+\begin{align*}
+r^k     &= 2x^k - x^{k-1}, \\
+x^{k+1} &\in \proj{D}^{\varepsilon_k}\bigl( x^k - \lambda F(r^k) \bigr).
+\end{align*}
+\end{minipage}}
+\end{center}
+
+We write $\bar x^{k+1} = \proj{D}(x^k - \lambda F(r^k))$ for the exact
+projection, so that $\norm{x^{k+1} - \bar x^{k+1}} \le \varepsilon_k$, and
+$e^k = x^{k+1} - \bar x^{k+1}$.
+
+\section{Convergence}
+\label{sec:conv}
+
+\begin{lemma}[one-step inequality]
+\label{lem:onestep}
+For every $z \in D$,
+\[
+\norm{\bar x^{k+1} - z}^2 \le \norm{x^k - z}^2 - \norm{x^k - \bar x^{k+1}}^2
++ 2\lambda \inner{F(r^k)}{z - \bar x^{k+1}} .
+\]
+\end{lemma}
+
+\begin{proof}
+Apply \eqref{eq:projchar} with $v = x^k - \lambda F(r^k)$ and the projection
+$\bar x^{k+1}$, which gives
+$\inner{x^k - \bar x^{k+1}}{z - \bar x^{k+1}} \le \lambda
+\inner{F(r^k)}{z - \bar x^{k+1}}$. Expand the left-hand side with the
+polarisation identity, using $(x^k - \bar x^{k+1}) - (z - \bar x^{k+1}) = x^k
+- z$, and rearrange.
+\end{proof}
+
+\begin{lemma}[monotonicity step]
+\label{lem:mono}
+For every $z \in S$,
+\[
+2\lambda \inner{F(r^k)}{z - \bar x^{k+1}} \le
+2\lambda \inner{F(z)}{z - r^k} + 2\lambda \inner{F(r^k)}{r^k - \bar x^{k+1}} .
+\]
+\end{lemma}
+
+\begin{proof}
+Split $\inner{F(r^k)}{z - \bar x^{k+1}} = \inner{F(r^k)}{z-r^k} +
+\inner{F(r^k)}{r^k - \bar x^{k+1}}$ and apply Assumption~\ref{as:F} to the
+pair $(r^k, z)$, which yields $\inner{F(r^k)}{z-r^k} \le
+\inner{F(z)}{z-r^k}$. This is the only place where monotonicity is used, and
+it is used at a pair whose first entry lies outside $D$.
+\end{proof}
+
+\begin{lemma}[telescoping of the solution term]
+\label{lem:tele}
+Let $z \in S$ and set $a_k = \inner{F(z)}{z - x^k}$. If $x^k \in D$ for all
+$k$, then $a_k \le 0$ and
+\[
+\inner{F(z)}{z - r^k} = 2a_k - a_{k-1} .
+\]
+\end{lemma}
+
+\begin{proof}
+$a_k \le 0$ is the definition of $z \in S$ together with $x^k \in D$. The
+identity follows from $z - r^k = 2(z-x^k) - (z-x^{k-1})$.
+\end{proof}
+
+\begin{lemma}[uniform perturbation]
+\label{lem:pert}
+For every $z \in \HH$,
+$\norm{x^{k+1} - z} \le \norm{\bar x^{k+1} - z} + \varepsilon_k$ and
+$\norm{x^{k+1} - z}^2 \le \norm{\bar x^{k+1} - z}^2
+ + 2\varepsilon_k \norm{\bar x^{k+1} - z} + \varepsilon_k^2$.
+\end{lemma}
+
+\begin{theorem}
+\label{thm:weak}
+Let Assumptions~\ref{as:D}--\ref{as:step} hold, let $\{x^k\}$ be generated by
+Algorithm~1 with $\sum_k \varepsilon_k < \infty$, and assume $\HH$ is finite
+dimensional or $F$ is sequentially weakly continuous on $D$. Then $\{x^k\}$
+converges weakly to a point of $S$.
+\end{theorem}
+
+\begin{proof}[Proof sketch and status]
+Combining Lemmas~\ref{lem:onestep}--\ref{lem:tele} and following the energy
+argument of \cite[Lemma~9 and Theorem~4.2]{Malitsky2015} with the potential
+\[
+\varphi_k = \norm{x^k-z}^2 + \lambda L \norm{x^k - r^{k-1}}^2 - 2\lambda
+a_{k-1},
+\]
+one obtains $\varphi_{k+1} \le \varphi_k + 2\lambda a_k - c\,\norm{x^k - \bar
+x^{k+1}}^2 + \delta_k$ with $c > 0$ under Assumption~\ref{as:step}. The
+perturbation of Lemma~\ref{lem:pert} contributes $\delta_k = O(\varepsilon_k)$
+on bounded sequences, and the error at the \emph{base point}, $x^k = \bar x^k +
+e^{k-1}$, contributes further cross terms which are $O(\varepsilon_{k-1}/
+\lambda)$ because the projection inequality of the previous step is divided by
+$\lambda$, and which are amplified by the factor two of the reflection. All of
+these are summable, so Lemma~\ref{lem:qf} applies to $\varphi_k$; since $a_k
+\le 0$, summing also gives $\sum_k (-a_k) < \infty$ and hence $a_k \to 0$,
+from which $\norm{x^k - z}$ converges. The negative term gives $\norm{x^k -
+\bar x^{k+1}} \to 0$ and hence $\norm{x^k - x^{k-1}} \to 0$; weak cluster
+points then belong to $S$ by Minty's lemma, and Opial's lemma concludes.
+
+\emph{Status.} The four lemmas above are complete. The assembly of the
+potential $\varphi_k$ carrying the base-point error, and the two limit steps at
+the end, are written here at the level of a proof sketch and are the part of
+the argument that must be verified line by line before submission. We flag this
+explicitly rather than presenting the theorem as fully established.
+\end{proof}
+
+\begin{remark}[honest positioning]
+\label{rem:position}
+Theorem~\ref{thm:weak} should be read as an extension, not as a new mechanism.
+If $\{\varepsilon_k\}$ is a prescribed summable sequence, the statement is
+close to what one obtains by combining \cite{Malitsky2015} with the
+bounded-perturbation-resilience results of \cite{Censor2017}; the reason it is
+not an immediate corollary is that PRG is not Fej\'er monotone and the
+perturbation enters through the reflection, as described in the proof. The
+practical value of this paper lies in Sections~\ref{sec:cert}--\ref{sec:num}.
+\end{remark}
+
+\section{A computable error certificate}
+\label{sec:cert}
+
+Definition~\ref{def:inexact} is not directly checkable: verifying $\norm{w -
+\proj{D}(v)} \le \varepsilon$ presupposes $\proj{D}(v)$. We now remove this
+circularity for the case where the projection subproblem is solved by a
+primal--dual method.
+
+Consider $D = \{x : \TV(x) \le \tau\} \cap [0,1]^n$ and the subproblem
+\begin{equation}
+\label{eq:sub}
+\proj{D}(v) = \arg\min_x \; G(x) + F_{\mathrm{ind}}(Kx), \qquad
+G(x) = \tfrac12\norm{x-v}^2 , \quad K = \nabla ,
+\end{equation}
+with $F_{\mathrm{ind}}$ the indicator of the $\ell_{2,1}$ ball of radius
+$\tau$. Chambolle--Pock \cite{ChambollePock2011} produces a primal--dual pair
+$(x,p)$. Since $G$ is $1$-strongly convex,
+\begin{equation}
+\label{eq:cert}
+\norm{x - \proj{D}(v)}^2 \le 2\bigl( P(x) - P(\proj{D}(v)) \bigr)
+\le 2\bigl( P(x) - Dl(p) \bigr) =: 2\,\mathrm{gap}(x,p) ,
+\end{equation}
+where $P(x) = \tfrac12\norm{x-v}^2$ for feasible $x$ and
+$Dl(p) = \inner{v}{-\mathrm{div}\,p} - \tfrac12\norm{\mathrm{div}\,p}^2 -
+\tau\norm{p}_{2,\infty}$.
+
+\begin{proposition}
+\label{prop:cert}
+$\sqrt{2\,\mathrm{gap}(x,p)}$ is a computable upper bound for $\norm{x -
+\proj{D}(v)}$, evaluated from the primal--dual pair alone.
+\end{proposition}
+
+Inequality \eqref{eq:cert} is standard convex analysis. Its role here is what
+matters: it is the missing interface between the outer convergence theory,
+which speaks of $\varepsilon_k$, and the inner solver, which can only measure
+its own iterates. Combined with a feasibility step (rescaling towards the mean,
+which preserves membership in $D$ since $\TV$ is positively homogeneous about
+constants), it produces exactly the object required by
+Definition~\ref{def:inexact}.
+
+\begin{remark}[what does not work]
+\label{rem:fail}
+It is tempting to replace Definition~\ref{def:inexact} by the relaxed
+projection inequality of \cite{DiazMillan2024}, in which the error enters
+quadratically and a constant relative tolerance suffices. We report that this
+is not implementable here. Checking it requires the support function of $D$;
+bounding it by the enclosing box is far too loose (in our experiments the left
+side stays at $1.2 \times 10^{2}$ while the right side is $3\times10^{-1}$,
+even after $2000$ inner iterations), and deriving it from the certificate
+\eqref{eq:cert} costs a factor: the error enters the relaxed inequality
+linearly while the criterion is quadratic in the displacement, so one would
+need $\varepsilon \sim \norm{w-u}^2$, i.e.\ five orders of magnitude below the
+displacement at $k=200$ in our runs. We record this to save others the attempt.
+\end{remark}
+
+\section{Adaptive inner budget and cost}
+\label{sec:cost}
+
+The certificate turns the schedule $\{\varepsilon_k\}$ into an implementable
+rule: at outer iteration $k$, run the inner solver, with dual warm starting
+from iteration $k-1$, until $\sqrt{2\,\mathrm{gap}} \le \varepsilon_k$. We take
+$\varepsilon_k = \varepsilon_0/(k+1)^p$ with $p>1$, which is summable as
+required by Theorem~\ref{thm:weak}.
+
+Two costs must be reported and we report both: the total number of inner
+iterations, and the wall-clock time of the algorithm proper, measured with GPU
+synchronisation and excluding all instrumentation. The first alone is
+misleading, because an inner iteration of the adaptive scheme also evaluates
+the certificate and is therefore more expensive than a bare Chambolle--Pock
+step.
+
+\begin{remark}[price of a checkable rule]
+The certificate is conservative: its ratio to the true error grows from about
+$2$ to about $12$ as the iterates approach the solution, and stopping by the
+certificate costs $2.6$--$5.8$ times more inner iterations than stopping by the
+true (unknowable) error. This is the price of a rule that an implementation can
+actually check.
+\end{remark}
+
+\section{Numerical experiments}
+\label{sec:num}
+
+\paragraph{Setup.}
+Image deblurring $y = Bx + \epsilon$ with $B$ a normalised blur (Gaussian
+$9\times9$, $\sigma=1.6$; and motion, length $9$, $30^\circ$), noise level
+$0.05$, grayscale patches of side $96$, eight test images, $K=150$ outer
+iterations, $F(x)=B^{\!\top}(Bx-y)$, $D$ a TV ball with radius $\tau = 0.55\,
+\TV(x_{\mathrm{true}})$, and $\lambda = 0.9(\sqrt2-1)/L$ with $L =
+\norm{B^{\!\top}B}$ estimated by power iteration. Runs are on an NVIDIA L40S.
+
+\paragraph{Protocol.}
+Target residual levels are fixed \emph{in advance} and independently of any
+configuration. Both groups use the same certificate, so neither side is given
+information the other lacks. The baseline (certified exact projection) is tuned
+over the same number of configurations (eight) as the proposed scheme.
+
+\paragraph{Cost at fixed accuracy.}
+Table~\ref{tab:cost} reports, for each prescribed residual level, the cheapest
+configuration of each group.
+
+\begin{table}[t]
+\centering
+\caption{Cost to reach a prescribed variational residual, Gaussian blur. Time
+is algorithm wall-clock, instrumentation excluded.}
+\label{tab:cost}
+\begin{tabular}{lrrrrrr}
+\toprule
+& \multicolumn{2}{c}{inner iterations} & \multicolumn{2}{c}{time (s)} &
+\multicolumn{2}{c}{speed-up} \\
+\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+residual & exact & adaptive & exact & adaptive & iter. & time \\
+\midrule
+$3.0\times10^{-2}$ & 3796 & 198 & 2.48 & 0.52 & 19.2 & 4.7 \\
+$2.0\times10^{-2}$ & 3858 & 275 & 5.13 & 0.70 & 14.0 & 7.4 \\
+$1.5\times10^{-2}$ & 5738 & 357 & 8.61 & 0.88 & 16.1 & 9.7 \\
+$1.2\times10^{-2}$ & 8509 & 476 & 9.73 & 1.12 & 17.9 & 8.7 \\
+$1.0\times10^{-2}$ & 8566 & 649 & 11.25 & 1.43 & 13.2 & 7.9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+For motion blur the corresponding ranges are $17.2$--$23.6$ in inner iterations
+and $6.2$--$8.7$ in time. All configurations return strictly feasible iterates
+(constraint ratio $1.0000$), whereas a fixed inner budget violates the
+constraint by up to a few percent.
+
+\paragraph{Where the scheme loses.}
+The schedule must not be too tight. With $\varepsilon_0 = 0.5$ and $p=1.5$ the
+inner cost explodes to $5.2\times10^{5}$ iterations, about $50$ times
+\emph{worse} than the exact projection; every configuration with $p=1.5$ fails.
+The rule of thumb from our grid is $p$ slightly above $1$ and $\varepsilon_0$
+large, around $2$ to $4$. We report this because a reader who picks the
+schedule badly will observe the opposite of our headline numbers.
+
+\paragraph{Summability of the error sequence.}
+Theorem~\ref{thm:weak} requires $\sum_k \varepsilon_k < \infty$. With the
+schedule above this holds by construction, but it is instructive to measure the
+displacement $\norm{\bar x^{k+1}-x^k}$, which controls how tight the schedule
+must be. Over $K=3000$ outer iterations its log--log slope is $-2.34$
+(Gaussian) and $-2.84$ (motion), and the cumulative sums saturate (ratio $1.006$
+and $1.000$ between half-horizon and horizon). If an anchoring step is added,
+the slope degrades to $-1.01$ on motion blur, i.e.\ to the boundary of
+divergence; at $K=600$ it still reads $-1.48$ and looks safe. This is direct
+evidence for the design choice of Section~\ref{sec:alg}: anchoring would not
+only break the projection chain used in Lemma~\ref{lem:onestep} but also push
+summability to the edge.
+
+\paragraph{A pseudomonotone, non-monotone instance.}
+To confirm that the analysis is not vacuously restricted to a class larger than
+the examples, we also run $F(x) = e^{-\norm{x}^2} A(x-b)$ on the unit ball in
+$\R^{50}$ with $A \succeq 0$ singular. A numerical certificate finds pairs with
+$\inner{F(u)-F(v)}{u-v} = -5.6\times10^{-6} < 0$, so $F$ is not monotone, while
+the scheme still drives the residual from $5.0\times10^{-2}$ to
+$1.25\times10^{-4}$.
+
+\paragraph{Reproducibility.}
+Code, raw traces and the analysis scripts are available at
+\url{https://github.com/cloudysman/PIE_em_Hoang}.
+
+\section{Conclusion}
+\label{sec:concl}
+
+We analysed the projected reflected gradient method with feasible inexact
+projections, and, more importantly for practice, we closed the gap between the
+$\varepsilon_k$ of the theory and what an implementation can measure, by using
+the duality gap of the strongly convex projection subproblem as a computable
+certificate. The resulting adaptive inner budget reaches a prescribed accuracy
+with roughly an order of magnitude fewer inner iterations and $5$--$10$ times
+less time than a certified exact projection, while keeping iterates feasible.
+We have been explicit about the limits: the convergence statement is an
+extension rather than a new mechanism, the certificate is conservative by a
+factor of $2$--$12$, the relaxed-inequality route is not implementable here,
+and a badly chosen schedule is worse than doing nothing.
+
+Two directions remain. First, completing the assembly of the potential in
+Theorem~\ref{thm:weak}, including the base-point error amplified by the
+reflection; this is where whatever technical novelty the analysis carries is
+concentrated. Second, obtaining strong convergence without destroying either
+the projection chain or the summability margin, which our data suggests is not
+merely a technical matter.
+
+\begin{thebibliography}{9}
+
+\bibitem{Malitsky2015}
+Yu.~Malitsky.
+\newblock Projected reflected gradient methods for monotone variational
+inequalities.
+\newblock \emph{SIAM Journal on Optimization}, 25(1):502--520, 2015.
+
+\bibitem{Censor2017}
+Y.~Censor, A.~Gibali, S.~Reich.
+\newblock Bounded perturbation resilience of extragradient-type methods and
+their applications.
+\newblock \emph{Journal of Inequalities and Applications}, 2017:232, 2017.
+
+\bibitem{DiazMillan2024}
+R.~D\'iaz Mill\'an, O.~P.~Ferreira, J.~Ugon.
+\newblock Extragradient method with feasible inexact projection to variational
+inequality problem.
+\newblock \emph{Computational Optimization and Applications}, 89:459--484,
+2024.
+
+\bibitem{ChambollePock2011}
+A.~Chambolle, T.~Pock.
+\newblock A first-order primal-dual algorithm for convex problems with
+applications to imaging.
+\newblock \emph{Journal of Mathematical Imaging and Vision}, 40:120--145, 2011.
+
+\bibitem{Combettes2001}
+P.~L.~Combettes.
+\newblock Quasi-Fej\'erian analysis of some optimization algorithms.
+\newblock In \emph{Inherently Parallel Algorithms in Feasibility and
+Optimization and their Applications}, 115--152, 2001.
+
+\bibitem{Tseng2000}
+P.~Tseng.
+\newblock A modified forward-backward splitting method for maximal monotone
+mappings.
+\newblock \emph{SIAM Journal on Control and Optimization}, 38(2):431--446,
+2000.
+
+\end{thebibliography}
+
+\end{document}
