@@ -119,6 +119,58 @@ Cần kiểm kỹ, và là chỗ đóng góp thật của bài:
 
 So với bản thảo trước, mục 1 đến 3 đã chuyển từ phác thảo thành chứng minh đầy đủ. Phần còn thiếu thu hẹp về đúng ba mục trên.
 
+## 7bis. Dẫn xuất đầy đủ hằng số ν_k, và câu trả lời cho câu hỏi hệ số 1/λ
+
+Đây là chỗ được đánh dấu là quyết định: hằng số C trong ν_k ≤ Cε_{k−1} có chứa nghịch đảo bước nhảy hay không. Ta dẫn xuất từ đầu, dùng đúng công thức (11) của Malitsky.
+
+Nguồn của số hạng phụ thuộc bước trước. Trong chứng minh Malitsky, số hạng toán tử được tách F(r^k) = [F(r^k) − F(r^{k−1})] + F(r^{k−1}), và phần F(r^{k−1}) được chặn bằng bất đẳng thức chiếu của bước trước, tức đặc trưng của x^k = P_D(x^{k−1} − λF(r^{k−1})):
+
+    ⟨x^{k−1} − λF(r^{k−1}) − x^k, y − x^k⟩ ≤ 0   với mọi y thuộc D.        (P)
+
+Điểm cần chú ý: trong (P), toán tử xuất hiện dưới dạng λF(r^{k−1}), tức đã nhân sẵn với λ; không có phép chia cho λ ở bất kỳ đâu.
+
+Trong sơ đồ chiếu xấp xỉ, đặc trưng (P) chỉ đúng cho phép chiếu chính xác x̄^k, không cho điểm thực x^k = x̄^k + e^{k−1}. Vậy bất đẳng thức đúng là
+
+    ⟨x^{k−1} − λF(r^{k−1}) − x̄^k, y − x̄^k⟩ ≤ 0.        (P')
+
+Đặt A = x^{k−1} − λF(r^{k−1}) − x̄^k. Thay x̄^k = x^k − e^{k−1} vào (P'), tức A = (x^{k−1} − λF(r^{k−1}) − x^k) + e^{k−1} và y − x̄^k = (y − x^k) + e^{k−1}:
+
+    ⟨A_0 + e^{k−1}, (y − x^k) + e^{k−1}⟩ ≤ 0,   với A_0 = x^{k−1} − λF(r^{k−1}) − x^k.
+
+Khai triển:
+
+    ⟨A_0, y − x^k⟩ ≤ − ⟨A_0, e^{k−1}⟩ − ⟨e^{k−1}, y − x^k⟩ − ‖e^{k−1}‖².
+
+Vế trái ⟨A_0, y − x^k⟩ là chính số hạng mà Malitsky dùng cho bản chiếu chính xác. Ba số hạng bên phải là nhiễu. Tính từng cái, với A_0 = −(x^k − x^{k−1}) − λF(r^{k−1}):
+
+    − ⟨A_0, e^{k−1}⟩ = ⟨x^k − x^{k−1}, e^{k−1}⟩ + λ⟨F(r^{k−1}), e^{k−1}⟩ .
+
+Do đó, tổng nhiễu ν_k, sau khi nhân với thừa số 2 mà công thức (11) mang theo, bị chặn bởi
+
+    ν_k ≤ 2\bigl| ⟨x^k − x^{k−1}, e^{k−1}⟩ \bigr|
+        + 2λ\bigl| ⟨F(r^{k−1}), e^{k−1}⟩ \bigr|
+        + 2\bigl| ⟨e^{k−1}, y − x^k⟩ \bigr|
+        + 2‖e^{k−1}‖² .
+
+Chặn từng số hạng bằng Cauchy-Schwarz và ‖e^{k−1}‖ ≤ ε_{k−1}, dùng tính bị chặn của quỹ đạo (đặt M = sup_k ‖x^k − x^{k−1}‖, M_F = sup_k ‖F(r^k)‖, M' = sup ‖y − x^k‖ với y là điểm được chọn trong (11), tất cả hữu hạn vì dãy bị chặn):
+
+    ν_k ≤ 2M ε_{k−1} + 2λ M_F ε_{k−1} + 2M' ε_{k−1} + 2ε_{k−1}²
+        = \bigl( 2M + 2λ M_F + 2M' + 2ε_{k−1} \bigr) ε_{k−1}
+        ≤ \bigl( 2M + 2λ M_F + 2M' + 2ε_0 \bigr) ε_{k−1}
+        =: C ε_{k−1} ,
+
+trong đó dùng ε_{k−1} ≤ ε_0 để C là hằng số cố định, độc lập với chỉ số k.
+
+## 7ter. Câu trả lời, và hệ quả cho định vị bài
+
+Hằng số C = 2M + 2λ M_F + 2M' + 2ε_0 KHÔNG chứa nghịch đảo bước nhảy. Ngược lại, bước nhảy λ xuất hiện ở một số hạng dưới dạng thừa số NHÂN, tức làm số hạng đó nhỏ đi khi λ nhỏ, chứ không phóng đại. Lý do có tính cấu trúc: trong bất đẳng thức chiếu (P), toán tử đã đi kèm sẵn thừa số λ, nên khi sai số điểm gốc e^{k−1} tương tác với số hạng toán tử, nó nhận thừa số λ chứ không phải 1/λ.
+
+Đây là câu trả lời trung thực, và nó đóng lại hy vọng về một điểm phân biệt lý thuyết ở chỗ này. Khẳng định ban đầu của tôi rằng sai số điểm gốc bị khuếch đại bởi 1/λ là sai; phản biện nghi ngờ đúng. Vì hằng số chỉ là O(M, M_F, M') và bị chặn khi λ nằm trong khoảng cho phép, số hạng nhiễu điểm gốc không có gì đặc biệt hơn nhiễu điểm cuối: cả hai đều bậc nhất theo sai số và tổng được.
+
+Hệ quả cho định vị: định lý hội tụ của bài là một MỞ RỘNG, đúng như đã thừa nhận trong ghi chú định vị của bản thảo. Việc thêm phản xạ vào khung chiếu xấp xỉ không tạo ra một số hạng nhiễu mới về bản chất; nó chỉ là kiểm rằng cơ chế bền vững với nhiễu vẫn chạy qua bước phản xạ, điều mà bây giờ ta đã kiểm và thấy đúng. Do đó bài KHÔNG có đóng góp lý thuyết đủ mới để nhắm Q1 ở phần định lý.
+
+Điều này KHÔNG làm bài mất giá trị, mà xác định đúng giá trị của nó. Đóng góp bán được nằm ở nơi bản thảo đã đặt: chứng chỉ sai số tính được qua khoảng cách đối ngẫu, ngân sách thích nghi, và phân tích chi phí kèm thực nghiệm. Đó là đóng góp thực nghiệm và thuật toán, phù hợp một bài Q2, và nó không phụ thuộc vào việc định lý có mới hay không. Kết luận: theo đúng con đường Q2 đã chọn, và không cố nâng lên Q1 bằng phần định lý, vì phần đó đã được chứng minh là mở rộng chứ không phải cơ chế mới.
+
 ## 8. Kết quả phản biện, đã tích hợp
 
 Ba tác nhân phản biện độc lập tự tính lại từng phép đại số. Kết quả:

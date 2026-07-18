@@ -131,11 +131,14 @@ the very object the outer method avoids computing.
       \cite{Censor2017}, and not a new mechanism; the technical content lies in
       the fact that PRG is not Fej\'er monotone, so the perturbation must be
       carried through the reflection step. An error at the base point enters
-      through the projection inequality of the previous step, and tracking it
-      through the reflection is the part that must be carried out from scratch;
-      whether it carries an amplifying factor $1/\lambda$ or cancels to first
-      order is left to the full write-up, since convergence only requires it to
-      be summable.
+      through the projection inequality of the previous step; carrying it out we
+      find the base-point error contributes $\nu_k \le C\varepsilon_{k-1}$ with a
+      constant $C$ that does \emph{not} contain $1/\lambda$ (in the projection
+      inequality the operator already appears multiplied by $\lambda$, so the
+      cross term carries $\lambda$ as a factor, not its inverse). Consequently
+      the perturbed convergence statement is an extension of \cite{Malitsky2015}
+      and \cite{Censor2017}, with no new perturbation mechanism, and we do not
+      base any novelty claim on it.
 \item \emph{A computable certificate (Section~\ref{sec:cert}).} The projection
       subproblem $\min_x \tfrac12 \norm{x-v}^2$ subject to $x \in D$ is
       $1$-strongly convex, hence
@@ -336,14 +339,15 @@ from which $\norm{x^k - z}$ converges. The negative term gives $\norm{x^k -
 \bar x^{k+1}} \to 0$ and hence $\norm{x^k - x^{k-1}} \to 0$; weak cluster
 points then belong to $S$ by Minty's lemma, and Opial's lemma concludes.
 
-\emph{Status.} The four lemmas and the exact-projection assembly (the identity
-$c_2-\lambda L=c_1$ and the resulting nonincreasing $\varphi_k$) are complete
-and have been checked line by line. What remains for the full write-up is the
-explicit constant $C$ in $\nu_k$ (in particular whether it carries a factor
-$1/\lambda$), the precise statement of the multiplicative quasi-Fej\'er lemma so
-that it does not absorb the negative term, and, in infinite dimension, the weak
-limit step. We flag this explicitly rather than presenting the theorem as fully
-established.
+\emph{Status.} The four lemmas, the exact-projection assembly (the identity
+$c_2-\lambda L=c_1$ and the resulting nonincreasing $\varphi_k$), and the
+base-point perturbation constant $\nu_k \le C\varepsilon_{k-1}$ (with $C$ free
+of $1/\lambda$) are complete and have been checked line by line. What remains
+for the full write-up is the precise statement of the multiplicative
+quasi-Fej\'er lemma so that it does not absorb the negative term, and, in
+infinite dimension, the weak limit step; in the finite-dimensional setting of
+the experiments the latter is routine. We flag this rather than presenting the
+theorem as fully established.
 \end{proof}
 
 \begin{remark}[honest positioning]
