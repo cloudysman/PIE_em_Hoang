@@ -99,6 +99,102 @@ MUC_1 = [
      "không gian hữu hạn chiều của phần thực nghiệm.", "thuong"),
 ]
 
+MUC_2 = [
+    ("Mục 2. Bối cảnh và điểm xuất phát", "de_muc"),
+
+    ("2.1. Bài toán", "de_muc_phu"),
+    ("Đề tài PIE-Net nhằm giải bài toán ngược trong xử lý ảnh, viết dưới dạng y = Bx + "
+     "ε, trong đó x là ảnh gốc cần khôi phục, y là dữ liệu quan sát, B là toán tử suy "
+     "biến đã biết, chẳng hạn một phép làm mờ, và ε là nhiễu. Bài toán này được đặt "
+     "dưới dạng bất đẳng thức biến phân trên một tập ràng buộc D: tìm điểm x thuộc D "
+     "sao cho tích vô hướng của toán tử chi phí tại x với mọi hướng đi từ x tới một "
+     "điểm khác của D đều không âm.", "thuong"),
+    ("Cách đặt bài toán như vậy có hai hệ quả định hình toàn bộ công việc về sau. Hệ "
+     "quả thứ nhất là tập ràng buộc trở thành một thành phần của thuật toán chứ không "
+     "phải một điều kiện phụ, vì mỗi bước lặp đều phải chiếu điểm hiện tại về tập ràng "
+     "buộc. Hệ quả thứ hai, và đây là điểm quan trọng cho phần sau của báo cáo, là "
+     "phép chiếu chỉ rẻ khi tập ràng buộc đủ đơn giản. Với tập ràng buộc được dùng "
+     "trong đề tài là quả cầu biến phân toàn phần, phép chiếu không có công thức đóng "
+     "và phải giải bằng một vòng lặp nội, nên chi phí của phép chiếu chiếm phần lớn "
+     "chi phí của thuật toán.", "thuong"),
+
+    ("2.2. Kết luận của báo cáo thực nghiệm trước", "de_muc_phu"),
+    ("Thiết kế ban đầu của đề tài dựa trên bốn khẳng định, mỗi khẳng định được gắn với "
+     "một thí nghiệm kiểm chứng và một tiêu chí đạt hay không đạt bằng con số cụ thể, "
+     "đặt trước khi chạy và không sửa sau khi thấy số liệu. Báo cáo thực nghiệm trước "
+     "đã kiểm cả bốn khẳng định qua năm thí nghiệm, và kết quả là chỉ một khẳng định "
+     "đứng vững.", "thuong"),
+    ("Khẳng định thứ nhất cho rằng hệ số vô hướng học được cải thiện chất lượng khôi "
+     "phục so với hệ số hằng được tinh chỉnh tốt. Kết quả là không đạt: phiên bản có "
+     "hệ số vô hướng học được đạt 28,31 dB, còn phiên bản hệ số hằng đạt 28,91 dB, tức "
+     "thấp hơn 0,60 dB. Hệ số học được còn tự hội tụ về một hằng số xấp xỉ 1, với giá "
+     "trị trung bình 0,991 trên tập kiểm tra, cho thấy phần dung lượng mô hình dành "
+     "cho nó không được sử dụng.", "thuong"),
+    ("Khẳng định thứ ba cho rằng thành phần học được thêm giá trị so với phiên bản "
+     "không học. Kết quả cũng không đạt: tại điểm vận hành ổn định nhất, với mờ Gauss "
+     "phiên bản có học đạt 26,80 dB còn phiên bản không học đạt 25,79 dB, và với mờ "
+     "chuyển động là 26,82 dB so với 24,64 dB; sau khi tính tới dao động theo hạt "
+     "giống, mức chênh không vượt ngưỡng 0,3 dB đặt trước một cách ổn định. Ở ngân "
+     "sách bước nội thấp, phiên bản có học còn mất ổn định nghiêm trọng.", "thuong"),
+    ("Khẳng định thứ tư cho rằng ràng buộc cứng nhất quán dữ liệu cho lợi thế so với "
+     "Plug-and-Play. Kết quả là không đạt, và đây là kết quả dứt khoát nhất: phương "
+     "pháp của đề tài thua Plug-and-Play 0,59 dB ở chế độ khớp mức nhiễu và 0,88 dB ở "
+     "chế độ lệch mức nhiễu, tức khoảng cách còn nới rộng đúng ở chế độ mà ràng buộc "
+     "cứng được kỳ vọng có lợi thế. Trước đó một thí nghiệm riêng đã đo được khoảng "
+     "trống 1,97 dB giữa prior thủ công tốt nhất và trần của việc học trên ảnh kết "
+     "cấu, nhưng chính thí nghiệm đối đầu cho thấy Plug-and-Play đã lấy gần trọn "
+     "khoảng trống đó, khi đạt 27,47 dB so với trần 27,60 dB.", "thuong"),
+
+    ("2.3. Vì sao các kết quả này có tính cấu trúc", "de_muc_phu"),
+    ("Điểm quan trọng nhất của báo cáo trước không nằm ở các con số mà ở chẩn đoán "
+     "nguyên nhân. Ba kết quả không đạt nêu trên không đến từ lỗi cài đặt hay từ việc "
+     "tinh chỉnh chưa tới, mà bắt nguồn từ chính cách dựng mô hình, nên không thể khắc "
+     "phục bằng cách dò thêm siêu tham số hay đổi kiến trúc mạng.", "thuong"),
+    ("Có thể thấy điều đó qua ba lập luận. Thứ nhất, hệ số vô hướng dương nhân với một "
+     "toán tử không làm thay đổi tập nghiệm của bất đẳng thức biến phân; nó chỉ tác "
+     "động lên động học hội tụ, mà ở chân trời hữu hạn thì tác động đó quá nhỏ để tạo "
+     "khác biệt về chất lượng. Thứ hai, ràng buộc cứng nhất quán dữ liệu buộc nghiệm "
+     "bám sát quả cầu quanh dữ liệu quan sát, mà dữ liệu quan sát đã mang nhiễu, nên "
+     "ép như vậy chính là nạp nhiễu trở lại ảnh khôi phục; điều này giải thích vì sao "
+     "khoảng cách với Plug-and-Play nới rộng đúng ở chế độ lệch mức nhiễu. Thứ ba, hai "
+     "thành phần được kỳ vọng của đề tài loại trừ lẫn nhau: toán tử học được chỉ ổn "
+     "định khi ngân sách bước nội đủ lớn, mà ngân sách bước nội lớn lại phá hủy đúng "
+     "lợi thế chi phí của phép chiếu xấp xỉ ít bước nội.", "thuong"),
+    ("Vì các rào cản này có tính cấu trúc, báo cáo trước đã khuyến nghị đóng hướng "
+     "thực nghiệm theo khuôn khổ cũ thay vì tiếp tục tinh chỉnh. Báo cáo hiện tại kế "
+     "thừa nguyên vẹn khuyến nghị đó và không mở lại bất kỳ nhánh nào đã đóng.",
+     "thuong"),
+
+    ("2.4. Điều duy nhất còn đứng vững", "de_muc_phu"),
+    ("Khẳng định thứ hai là khẳng định duy nhất đạt tiêu chí đặt trước. Nội dung của "
+     "nó là: trên một tập ràng buộc mà phép chiếu chính xác thật sự cần vòng lặp nội, "
+     "phép chiếu xấp xỉ với ngân sách bước nội nhỏ đạt chất lượng không thấp hơn phép "
+     "chiếu chính xác có khởi tạo ấm, trong ngưỡng 0,1 dB, đồng thời tốn ít hơn rõ rệt "
+     "về tổng bước nội. Số liệu cụ thể là rẻ hơn khoảng 8,2 lần với mờ Gauss và khoảng "
+     "7,6 lần với mờ chuyển động.", "thuong"),
+    ("Báo cáo trước cũng nêu ba điều kiện để hiểu đúng kết quả này, và báo cáo hiện "
+     "tại giữ nguyên cả ba. Thứ nhất, lợi thế đo được là lợi thế về chi phí chứ không "
+     "phải về chất lượng khôi phục. Thứ hai, phép chiếu chính xác có khởi tạo ấm mới "
+     "là mốc so sánh đúng, vì bản thân khởi tạo ấm đã tiết kiệm rất lớn so với khởi "
+     "tạo lạnh, và nếu so với khởi tạo lạnh thì phần tiết kiệm ấy sẽ bị gán nhầm cho "
+     "phép chiếu xấp xỉ. Thứ ba, cơ chế tạo ra lợi thế là việc phân bổ vòng lặp nội "
+     "qua các bước ngoài nhờ khởi tạo ấm, một kỹ thuật đã biết trong tối ưu, nên tự nó "
+     "chưa đủ mới để đứng thành một đóng góp riêng.", "thuong"),
+
+    ("2.5. Câu hỏi của giai đoạn nghiên cứu này", "de_muc_phu"),
+    ("Từ hiện trạng trên, câu hỏi của giai đoạn nghiên cứu này được phát biểu như sau: "
+     "có thể biến điều duy nhất còn đứng vững, tức lợi thế chi phí của phép chiếu xấp "
+     "xỉ có khởi tạo ấm, thành một đóng góp công bố được hay không, khi mà bản thân cơ "
+     "chế tạo ra lợi thế đó là một kỹ thuật đã biết.", "thuong"),
+    ("Câu hỏi này ràng buộc cách làm theo ba hướng. Thứ nhất, không được lặp lại các "
+     "nhánh đã đóng, nên trọng tâm phải chuyển từ phần học sang phần thuật toán và "
+     "giải tích số. Thứ hai, vì cơ chế nền đã biết, đóng góp nếu có phải nằm ở chỗ "
+     "khác, và phần sau của báo cáo cho thấy chỗ đó là tiêu chuẩn dừng của vòng lặp "
+     "nội. Thứ ba, vì kết luận trước đây dựa trên so sánh chi phí, mọi phép đo chi phí "
+     "trong giai đoạn này phải được thiết kế chặt hơn trước, và mục 3 trình bày các "
+     "nguyên tắc được dùng cho việc đó.", "thuong"),
+]
+
 
 def thay_chu(p, text):
     """Thay chữ của một đoạn nhưng giữ nguyên định dạng của lần chạy chữ đầu tiên."""
@@ -130,8 +226,8 @@ def main():
     for t in list(doc.tables):
         t._element.getparent().remove(t._element)
 
-    # 3. Ghi mục 1.
-    for text, kieu in MUC_1:
+    # 3. Ghi mục 1 và mục 2.
+    for text, kieu in MUC_1 + MUC_2:
         p = doc.add_paragraph()
         r = p.add_run(text)
         r.font.name = "Times New Roman"
@@ -139,7 +235,14 @@ def main():
             r.bold = True
             r.font.size = Pt(15)
             p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            p.paragraph_format.space_before = Pt(14)
             p.paragraph_format.space_after = Pt(12)
+        elif kieu == "de_muc_phu":
+            r.bold = True
+            r.font.size = Pt(13)
+            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
+            p.paragraph_format.space_before = Pt(10)
+            p.paragraph_format.space_after = Pt(6)
         else:
             r.font.size = Pt(13)
             p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
