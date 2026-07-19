@@ -24,7 +24,7 @@ except Exception:
 from docx import Document
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-BAO_CAO = os.path.join(HERE, "Bao_cao_muc_1_2.docx")
+BAO_CAO = os.path.join(HERE, "Bao_cao_muc_1_2_3.docx")
 GOC = (r"C:\Users\trong\AppData\Local\Temp\claude"
        r"\c--Users-trong-Downloads-PIE-em-Hoang"
        r"\2bf96163-73da-4142-8ed0-60cb16987721\scratchpad\bao_cao_goc.txt")
@@ -72,10 +72,14 @@ def lay_van_ban(path):
 
 
 def tach_muc(doan):
-    """Tách danh sách đoạn thành mục 1 và mục 2."""
-    i1 = next(i for i, t in enumerate(doan) if t.startswith("Mục 1."))
-    i2 = next(i for i, t in enumerate(doan) if t.startswith("Mục 2."))
-    return doan[i1:i2], doan[i2:]
+    """Tách danh sách đoạn thành từng mục, trả về dict {số mục: các đoạn}."""
+    moc = [(i, int(t.split(".")[0].split()[-1]))
+           for i, t in enumerate(doan) if re.match(r"^Mục \d+\.", t)]
+    ket = {}
+    for k, (i, so) in enumerate(moc):
+        j = moc[k + 1][0] if k + 1 < len(moc) else len(doan)
+        ket[so] = doan[i:j]
+    return ket
 
 
 def kiem_so_lieu(text, goc):
@@ -114,27 +118,40 @@ def kiem_viet_hoa(doan):
     return loi
 
 
-def kiem_lien_ket(muc1, muc2):
-    """Mục 1 nhắc khái niệm nào thì mục 2 phải giải thích, và số chung phải trùng."""
-    canh_bao = []
-    t1, t2 = " ".join(muc1).lower(), " ".join(muc2).lower()
+def kiem_lien_ket(muc):
+    """Kiểm liên kết theo chuỗi giữa các mục đã viết.
 
-    # a) khái niệm mục 1 nêu, mục 2 phải nói tới
-    khai_niem = ["bốn khẳng định", "plug-and-play", "khởi tạo ấm",
-                 "phép chiếu xấp xỉ", "cấu trúc"]
-    for k in khai_niem:
-        if k in t1 and k not in t2:
+    Ba tiêu chí: mỗi mục phải dẫn sang mục kế tiếp; khái niệm nêu ở mục trước phải
+    được mục sau nói tới; và số liệu dùng chung giữa các mục phải trùng nhau."""
+    canh_bao = []
+    so_muc = sorted(muc)
+    van = {k: " ".join(v).lower() for k, v in muc.items()}
+
+    # a) mỗi mục dẫn sang mục kế tiếp
+    for k in so_muc[:-1]:
+        if f"mục {k + 1}" not in van[k]:
+            canh_bao.append(f"mục {k} không có câu dẫn sang mục {k + 1}")
+
+    # b) khái niệm nêu ở mục 1 phải được mục 2 giải thích
+    for k in ["bốn khẳng định", "plug-and-play", "khởi tạo ấm",
+              "phép chiếu xấp xỉ", "cấu trúc"]:
+        if 1 in van and 2 in van and k in van[1] and k not in van[2]:
             canh_bao.append(f"mục 1 nêu '{k}' nhưng mục 2 không nhắc lại")
 
-    # b) số liệu xuất hiện ở cả hai mục phải giống nhau
-    so1 = set(re.findall(r"\d+,\d+", t1))
-    so2 = set(re.findall(r"\d+,\d+", t2))
-    chung = so1 & so2
-    canh_bao.append(f"(thông tin) số liệu dùng chung ở hai mục: {sorted(chung)}")
+    # c) ba lỗi phương pháp luận nêu ở mục 1 phải được mục 3 trình bày
+    if 1 in van and 3 in van and "ba lỗi" in van[1]:
+        for k in ["thời gian", "mục tiêu", "bất đối xứng"]:
+            if k not in van[3]:
+                canh_bao.append(f"mục 1 nhắc ba lỗi nhưng mục 3 thiếu '{k}'")
 
-    # c) mục 2 phải kết bằng câu dẫn sang mục 3
-    if "mục 3" not in t2:
-        canh_bao.append("mục 2 không có câu dẫn sang mục 3")
+    # d) số liệu dùng chung giữa các cặp mục
+    for i, a in enumerate(so_muc):
+        for b in so_muc[i + 1:]:
+            chung = set(re.findall(r"\d+,\d+", van[a])) & \
+                    set(re.findall(r"\d+,\d+", van[b]))
+            if chung:
+                canh_bao.append(
+                    f"(thông tin) số dùng chung mục {a} và {b}: {sorted(chung)}")
     return canh_bao
 
 
@@ -143,13 +160,14 @@ def main():
         sys.exit(f"Không tìm thấy báo cáo: {BAO_CAO}")
     doan = lay_van_ban(BAO_CAO)
     goc = open(GOC, encoding="utf-8").read() if os.path.exists(GOC) else ""
-    muc1, muc2 = tach_muc(doan)
+    muc = tach_muc(doan)
     text = " ".join(doan)
 
-    print(f"Báo cáo: {len(doan)} đoạn | mục 1: {len(muc1)} đoạn | "
-          f"mục 2: {len(muc2)} đoạn")
-    print(f"Số chữ mục 1: {len(' '.join(muc1).split())} | "
-          f"mục 2: {len(' '.join(muc2).split())}")
+    print(f"Báo cáo: {len(doan)} đoạn, {len(text.split())} chữ")
+    for k in sorted(muc):
+        sc = len(" ".join(muc[k]).split())
+        print(f"   mục {k}: {len(muc[k]):2d} đoạn, {sc:4d} chữ "
+              f"(khoảng {sc / 550:.1f} trang)")
     print()
 
     tat_ca_loi = []
@@ -167,8 +185,8 @@ def main():
             print("   không có lỗi")
         print()
 
-    print("--- 4. Liên kết giữa mục 1 và mục 2 ---")
-    for c in kiem_lien_ket(muc1, muc2):
+    print("--- 4. Liên kết giữa các mục ---")
+    for c in kiem_lien_ket(muc):
         print("  ", c)
         if not c.startswith("(thông tin)"):
             tat_ca_loi.append(c)
