@@ -1262,13 +1262,14 @@ MUC_11 = [
      "Lệnh chạy lại từng thí nghiệm được ghi trong phần chú thích đầu của mỗi tệp, kèm "
      "các tham số đã dùng, nên người kiểm không phải đoán.", "thuong"),
 
-    ("Ngoài ra có một trình kiểm tra tự động cho chính báo cáo này, gồm sáu nhóm kiểm "
+    ("Ngoài ra có một trình kiểm tra tự động cho chính báo cáo này, gồm bảy nhóm kiểm "
      "tra. Nó đối chiếu từng con số trong báo cáo với tệp kết quả, kể cả các số trong "
      "bảng và các số ghi ở dạng khoa học; kiểm tính nhất quán của thuật ngữ; kiểm cách "
-     "viết hoa; kiểm các mục có dẫn sang nhau hay không; và đếm lại số dòng lệnh của "
-     "từng tệp trong bảng 11.1 để bảng đó không lỗi thời khi mã nguồn thay đổi. Trình "
-     "kiểm tra này đã bắt được nhiều lỗi số liệu trong quá trình viết, trong đó có "
-     "những con số lấy từ một lần chạy cũ đã bị thay thế.", "thuong"),
+     "viết hoa; kiểm các mục có dẫn sang nhau hay không; đếm lại số dòng lệnh của từng "
+     "tệp trong bảng 11.1 để bảng đó không lỗi thời khi mã nguồn thay đổi; và kiểm mọi "
+     "đường dẫn nêu trong bảng 12.1 có còn tồn tại hay không. Trình kiểm tra này đã bắt "
+     "được nhiều lỗi trong quá trình viết, trong đó có những con số lấy từ một lần chạy "
+     "cũ đã bị thay thế, và một đường dẫn ghi thiếu tên thư mục.", "thuong"),
 
     ("11.5. Hạ tầng tính toán", "de_muc_phu"),
     ("Các phép đo chi phí ở mục 7 chạy trên một máy chủ có bộ xử lý đồ họa, vì phép đo "
@@ -1360,6 +1361,79 @@ MUC_12 = [
 ]
 
 
+MUC_13 = [
+    ("Mục 13. Hạn chế", "de_muc"),
+
+    ("Mục này nêu năm hạn chế của công việc. Mục đích là để người đọc hiểu đúng phạm vi "
+     "của các kết luận ở mục 7 và mục 9, chứ không phải để bào chữa. Mỗi hạn chế được "
+     "nêu thẳng, kèm điều nó ngăn không cho kết luận.", "thuong"),
+
+    ("13.1. Phạm vi thực nghiệm hẹp", "de_muc_phu"),
+    ("Toàn bộ thực nghiệm chỉ dùng một tập ràng buộc là quả cầu biến phân toàn phần, "
+     "và hai loại mờ là mờ Gauss và mờ chuyển động, trên ảnh xám cạnh 96 điểm ảnh với "
+     "tám ảnh kiểm tra. Chứng chỉ ở mục 6 được dẫn cho riêng tập ràng buộc này, vì công "
+     "thức của hàm mục tiêu đối ngẫu phụ thuộc dạng cụ thể của nó.", "thuong"),
+
+    ("Điều này ngăn không cho kết luận rằng chế độ ngân sách thích nghi tiết kiệm được "
+     "chi phí trên các tập ràng buộc khác. Cách gỡ vòng luẩn quẩn ở mục 6.2 chỉ cần bộ "
+     "giải nội thuộc loại gốc và đối ngẫu, nên về nguyên tắc nó áp được cho tập ràng "
+     "buộc khác; nhưng đó là suy đoán, chưa phải điều đã đo.", "thuong"),
+
+    ("13.2. Chưa so sánh với phương pháp đã công bố", "de_muc_phu"),
+    ("Đây là hạn chế nặng nhất. Mọi so sánh ở mục 7 đều là giữa các chế độ chọn ngân "
+     "sách bước nội của cùng một sơ đồ: chế độ thích nghi so với phép chiếu chính xác "
+     "và với hai tiêu chuẩn tương đối. Không có phương pháp nào đã công bố được cài đặt "
+     "lại để so.", "thuong"),
+
+    ("Hệ quả là các con số ở bảng 7.1 và bảng 7.2 chỉ nói được một điều: trong cùng một "
+     "sơ đồ, chọn ngân sách bước nội theo chứng chỉ rẻ hơn chiếu chính xác. Chúng không "
+     "nói được rằng sơ đồ này rẻ hơn các phương pháp khác cho cùng bài toán. Muốn nói "
+     "được điều thứ hai thì phải cài lại ít nhất một phương pháp trong bảng 4.1 và đo "
+     "trên cùng máy, việc đó chưa làm.", "thuong"),
+
+    ("13.3. Bán kính quả cầu đặt theo thông tin của ảnh sạch", "de_muc_phu"),
+    ("Trong mọi thực nghiệm, bán kính quả cầu biến phân toàn phần được đặt bằng 0,55 "
+     "lần biến phân toàn phần của ảnh gốc chưa bị làm mờ. Đây là thông tin mà một "
+     "triển khai thật không có, vì nếu đã biết ảnh gốc thì không cần khôi phục.",
+     "thuong"),
+
+    ("Cách đặt này được chọn có chủ ý, để bán kính giống nhau cho mọi cấu hình và phép "
+     "so chi phí không bị nhiễu bởi việc chọn bán kính. Nó hợp lý cho mục đích so chi "
+     "phí, nhưng phải nói rõ rằng nó làm bài toán dễ hơn thực tế: trong triển khai "
+     "thật, bán kính phải ước lượng từ dữ liệu quan sát, và sai số của ước lượng đó sẽ "
+     "cộng thêm vào sai số cuối cùng. Báo cáo không đo ảnh hưởng của việc ước lượng "
+     "bán kính.", "thuong"),
+
+    ("13.4. Lợi thế đo được là chi phí, không phải chất lượng ảnh", "de_muc_phu"),
+    ("Cần nói rõ chế độ ngân sách thích nghi không cho ảnh đẹp hơn. Ở cấu hình tốt nhất "
+     "của mỗi nhóm, chỉ số chất lượng ảnh của chế độ thích nghi là 26,8251 dB trên mờ "
+     "Gauss so với 26,7998 dB của phép chiếu chính xác, và 26,8487 dB trên mờ chuyển "
+     "động so với 26,8332 dB. Chênh lệch lần lượt là 0,03 dB và 0,02 dB, tức nằm trong "
+     "khoảng dao động giữa các cấu hình và không có ý nghĩa thực tế.", "thuong"),
+
+    ("Đây đúng là điều được kỳ vọng, vì hai chế độ giải cùng một bài toán và chỉ khác "
+     "nhau ở cách phân bổ chi phí cho vòng lặp nội. Nhưng nó giới hạn cách phát biểu "
+     "đóng góp: đóng góp là đạt cùng độ chính xác với chi phí thấp hơn, chứ không phải "
+     "đạt độ chính xác cao hơn. Người đọc kỳ vọng ảnh khôi phục tốt hơn sẽ không tìm "
+     "thấy điều đó ở đây.", "thuong"),
+
+    ("13.5. Hai chi tiết trong chứng minh chưa viết đầy đủ", "de_muc_phu"),
+    ("Như đã nêu ở mục 9.7, phần lý thuyết còn hai chỗ chưa hoàn tất: phát biểu chính "
+     "xác của bổ đề tựa Fejér cho dạng truy hồi có thừa số nhân, và bước chuyển qua "
+     "giới hạn yếu trong không gian vô hạn chiều. Trong không gian hữu hạn chiều của "
+     "phần thực nghiệm, cả hai là thường quy, nên hạn chế này không ảnh hưởng tới các "
+     "con số đã báo.", "thuong"),
+
+    ("Tuy vậy nó ảnh hưởng tới việc nộp bài. Chừng nào hai chỗ ấy chưa viết đủ thì định "
+     "lý chưa nộp được, và bài chỉ còn phần thuật toán cùng phần thực nghiệm. Đây là "
+     "việc phải làm trước, và mục 14 xếp nó vào nhóm ưu tiên cao nhất.", "thuong"),
+
+    ("Năm hạn chế trên không làm hỏng các kết luận đã nêu, nhưng chúng giới hạn phạm vi "
+     "của các kết luận đó. Mục 14 trình bày việc còn lại, sắp theo thứ tự ưu tiên rút "
+     "ra từ chính năm hạn chế này.", "thuong"),
+]
+
+
 def thay_chu(p, text):
     """Thay chữ của một đoạn nhưng giữ nguyên định dạng của lần chạy chữ đầu tiên."""
     runs = p.runs
@@ -1444,7 +1518,7 @@ def main():
         "bang12": BANG_MUC_12,
     }
     for text, kieu in (MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6 + MUC_7
-                       + MUC_8 + MUC_9 + MUC_10 + MUC_11 + MUC_12):
+                       + MUC_8 + MUC_9 + MUC_10 + MUC_11 + MUC_12 + MUC_13):
         if kieu in bang_theo_khoa:
             them_bang(doc, bang_theo_khoa[kieu])
             continue

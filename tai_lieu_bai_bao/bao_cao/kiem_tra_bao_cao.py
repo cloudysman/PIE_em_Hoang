@@ -1,6 +1,6 @@
 """Kiểm tra tệp báo cáo: số liệu, thuật ngữ, cách viết hoa và liên kết giữa các mục.
 
-Năm nhóm kiểm tra:
+Bảy nhóm kiểm tra:
   1. Mọi con số trong báo cáo phải khớp báo cáo thực nghiệm gốc hoặc tệp kết quả.
   2. Thuật ngữ phải nhất quán: không dùng hai từ khác nhau cho cùng một khái niệm.
   3. Không viết hoa tùy tiện ở giữa câu.
@@ -8,6 +8,9 @@ Năm nhóm kiểm tra:
      thích, và số liệu chung giữa hai mục phải trùng nhau.
   5. Mọi ô số trong mọi bảng phải tìm thấy trong tệp kết quả. Nhóm 1 chỉ soát phần
      chữ, vì python-docx để bảng ngoài danh sách đoạn, nên bảng cần một nhóm riêng.
+  6. Số dòng lệnh trong bảng liệt kê tệp mã nguồn phải khớp chính tệp đó, và tổng
+     số dòng phải xuất hiện trong phần chữ. Nhóm 5 chỉ soát số thập phân nên bỏ sót.
+  7. Mọi đường dẫn nêu trong bảng phải còn tồn tại trong kho lưu trữ.
 
 Chạy: python tai_lieu_bai_bao/bao_cao/kiem_tra_bao_cao.py
 """
@@ -76,6 +79,11 @@ NGUON_SO = {
     "0,25": "thiet_ke",
     # mục 11: phần dư biến phân đầu và cuối, lấy từ README và chú thích mã nguồn
     "2,48": "noi_bo", "0,199": "noi_bo",
+    # muc 13: chi so chat luong anh o cau hinh tot nhat cua tung nhom
+    "26,8251": "ket_qua", "26,7998": "ket_qua",
+    "26,8487": "ket_qua", "26,8332": "ket_qua",
+    # chenh lech suy ra tu bon so tren
+    "0,03": "suy_ra", "0,02": "suy_ra",
 }
 
 # Tài liệu nội bộ dùng làm nguồn đối chiếu cho các phép đo của chính đề tài.
@@ -110,7 +118,8 @@ CHO_PHEP_HOA = {
     "Nonlinear", "Science", "Simulation", "SIAM", "Ferreira", "Ugon",
     "Millán", "Díaz", "Qin", "Tan", "Tseng",  # tên tạp chí và tên tác giả
     "Plug-and-Play", "Gauss", "PIE-Net", "Fejér", "DnCNN", "Q1", "Q2", "Python",
-    "Chambolle-Pock", "Malitsky", "Lipschitz", "Minty", "Opial", "Hà", "Nội", "Đào", "Trọng", "Hiếu",
+    "Chambolle-Pock", "Malitsky", "Lipschitz", "Minty", "Opial",
+    "Hà", "Nội", "Đào", "Trọng", "Hiếu",
     "Đặng", "Văn", "Chiến", "Học", "Viện", "Bộ", "Khoa", "Công", "Nghệ",
     "Bưu", "Chính", "Viễn", "Thông", "Mục", "Đề", "Giảng", "Lớp", "Biết",
     "Báo", "Tóm", "Bối", "Câu", "Khẳng", "Kết", "Điểm", "Đóng", "Phần",
