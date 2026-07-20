@@ -486,6 +486,138 @@ MUC_5 = [
      "bày đóng góp chính.", "thuong"),
 ]
 
+# Bảng ở mục 6: kiểm chứng chặn trên của chứng chỉ theo số bước nội.
+BANG_MUC_6 = {
+    "tieu_de": ("Bảng 6.1. Kiểm chứng chặn trên của chứng chỉ theo số bước nội. "
+                "Cột cuối là tỉ số giữa chặn trên và sai số thật."),
+    "cot": ["Số bước nội", "Chặn trên từ chứng chỉ", "Sai số thật",
+            "Tỉ số chặn trên trên sai số thật"],
+    "dong": [
+        ("5", "5,29", "2,83", "2,18"),
+        ("10", "3,10", "1,62", "2,26"),
+        ("25", "1,63", "0,819", "2,52"),
+        ("50", "1,06", "0,462", "3,03"),
+        ("100", "0,643", "0,226", "3,98"),
+        ("250", "0,332", "0,0872", "5,41"),
+        ("500", "0,218", "0,0505", "6,95"),
+        ("1500", "0,0901", "0,0110", "11,96"),
+    ],
+}
+
+MUC_6 = [
+    ("Mục 6. Chứng chỉ sai số tính được", "de_muc"),
+
+    ("Mục này trình bày đóng góp kỹ thuật chính của giai đoạn nghiên cứu. Nội dung của "
+     "nó là gỡ một vòng luẩn quẩn nằm ngay trong định nghĩa của phép chiếu xấp xỉ, và "
+     "nhờ đó nối được phần lý thuyết với phần thực thi. Mục 4 đã chỉ ra rằng cả hai "
+     "nhánh tài liệu đều bỏ ngỏ câu hỏi này, nên đây cũng là chỗ đáng đầu tư nhất.",
+     "thuong"),
+
+    ("6.1. Vấn đề: một vòng luẩn quẩn trong định nghĩa", "de_muc_phu"),
+    ("Trong tài liệu, phép chiếu xấp xỉ với sai số cho trước được định nghĩa như sau: "
+     "một điểm được gọi là phép chiếu xấp xỉ của một điểm cho trước nếu nó nằm trong "
+     "tập ràng buộc và khoảng cách từ nó tới phép chiếu chính xác không vượt quá mức "
+     "sai số cho phép. Định nghĩa này rõ ràng về mặt toán học và là định nghĩa đúng để "
+     "phát biểu định lý.", "thuong"),
+    ("Nhưng nó không kiểm được trong thực thi. Muốn biết một điểm có thỏa định nghĩa "
+     "hay không, chương trình phải tính khoảng cách từ điểm đó tới phép chiếu chính "
+     "xác, tức phải biết phép chiếu chính xác. Trong khi đó, toàn bộ lý do dùng phép "
+     "chiếu xấp xỉ là để tránh phải tính phép chiếu chính xác, vì trên quả cầu biến "
+     "phân toàn phần phép chiếu chính xác đòi một vòng lặp nội tốn kém. Nói cách khác, "
+     "tiêu chuẩn dừng đòi hỏi đúng đại lượng mà thuật toán sinh ra để tránh.", "thuong"),
+    ("Hệ quả của vòng luẩn quẩn này không chỉ là bất tiện. Vì tiêu chuẩn không kiểm "
+     "được, các cách chọn ngân sách bước nội trong thực thi, chẳng hạn chạy một số "
+     "bước nội cố định, đều nằm ngoài phạm vi của định lý: chúng có thể chạy tốt trên "
+     "số liệu nhưng không ai bảo đảm chúng thỏa giả thiết mà định lý cần. Đây là "
+     "khoảng cách giữa lý thuyết và thực thi mà mục này nhằm xóa bỏ.", "thuong"),
+
+    ("6.2. Cách gỡ: dùng khoảng cách đối ngẫu làm chứng chỉ", "de_muc_phu"),
+    ("Cách gỡ dựa trên một tính chất của chính bài toán chiếu. Phép chiếu một điểm lên "
+     "tập ràng buộc là nghiệm của bài toán cực tiểu hóa nửa bình phương khoảng cách "
+     "tới điểm đó trên tập ràng buộc. Hàm mục tiêu của bài toán này lồi mạnh với tham "
+     "số bằng một, vì phần bậc hai của nó chính là nửa bình phương khoảng cách.",
+     "thuong"),
+    ("Với một hàm lồi mạnh tham số bằng một, khoảng cách bình phương từ một điểm bất "
+     "kỳ tới nghiệm không vượt quá hai lần độ chênh giữa giá trị hàm mục tiêu tại điểm "
+     "đó và giá trị tối ưu. Độ chênh ấy lại không vượt quá khoảng cách đối ngẫu, tức "
+     "hiệu giữa giá trị hàm mục tiêu gốc tại điểm đang xét và giá trị hàm mục tiêu đối "
+     "ngẫu tại biến đối ngẫu đang xét. Ghép hai bước lại, khoảng cách từ điểm đang xét "
+     "tới phép chiếu chính xác không vượt quá căn bậc hai của hai lần khoảng cách đối "
+     "ngẫu.", "thuong"),
+    ("Điểm mấu chốt là khoảng cách đối ngẫu tính được. Bộ giải nội được dùng là thuật "
+     "toán Chambolle-Pock, vốn là thuật toán gốc và đối ngẫu, nên ở mỗi bước nội nó "
+     "sẵn có cả biến gốc lẫn biến đối ngẫu. Chỉ cần thay hai biến đó vào hai hàm mục "
+     "tiêu là ra khoảng cách đối ngẫu, mà không cần biết nghiệm. Vòng luẩn quẩn vì thế "
+     "được gỡ: tiêu chuẩn dừng trở thành thứ chương trình kiểm được bằng chính thông "
+     "tin nó đang có.", "thuong"),
+
+    ("6.3. Công thức cho bài toán chiếu lên quả cầu biến phân toàn phần", "de_muc_phu"),
+    ("Với tập ràng buộc là quả cầu biến phân toàn phần, bài toán chiếu được viết dưới "
+     "dạng cực tiểu hóa tổng của hai hàm: hàm thứ nhất là nửa bình phương khoảng cách "
+     "tới điểm cần chiếu, hàm thứ hai là hàm chỉ của quả cầu chuẩn hỗn hợp áp lên "
+     "trường gradient rời rạc. Hàm mục tiêu gốc, tính tại một điểm đã được ép về tập "
+     "ràng buộc, chính là nửa bình phương khoảng cách từ điểm đó tới điểm cần chiếu.",
+     "thuong"),
+    ("Hàm mục tiêu đối ngẫu, tính tại biến đối ngẫu, gồm ba số hạng: tích vô hướng "
+     "giữa điểm cần chiếu với ảnh của biến đối ngẫu qua toán tử phân kỳ lấy dấu âm; "
+     "trừ đi nửa bình phương chuẩn của ảnh đó; và trừ đi tích của bán kính quả cầu với "
+     "chuẩn hỗn hợp cực đại của biến đối ngẫu. Khoảng cách đối ngẫu là hiệu giữa hàm "
+     "mục tiêu gốc và hàm mục tiêu đối ngẫu, và nó luôn không âm.", "thuong"),
+    ("Trong cài đặt, điểm được ép về tập ràng buộc bằng cách co về giá trị trung bình "
+     "của chính nó. Phép co này giữ được tính khả thi vì biến phân toàn phần của một "
+     "ảnh hằng bằng không và biến phân toàn phần thuần nhất dương theo phép co, nên "
+     "chỉ cần co với hệ số bằng tỉ số giữa bán kính và biến phân toàn phần hiện tại "
+     "khi giá trị hiện tại vượt bán kính, còn khi đã khả thi thì giữ nguyên. "
+     "Nhờ vậy điểm trả về vừa khả thi vừa có chứng chỉ đi kèm.", "thuong"),
+
+    ("6.4. Vị thế của đóng góp", "de_muc_phu"),
+    ("Cần nêu rõ vị thế của đóng góp này để tránh hiểu quá lời. Bất đẳng thức nối "
+     "khoảng cách tới nghiệm với khoảng cách đối ngẫu dưới giả thiết lồi mạnh là kiến "
+     "thức chuẩn trong giải tích lồi; nó không phải phát hiện của báo cáo, và một vòng "
+     "phản biện đã nhắc đúng điều đó.", "thuong"),
+    ("Đóng góp nằm ở chỗ khác: dùng bất đẳng thức ấy làm giao diện giữa phần lý thuyết "
+     "và bộ giải nội. Phần lý thuyết phát biểu điều kiện theo mức sai số cho phép, còn "
+     "bộ giải nội chỉ đo được các đại lượng của chính nó; chứng chỉ là thứ dịch giữa "
+     "hai bên. Các bài về phép chiếu xấp xỉ đều bỏ ngỏ chỗ này: hoặc giả thiết dãy sai "
+     "số một cách trừu tượng, hoặc dùng tiêu chuẩn cần biết phép chiếu chính xác. Việc "
+     "lấp chỗ ấy là điều mà báo cáo này nhận là đóng góp, không hơn.", "thuong"),
+
+    ("6.5. Kiểm chứng: chứng chỉ có thật sự là chặn trên hay không", "de_muc_phu"),
+    ("Một chứng chỉ chỉ dùng được nếu nó không bao giờ đánh giá thấp sai số thật. Nếu "
+     "nó đánh giá thấp, thuật toán sẽ dừng sớm và giả thiết của định lý bị vi phạm mà "
+     "không ai biết. Vì vậy tính chất chặn trên được kiểm trực tiếp bằng số, chứ không "
+     "chỉ dựa vào lập luận.", "thuong"),
+    ("Phép kiểm được thực hiện như sau: chạy bộ giải nội tới nhiều mức số bước khác "
+     "nhau; ở mỗi mức, tính chặn trên từ chứng chỉ, đồng thời tính sai số thật bằng "
+     "cách so với một nghiệm chiếu tham chiếu chạy rất dài; rồi so hai đại lượng. Kết "
+     "quả trình bày ở bảng 6.1.", "thuong"),
+    ("__BANG_6_1__", "bang6"),
+    ("Ở toàn bộ tám mức số bước nội đã thử, chặn trên luôn lớn hơn sai số thật, nên "
+     "chứng chỉ hợp lệ. Ngoài ra cả hai đại lượng cùng giảm khi số bước nội tăng, đúng "
+     "như mong đợi: ở năm bước nội chặn trên là 5,29 còn sai số thật là 2,83; ở 1500 "
+     "bước nội chặn trên còn 0,0901 và sai số thật còn 0,0110.", "thuong"),
+
+    ("6.6. Cái giá phải trả", "de_muc_phu"),
+    ("Chứng chỉ có một nhược điểm phải nói thẳng: nó bi quan, và mức bi quan tăng dần "
+     "khi tiến gần nghiệm. Cột cuối của bảng 6.1 cho thấy tỉ số giữa chặn trên và sai "
+     "số thật tăng từ 2,18 ở năm bước nội lên 11,96 ở 1500 bước nội. Nói cách khác, "
+     "càng gần nghiệm thì chứng chỉ càng đánh giá sai số cao hơn thực tế nhiều lần.",
+     "thuong"),
+    ("Hệ quả trực tiếp là chi phí. Dừng theo chứng chỉ tốn nhiều bước nội hơn dừng "
+     "theo sai số thật từ 2,6 đến 5,8 lần, tùy mức sai số yêu cầu. Đây là cái giá của "
+     "một tiêu chuẩn kiểm được: sai số thật là đại lượng không biết được trong thực "
+     "thi, nên con số 2,6 đến 5,8 lần chính là khoảng cách giữa một tiêu chuẩn lý "
+     "tưởng nhưng không dùng được và một tiêu chuẩn dùng được.", "thuong"),
+    ("Có một cách đã được thử để giảm mức bi quan, là theo dõi giá trị tốt nhất của "
+     "hai hàm mục tiêu qua các bước nội thay vì chỉ dùng giá trị ở bước hiện tại. Cách "
+     "này về lý thuyết cho chặn trên không lỏng hơn, nhưng đo thực tế cho thấy nó "
+     "không giảm được bước nội nào, vì thuật toán Chambolle-Pock vốn đã cho giá trị "
+     "gần đơn điệu. Kết quả âm tính này được ghi ở mục 10.", "thuong"),
+    ("Dù bi quan, chứng chỉ vẫn đáng dùng, vì nó biến một tiêu chuẩn không kiểm được "
+     "thành một tiêu chuẩn kiểm được, và vì nó mở đường cho chế độ ngân sách thích "
+     "nghi trình bày ở mục 7.", "thuong"),
+]
+
 
 def thay_chu(p, text):
     """Thay chữ của một đoạn nhưng giữ nguyên định dạng của lần chạy chữ đầu tiên."""
@@ -565,9 +697,12 @@ def main():
         t._element.getparent().remove(t._element)
 
     # 3. Ghi các mục nội dung.
-    for text, kieu in MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5:
+    for text, kieu in MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6:
         if kieu == "bang":
             them_bang(doc, BANG_MUC_4)
+            continue
+        if kieu == "bang6":
+            them_bang(doc, BANG_MUC_6)
             continue
         p = doc.add_paragraph()
         r = p.add_run(text)

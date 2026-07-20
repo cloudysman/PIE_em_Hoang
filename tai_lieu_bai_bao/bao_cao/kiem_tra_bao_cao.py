@@ -24,7 +24,7 @@ except Exception:
 from docx import Document
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-BAO_CAO = os.path.join(HERE, "Bao_cao_muc_1_5.docx")
+BAO_CAO = os.path.join(HERE, "Bao_cao_dong_gop_PIE-Net.docx")
 GOC = (r"C:\Users\trong\AppData\Local\Temp\claude"
        r"\c--Users-trong-Downloads-PIE-em-Hoang"
        r"\2bf96163-73da-4142-8ed0-60cb16987721\scratchpad\bao_cao_goc.txt")
@@ -42,6 +42,15 @@ NGUON_SO = {
     "24,3458": "noi_bo", "1,242": "noi_bo", "1,243": "noi_bo",
     # mức phần dư biến phân mục tiêu, ấn định trước, có trong tệp kết quả
     "3,0": "ket_qua", "1,0": "ket_qua",
+    # bảng 6.1 và cái giá của tiêu chuẩn kiểm được, từ certificate_check.csv
+    # và certificate_cost.csv
+    "5,29": "ket_qua", "2,83": "ket_qua", "2,18": "ket_qua", "11,96": "ket_qua",
+    "0,0901": "ket_qua", "0,0110": "ket_qua", "2,6": "ket_qua", "5,8": "ket_qua",
+    "3,10": "ket_qua", "1,62": "ket_qua", "1,63": "ket_qua", "0,819": "ket_qua",
+    "1,06": "ket_qua", "0,462": "ket_qua", "0,643": "ket_qua", "0,226": "ket_qua",
+    "0,332": "ket_qua", "0,0872": "ket_qua", "0,218": "ket_qua", "0,0505": "ket_qua",
+    "2,26": "ket_qua", "2,52": "ket_qua", "3,03": "ket_qua", "3,98": "ket_qua",
+    "5,41": "ket_qua", "6,95": "ket_qua",
 }
 
 # Tài liệu nội bộ dùng làm nguồn đối chiếu cho các phép đo của chính đề tài.
@@ -88,7 +97,8 @@ def khop_lam_tron(so_bao_cao, nguon):
 
     Ví dụ báo cáo ghi 19,2 còn tệp kết quả ghi 19,17. So khớp chuỗi cứng sẽ báo sai;
     ở đây ta tìm trong nguồn một số mà khi làm tròn tới đúng số chữ số thập phân của
-    số trong báo cáo thì trùng với nó."""
+    số trong báo cáo thì trùng với nó. Nguồn có thể ghi số ở dạng khoa học, chẳng hạn
+    9.012900e-02, nên phải nhận cả dạng đó."""
     muc = so_bao_cao.replace(",", ".")
     if muc in nguon:
         return True
@@ -97,7 +107,7 @@ def khop_lam_tron(so_bao_cao, nguon):
     except ValueError:
         return False
     so_le = len(muc.split(".")[1]) if "." in muc else 0
-    for ung_vien in re.findall(r"\d+\.\d+", nguon):
+    for ung_vien in re.findall(r"\d+\.\d+(?:[eE][+-]?\d+)?", nguon):
         if round(float(ung_vien), so_le) == gia_tri:
             return True
     return False
