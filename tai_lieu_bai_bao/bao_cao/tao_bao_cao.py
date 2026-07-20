@@ -20,6 +20,8 @@ except Exception:
 
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.oxml import OxmlElement
+from docx.oxml.ns import qn
 from docx.shared import Pt
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -283,6 +285,106 @@ MUC_3 = [
      "phát hiện hai con số sai trong bản thảo đầu của chính báo cáo này, gồm một hệ số "
      "lấy nhầm từ bản đo cũ và một mức vi phạm ràng buộc ghi không chính xác. Mục 11 "
      "mô tả chương trình kiểm tra đó.", "thuong"),
+    ("Mục 4 sau đây áp dụng ngay các nguyên tắc trên vào bước đầu tiên của giai đoạn "
+     "nghiên cứu, là việc chọn hướng đi.", "thuong"),
+]
+
+# Bảng ở mục 4: mỗi dòng gồm bài chặn và điểm khác biệt so với công việc của báo cáo.
+BANG_MUC_4 = {
+    "tieu_de": "Bảng 4.1. Các bài chặn và điểm khác biệt so với công việc của báo cáo.",
+    "cot": ["Bài chặn", "Điểm khác biệt"],
+    "dong": [
+        ("Malitsky 2015, phương pháp chiếu phản xạ, SIAM Journal on Optimization",
+         "Dùng bước phản xạ nhưng với phép chiếu chính xác; không xét phép chiếu "
+         "xấp xỉ."),
+        ("Díaz Millán, Ferreira và Ugon 2024, Computational Optimization and "
+         "Applications",
+         "Dùng phép chiếu xấp xỉ với tiêu chuẩn sai số tương đối, nhưng trên sơ đồ "
+         "ngoại suy hai phép chiếu mỗi bước, không có bước phản xạ."),
+        ("Bài về phép chiếu xấp xỉ có độ nhớt 2025, Communications in Nonlinear "
+         "Science and Numerical Simulation",
+         "Ghép phép chiếu xấp xỉ với bước độ nhớt, nhưng không có bước phản xạ và "
+         "không phân tích chi phí của vòng lặp nội."),
+        ("Tan và Qin 2020",
+         "Có quán tính và độ nhớt với một phép chiếu mỗi bước, nhưng dùng hiệu chỉnh "
+         "kiểu Tseng và phép chiếu chính xác."),
+        ("Bản cải tiến của phương pháp chiếu phản xạ 2023, Numerical Algorithms",
+         "Tổng quát hóa quy tắc bước nhảy, không phải phép chiếu xấp xỉ; đã kiểm "
+         "riêng vì đăng trên chính tạp chí được nhắm tới."),
+        ("Bản có quán tính của phương pháp chiếu phản xạ 2022, Journal of Scientific "
+         "Computing",
+         "Đã ghép bước phản xạ với quán tính, nên phần quán tính không còn là chỗ "
+         "trống."),
+    ],
+}
+
+MUC_4 = [
+    ("Mục 4. Định vị lại hướng nghiên cứu", "de_muc"),
+
+    ("Sau khi hướng thực nghiệm cũ được đóng lại, việc đầu tiên phải làm là chọn hướng "
+     "đi mới. Mục này trình bày cách chọn hướng đó. Nguyên tắc áp dụng ở đây là nguyên "
+     "tắc thứ nhất của mục 3: quyết định phải dựa trên bằng chứng đặt ra trước, chứ "
+     "không dựa vào cảm nhận rằng một hướng nào đó có vẻ mới.", "thuong"),
+
+    ("4.1. Cách khảo sát tài liệu", "de_muc_phu"),
+    ("Khảo sát được tổ chức thành năm góc độc lập, mỗi góc phụ trách một câu hỏi riêng "
+     "và trả về một danh sách bài kèm các thuộc tính phân biệt. Năm góc gồm: phép "
+     "chiếu xấp xỉ cho bất đẳng thức biến phân; các phương pháp có quán tính và độ "
+     "nhớt cho lớp toán tử giả đơn điệu; các phương pháp kiểu neo và bước phản xạ; "
+     "điều kiện để có tốc độ hội tụ; và các phương pháp học được có bảo đảm hội tụ cho "
+     "bài toán ngược trong xử lý ảnh.", "thuong"),
+    ("Với mỗi bài tìm được, khảo sát ghi lại sáu thuộc tính: lớp toán tử được giả "
+     "thiết; có bước quán tính hay không; có bước độ nhớt hoặc bước neo hay không; "
+     "dùng phép chiếu chính xác hay phép chiếu xấp xỉ; nếu dùng phép chiếu xấp xỉ thì "
+     "tiêu chuẩn sai số là gì; và có phân tích chi phí của vòng lặp nội hay không. "
+     "Cách ghi theo thuộc tính như vậy cho phép so sánh trực tiếp giữa các bài, thay "
+     "vì chỉ đọc phần tóm tắt rồi kết luận cảm tính.", "thuong"),
+
+    ("4.2. Kết quả khảo sát: tài liệu chia thành hai nhánh", "de_muc_phu"),
+    ("Kết quả khảo sát cho thấy tài liệu hiện có chia thành hai nhánh gần như không "
+     "giao nhau. Nhánh thứ nhất gồm các phương pháp có bước quán tính, bước độ nhớt "
+     "hoặc bước neo, được nghiên cứu rất kỹ và cho hội tụ mạnh trong nhiều trường hợp; "
+     "nhưng toàn bộ nhánh này giả thiết phép chiếu là chính xác. Nhánh thứ hai gồm các "
+     "phương pháp dùng phép chiếu xấp xỉ, có xét tới sai số của phép chiếu; nhưng các "
+     "bài trong nhánh này không có bước quán tính và không có bước độ nhớt, và quan "
+     "trọng hơn, không bài nào phân tích chi phí thực của vòng lặp nội.", "thuong"),
+    ("Sự phân đôi này là điểm mấu chốt của mục 4, vì nó chỉ ra chỗ trống: không có bài "
+     "nào đồng thời dùng bước phản xạ và phép chiếu xấp xỉ. Bảng 4.1 liệt kê các bài "
+     "chặn quan trọng nhất cùng điểm khác biệt của từng bài so với công việc của báo "
+     "cáo này.", "thuong"),
+    ("__BANG_4_1__", "bang"),
+
+    ("4.3. Khe hở còn lại, và việc thừa nhận nó hẹp", "de_muc_phu"),
+    ("Từ bảng trên, khe hở còn lại được phát biểu chính xác như sau: ghép bước phản xạ "
+     "với phép chiếu xấp xỉ. Bước phản xạ đáng chú ý về mặt chi phí vì nó chỉ cần tính "
+     "toán tử một lần mỗi bước ngoài, trong khi các sơ đồ ngoại suy thường cần hai "
+     "lần.", "thuong"),
+    ("Cần thừa nhận ngay rằng đây là một khe hở hẹp. Mọi thành phần của sơ đồ đều đã "
+     "có người dùng riêng lẻ: bước phản xạ đã có từ 2015, phép chiếu xấp xỉ với tiêu "
+     "chuẩn sai số tương đối đã có từ 2024, và việc ghép bước phản xạ với quán tính đã "
+     "có từ 2022. Phần chưa ai làm chỉ là đúng cặp ghép còn lại. Báo cáo này không "
+     "trình bày khe hở đó như một phát hiện lớn, và mục 9 sẽ cho thấy phần định lý thu "
+     "được từ khe hở này chỉ là một mở rộng.", "thuong"),
+    ("Chính vì khe hở hẹp, hướng nghiên cứu được chuyển trọng tâm ngay từ đầu: thay vì "
+     "cố tìm tính mới ở phần định lý, công việc tập trung vào một câu hỏi thực thi mà "
+     "cả hai nhánh tài liệu đều bỏ ngỏ, đó là làm sao kiểm được tiêu chuẩn dừng của "
+     "vòng lặp nội. Mục 6 trình bày câu trả lời cho câu hỏi đó.", "thuong"),
+
+    ("4.4. Kiểm rủi ro trùng lặp", "de_muc_phu"),
+    ("Trong khảo sát có một bài đáng lo hơn cả, là bản cải tiến của phương pháp chiếu "
+     "phản xạ đăng năm 2023 trên Numerical Algorithms, tức chính tạp chí được nhắm "
+     "tới. Tên bài chứa chữ tổng quát hóa, mà trong dòng nghiên cứu này chữ đó thường "
+     "hàm ý đã bao gồm cả nhiễu hoặc phép chiếu xấp xỉ. Nếu đúng như vậy thì toàn bộ "
+     "khe hở nêu trên không còn, và mọi công việc sau đó là vô ích.", "thuong"),
+    ("Vì rủi ro này có thể làm hỏng cả hướng nghiên cứu, nó được kiểm trước mọi việc "
+     "khác. Kết quả kiểm cho thấy bài đó tổng quát hóa quy tắc bước nhảy chứ không "
+     "phải phép chiếu; nó cho hội tụ yếu và tốc độ tuyến tính theo nghĩa R khi toán tử "
+     "đơn điệu mạnh, và không xét phép chiếu xấp xỉ. Khe hở vì thế vẫn còn.", "thuong"),
+    ("Cùng lần kiểm này, khảo sát phát hiện thêm một bài năm 2022 trên Journal of "
+     "Scientific Computing đã ghép bước phản xạ với quán tính. Phát hiện đó không phá "
+     "khe hở, nhưng nó loại bỏ một khả năng: phần quán tính không còn là chỗ trống, "
+     "nên không nên tìm đóng góp ở đó. Đây là một trong các căn cứ để về sau bỏ hẳn "
+     "bước quán tính khỏi sơ đồ, như mục 5 trình bày.", "thuong"),
 ]
 
 
@@ -301,6 +403,53 @@ def xoa_doan(p):
     p._element.getparent().remove(p._element)
 
 
+def ke_vien(t):
+    """Kẻ viền cho bảng bằng XML, vì tệp khuôn không có sẵn kiểu bảng kẻ viền."""
+    tbl_pr = t._tbl.tblPr
+    borders = OxmlElement("w:tblBorders")
+    for canh in ("top", "left", "bottom", "right", "insideH", "insideV"):
+        e = OxmlElement(f"w:{canh}")
+        e.set(qn("w:val"), "single")
+        e.set(qn("w:sz"), "6")
+        e.set(qn("w:color"), "000000")
+        borders.append(e)
+    tbl_pr.append(borders)
+
+
+def dat_chu(o, text, dam=False, co=12):
+    """Ghi chữ vào một ô của bảng, dùng phông Times New Roman."""
+    o.text = ""
+    p = o.paragraphs[0]
+    r = p.add_run(text)
+    r.font.name = "Times New Roman"
+    r.font.size = Pt(co)
+    r.bold = dam
+    p.paragraph_format.space_after = Pt(2)
+    p.paragraph_format.line_spacing = 1.15
+
+
+def them_bang(doc, bang):
+    """Thêm một bảng hai cột kèm dòng tiêu đề bảng ở trên."""
+    p = doc.add_paragraph()
+    r = p.add_run(bang["tieu_de"])
+    r.font.name = "Times New Roman"
+    r.font.size = Pt(12)
+    r.italic = True
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.space_before = Pt(8)
+    p.paragraph_format.space_after = Pt(4)
+
+    t = doc.add_table(rows=1, cols=len(bang["cot"]))
+    ke_vien(t)
+    for o, ten in zip(t.rows[0].cells, bang["cot"]):
+        dat_chu(o, ten, dam=True)
+    for dong in bang["dong"]:
+        o = t.add_row().cells
+        for i, gia_tri in enumerate(dong):
+            dat_chu(o[i], gia_tri)
+    doc.add_paragraph().paragraph_format.space_after = Pt(6)
+
+
 def main():
     if not os.path.exists(KHUON):
         sys.exit(f"Không tìm thấy tệp khuôn: {KHUON}")
@@ -317,7 +466,10 @@ def main():
         t._element.getparent().remove(t._element)
 
     # 3. Ghi các mục nội dung.
-    for text, kieu in MUC_1 + MUC_2 + MUC_3:
+    for text, kieu in MUC_1 + MUC_2 + MUC_3 + MUC_4:
+        if kieu == "bang":
+            them_bang(doc, BANG_MUC_4)
+            continue
         p = doc.add_paragraph()
         r = p.add_run(text)
         r.font.name = "Times New Roman"

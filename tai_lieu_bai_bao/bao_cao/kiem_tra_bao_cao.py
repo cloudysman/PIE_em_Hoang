@@ -24,7 +24,7 @@ except Exception:
 from docx import Document
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-BAO_CAO = os.path.join(HERE, "Bao_cao_muc_1_2_3.docx")
+BAO_CAO = os.path.join(HERE, "Bao_cao_muc_1_4.docx")
 GOC = (r"C:\Users\trong\AppData\Local\Temp\claude"
        r"\c--Users-trong-Downloads-PIE-em-Hoang"
        r"\2bf96163-73da-4142-8ed0-60cb16987721\scratchpad\bao_cao_goc.txt")
@@ -56,6 +56,10 @@ THUAT_NGU = [
 # Từ được phép viết hoa giữa câu: tên riêng, tên phương pháp và ký hiệu toán học.
 CHO_PHEP_HOA = {
     "Bx", "B", "D", "F", "x", "y",          # ký hiệu toán học trong y = Bx + ε
+    "Numerical", "Algorithms", "Journal", "Scientific", "Computing",
+    "Optimization", "Computational", "Applications", "Communications",
+    "Nonlinear", "Science", "Simulation", "SIAM", "Ferreira", "Ugon",
+    "Millán", "Qin", "Tan",                 # tên tạp chí và tên tác giả
     "Plug-and-Play", "Gauss", "PIE-Net", "Fejér", "DnCNN", "Q1", "Q2",
     "Chambolle-Pock", "Malitsky", "Hà", "Nội", "Đào", "Trọng", "Hiếu",
     "Đặng", "Văn", "Chiến", "Học", "Viện", "Bộ", "Khoa", "Công", "Nghệ",
@@ -92,13 +96,19 @@ def kiem_so_lieu(text, goc):
     return loi
 
 
-def kiem_thuat_ngu(text):
+def kiem_thuat_ngu(doan):
+    """Soát TỪNG đoạn riêng, không nối các đoạn lại.
+
+    Nếu nối, chữ cuối của đoạn này và chữ đầu của đoạn sau sẽ tạo ra những cụm từ
+    không có thật, chẳng hạn tiêu đề kết thúc bằng 'trùng lặp' đứng ngay trước đoạn
+    mở đầu bằng 'Trong' sẽ bị đọc thành 'lặp trong'."""
     loi = []
-    thap = text.lower()
-    for dung, sai_list in THUAT_NGU:
-        for sai in sai_list:
-            if sai.lower() in thap:
-                loi.append(f"dùng '{sai}' thay vì '{dung}'")
+    for t in doan:
+        thap = t.lower()
+        for dung, sai_list in THUAT_NGU:
+            for sai in sai_list:
+                if sai.lower() in thap:
+                    loi.append(f"dùng '{sai}' thay vì '{dung}'")
     return loi
 
 
@@ -173,7 +183,7 @@ def main():
     tat_ca_loi = []
     for ten, loi in [
         ("1. Đối chiếu số liệu với nguồn", kiem_so_lieu(text, goc)),
-        ("2. Thuật ngữ nhất quán", kiem_thuat_ngu(text)),
+        ("2. Thuật ngữ nhất quán", kiem_thuat_ngu(doan)),
         ("3. Viết hoa giữa câu", kiem_viet_hoa(doan)),
     ]:
         print(f"--- {ten} ---")
