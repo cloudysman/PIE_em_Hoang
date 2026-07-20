@@ -87,6 +87,10 @@ THUAT_NGU = [
     ("tập ràng buộc", ["miền ràng buộc", "tập khả thi"]),
     ("chứng chỉ", ["giấy chứng nhận", "certificate"]),
     ("hệ số vô hướng", ["hệ số scalar", "trọng số vô hướng"]),
+    ("độ dài bước", ["bước nhảy", "cỡ bước", "kích thước bước"]),
+    ("tập nghiệm", ["tập lời giải", "tập các nghiệm"]),
+    ("toán tử chi phí", ["ánh xạ chi phí", "toán tử giá"]),
+    ("đại lượng thế năng", ["hàm Lyapunov", "hàm thế năng", "đại lượng Lyapunov"]),
 ]
 
 # Từ được phép viết hoa giữa câu: tên riêng, tên phương pháp và ký hiệu toán học.
@@ -97,7 +101,7 @@ CHO_PHEP_HOA = {
     "Nonlinear", "Science", "Simulation", "SIAM", "Ferreira", "Ugon",
     "Millán", "Qin", "Tan", "Tseng",        # tên tạp chí và tên tác giả
     "Plug-and-Play", "Gauss", "PIE-Net", "Fejér", "DnCNN", "Q1", "Q2",
-    "Chambolle-Pock", "Malitsky", "Lipschitz", "Hà", "Nội", "Đào", "Trọng", "Hiếu",
+    "Chambolle-Pock", "Malitsky", "Lipschitz", "Minty", "Opial", "Hà", "Nội", "Đào", "Trọng", "Hiếu",
     "Đặng", "Văn", "Chiến", "Học", "Viện", "Bộ", "Khoa", "Công", "Nghệ",
     "Bưu", "Chính", "Viễn", "Thông", "Mục", "Đề", "Giảng", "Lớp", "Biết",
     "Báo", "Tóm", "Bối", "Câu", "Khẳng", "Kết", "Điểm", "Đóng", "Phần",

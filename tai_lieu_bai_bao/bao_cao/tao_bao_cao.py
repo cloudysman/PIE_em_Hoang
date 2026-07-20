@@ -89,7 +89,7 @@ MUC_1 = [
      "thuong"),
     ("Về mức công bố, báo cáo kết luận rằng công trình phù hợp một tạp chí thuộc nhóm "
      "Q2 chứ không phải nhóm Q1. Lý do nằm ở phần lý thuyết: sau khi dẫn xuất đầy đủ, "
-     "hằng số của số hạng nhiễu do phép chiếu xấp xỉ không chứa nghịch đảo bước nhảy, "
+     "hằng số của số hạng nhiễu do phép chiếu xấp xỉ không chứa nghịch đảo độ dài bước, "
      "nên việc thêm bước phản xạ vào khung phép chiếu xấp xỉ không tạo ra một cơ chế "
      "nhiễu mới về bản chất; định lý hội tụ vì thế là một mở rộng của các kết quả đã "
      "công bố. Giá trị công bố được của công trình nằm ở phần chứng chỉ, chế độ ngân "
@@ -317,7 +317,7 @@ BANG_MUC_4 = {
          "Có quán tính và độ nhớt với một phép chiếu mỗi bước, nhưng dùng hiệu chỉnh "
          "kiểu Tseng và phép chiếu chính xác."),
         ("Bản cải tiến của phương pháp chiếu phản xạ 2023, Numerical Algorithms",
-         "Tổng quát hóa quy tắc bước nhảy, không phải phép chiếu xấp xỉ; đã kiểm "
+         "Tổng quát hóa quy tắc chọn độ dài bước, không phải phép chiếu xấp xỉ; đã kiểm "
          "riêng vì đăng trên chính tạp chí được nhắm tới."),
         ("Bản có quán tính của phương pháp chiếu phản xạ 2022, Journal of Scientific "
          "Computing",
@@ -385,7 +385,7 @@ MUC_4 = [
      "hàm ý đã bao gồm cả nhiễu hoặc phép chiếu xấp xỉ. Nếu đúng như vậy thì toàn bộ "
      "khe hở nêu trên không còn, và mọi công việc sau đó là vô ích.", "thuong"),
     ("Vì rủi ro này có thể làm hỏng cả hướng nghiên cứu, nó được kiểm trước mọi việc "
-     "khác. Kết quả kiểm cho thấy bài đó tổng quát hóa quy tắc bước nhảy chứ không "
+     "khác. Kết quả kiểm cho thấy bài đó tổng quát hóa quy tắc chọn độ dài bước chứ không "
      "phải phép chiếu; nó cho hội tụ yếu và tốc độ tuyến tính theo nghĩa R khi toán tử "
      "đơn điệu mạnh, và không xét phép chiếu xấp xỉ. Khe hở vì thế vẫn còn.", "thuong"),
     ("Cùng lần kiểm này, khảo sát phát hiện thêm một bài năm 2022 trên Journal of "
@@ -899,6 +899,167 @@ MUC_8 = [
 ]
 
 
+MUC_9 = [
+    ("Mục 9. Phần lý thuyết", "de_muc"),
+
+    ("Mục 7 và mục 8 trình bày phần thực nghiệm. Mục này chuyển sang phần lý thuyết và "
+     "trả lời hai câu hỏi: đã chứng minh được gì, và chưa chứng minh được gì. Cách "
+     "trình bày tách bạch hai phần đó, vì trong quá trình làm việc đã có hai bản thảo "
+     "chứng minh bị bác, và bài học rút ra là không nên gộp phần đã vững với phần còn "
+     "phác thảo.", "thuong"),
+
+    ("9.1. Bài toán và sơ đồ cuối cùng", "de_muc_phu"),
+    ("Bài toán là bất đẳng thức biến phân trên tập ràng buộc: tìm một điểm của tập ràng "
+     "buộc sao cho tích vô hướng giữa toán tử chi phí tại điểm đó với hướng đi tới mọi "
+     "điểm khác của tập ràng buộc đều không âm. Tập các điểm như vậy gọi là tập nghiệm "
+     "và được giả thiết khác rỗng.", "thuong"),
+
+    ("Sơ đồ sau khi đã bỏ bước quán tính và bước neo ở mục 5 chỉ còn hai dòng. Dòng thứ "
+     "nhất lấy điểm phản xạ bằng hai lần điểm lặp hiện tại trừ điểm lặp trước đó. Dòng "
+     "thứ hai đi một bước theo hướng ngược với toán tử chi phí tại điểm phản xạ, với độ "
+     "dài bước cố định, rồi chiếu xấp xỉ điểm thu được lên tập ràng buộc với mức sai số "
+     "cho phép của bước ngoài đó. Toán tử chi phí chỉ được tính một lần trong mỗi bước "
+     "ngoài.", "thuong"),
+
+    ("9.2. Các giả thiết", "de_muc_phu"),
+    ("Định lý dùng năm giả thiết. Thứ nhất, tập ràng buộc lồi, đóng và khác rỗng, và "
+     "tập nghiệm khác rỗng. Thứ hai, toán tử chi phí đơn điệu và liên tục Lipschitz. "
+     "Thứ ba, độ dài bước dương và nhỏ hơn một thương, mà tử số là căn bậc hai của hai "
+     "trừ đi một, còn mẫu số là hằng số Lipschitz. Thứ tư, phép chiếu xấp xỉ luôn trả "
+     "về điểm nằm trong tập ràng buộc. Thứ năm, dãy sai số của phép chiếu xấp xỉ tổng "
+     "được.", "thuong"),
+
+    ("Giả thiết thứ hai cần một lưu ý mà nếu bỏ qua thì chứng minh sai. Tính đơn điệu "
+     "và tính Lipschitz phải được đặt trên toàn không gian, chứ không chỉ trên tập ràng "
+     "buộc. Lý do nằm ở chính điểm phản xạ: vì nó bằng hai lần điểm lặp hiện tại trừ "
+     "điểm lặp trước, nó nói chung nằm ngoài tập ràng buộc, dù cả hai điểm lặp đều nằm "
+     "trong. Trong chứng minh, tính đơn điệu được dùng đúng một lần, và dùng tại cặp "
+     "gồm điểm phản xạ với một điểm nghiệm; nếu chỉ giả thiết đơn điệu trên tập ràng "
+     "buộc thì bước đó không hợp lệ.", "thuong"),
+
+    ("Với bài toán khôi phục ảnh của đề tài, giả thiết này thỏa: toán tử chi phí có "
+     "dạng chuyển vị của toán tử làm mờ nhân với phần dư, nên nó đơn điệu và liên tục "
+     "Lipschitz trên toàn không gian.", "thuong"),
+
+    ("9.3. Vai trò của giả thiết khả thi", "de_muc_phu"),
+    ("Giả thiết thứ tư, rằng phép chiếu xấp xỉ trả về điểm khả thi, dễ bị hiểu nhầm là "
+     "một chi tiết cài đặt. Thực ra nó là điều kiện của định lý, và nếu bỏ đi thì chứng "
+     "minh hỏng ở một chỗ cụ thể.", "thuong"),
+
+    ("Chỗ đó như sau. Trong chứng minh có một đại lượng bằng tích vô hướng giữa toán tử "
+     "chi phí tại điểm nghiệm với hướng đi từ điểm lặp tới điểm nghiệm. Đại lượng này "
+     "không dương đúng khi điểm lặp nằm trong tập ràng buộc, vì đó chính là phát biểu "
+     "của bất đẳng thức biến phân tại điểm nghiệm. Dấu không dương ấy được dùng hai "
+     "lần: một lần để khẳng định đại lượng thế năng không âm, và một lần để giữ dấu của "
+     "số hạng thu gọn dần khi cộng dồn qua các bước ngoài. Nếu điểm lặp ra ngoài tập "
+     "ràng buộc thì dấu này mất, và cả hai lập luận đổ theo.", "thuong"),
+
+    ("Đây cũng là chỗ phần thực nghiệm gặp phần lý thuyết. Con số ở mục 7.4, rằng biến "
+     "phân toàn phần của đầu ra chia cho bán kính không bao giờ vượt 1,0000 trên toàn "
+     "bộ cấu hình đã chạy, không phải một chỉ số phụ mà chính là giả thiết thứ tư được "
+     "kiểm bằng số. Tương tự, phép đo tổng được ở mục 7.6 chính là giả thiết thứ năm "
+     "được kiểm bằng số. Hai giả thiết của định lý vì thế không phải điều kiện đặt ra "
+     "cho tiện, mà là điều kiện đã được đo.", "thuong"),
+
+    ("9.4. Phần đã chứng minh đầy đủ", "de_muc_phu"),
+    ("Phần này gồm bốn bổ đề và một bước ghép, tất cả đã được ba người phản biện độc "
+     "lập tính lại từng phép biến đổi và đều xác nhận đúng, không sai dấu, sai hệ số "
+     "hay sai chỉ số.", "thuong"),
+
+    ("Bổ đề thứ nhất là bất đẳng thức cơ bản của bước chiếu, dẫn từ đặc trưng của phép "
+     "chiếu lên tập lồi đóng cộng với đẳng thức phân cực. Bổ đề thứ hai xử lý số hạng "
+     "toán tử bằng tính đơn điệu; đây là chỗ duy nhất dùng tính đơn điệu, và là lý do "
+     "giả thiết thứ hai phải đặt trên toàn không gian. Bổ đề thứ ba thu gọn số hạng "
+     "nghiệm: nhờ dạng của điểm phản xạ, đại lượng tại điểm phản xạ bằng hai lần đại "
+     "lượng tại bước hiện tại trừ đại lượng tại bước trước, nên khi cộng dồn qua các "
+     "bước ngoài phần lớn triệt tiêu. Bổ đề thứ tư chặn ảnh hưởng của sai số phép chiếu "
+     "xấp xỉ bằng bất đẳng thức tam giác và khai triển bình phương.", "thuong"),
+
+    ("Bước ghép dựng một đại lượng thế năng gồm ba số hạng: bình phương khoảng cách từ "
+     "điểm lặp tới điểm nghiệm, một số hạng bình phương đo độ lệch giữa điểm lặp với "
+     "điểm phản xạ của bước trước, và số hạng nghiệm của bước trước lấy dấu ngược. Cả "
+     "ba đều không âm, số hạng thứ ba nhờ đúng giả thiết khả thi nói ở trên.", "thuong"),
+
+    ("Trong bước ghép có một đẳng thức đáng nêu vì nó là chỗ mọi thứ khớp lại. Hai hằng "
+     "số xuất hiện trong bất đẳng thức một bước, một hằng số nhân với bình phương độ "
+     "lệch giữa hai điểm lặp liên tiếp và một hằng số nhân với bình phương độ lệch giữa "
+     "điểm chiếu với điểm phản xạ, thoạt nhìn khác nhau. Nhưng hằng số thứ hai trừ đi "
+     "tích của độ dài bước với hằng số Lipschitz thì đúng bằng hằng số thứ nhất. Nhờ "
+     "đẳng thức đó, hai số hạng âm gộp lại với cùng một hệ số, và đại lượng thế năng "
+     "giảm đơn điệu. Điều kiện để cả hai hằng số dương chính là giả thiết thứ ba về độ "
+     "dài bước.", "thuong"),
+
+    ("Với phép chiếu chính xác, lập luận đến đây là khép kín: đại lượng thế năng giảm "
+     "và bị chặn dưới bởi không nên hội tụ, và tổng các số hạng âm hữu hạn.", "thuong"),
+
+    ("9.5. Nhiễu do phép chiếu xấp xỉ", "de_muc_phu"),
+    ("Khi phép chiếu chỉ xấp xỉ, nhiễu vào theo hai đường khác nhau, và việc phân biệt "
+     "chúng là phần khó nhất của chứng minh.", "thuong"),
+
+    ("Đường thứ nhất là nhiễu điểm cuối. Điểm lặp thực khác điểm chiếu chính xác lý "
+     "tưởng một lượng không quá mức sai số cho phép, nên khi thay điểm này bằng điểm "
+     "kia trong đại lượng thế năng sẽ sinh các số hạng bậc nhất và bậc hai theo mức sai "
+     "số. Đường này thuần túy kỹ thuật, và phản biện xác nhận đúng tới từng hệ số.",
+     "thuong"),
+
+    ("Đường thứ hai là nhiễu điểm gốc, và tinh tế hơn. Bất đẳng thức một bước có một số "
+     "hạng còn phụ thuộc điểm lặp cách đó hai bước, và số hạng ấy được chặn bằng đặc "
+     "trưng phép chiếu của bước trước. Nhưng đặc trưng đó chỉ đúng cho điểm chiếu chính "
+     "xác của bước trước, chứ không cho điểm lặp thực. Chênh lệch giữa hai điểm ấy sinh "
+     "thêm các số hạng chéo bậc nhất theo sai số của bước trước.", "thuong"),
+
+    ("Câu hỏi quyết định là hằng số đứng trước sai số của bước trước lớn cỡ nào. Nếu nó "
+     "chứa nghịch đảo của độ dài bước thì sai số bị khuếch đại khi độ dài bước nhỏ, và "
+     "đó sẽ là một hiện tượng riêng của sơ đồ này, tức một điểm phân biệt. Hằng số này "
+     "đã được dẫn xuất đầy đủ, và kết quả là nó gồm bốn phần: hai lần chặn của độ lệch "
+     "giữa hai điểm lặp liên tiếp, hai lần tích của độ dài bước với chặn của toán tử "
+     "chi phí, hai lần chặn của khoảng cách từ điểm lặp tới điểm so sánh, và hai lần "
+     "mức sai số ban đầu.", "thuong"),
+
+    ("9.6. Kết luận trung thực của phần lý thuyết", "de_muc_phu"),
+    ("Hằng số vừa nêu không chứa nghịch đảo của độ dài bước. Ngược lại, độ dài bước xuất "
+     "hiện ở một phần dưới dạng thừa số nhân, tức làm phần đó nhỏ đi khi độ dài bước "
+     "nhỏ. Lý do có tính cấu trúc: trong đặc trưng phép chiếu, toán tử chi phí đã đi "
+     "kèm sẵn thừa số độ dài bước, nên khi sai số điểm gốc gặp số hạng toán tử, nó nhận "
+     "thừa số ấy chứ không nhận nghịch đảo của nó.", "thuong"),
+
+    ("Khẳng định ban đầu của báo cáo, rằng sai số điểm gốc bị khuếch đại bởi nghịch đảo "
+     "độ dài bước, vì thế là sai; phản biện đã nghi ngờ đúng. Hệ quả phải nói "
+     "thẳng: số hạng nhiễu điểm gốc không có gì đặc biệt hơn nhiễu điểm cuối, cả hai "
+     "đều bậc nhất theo sai số và đều tổng được. Định lý hội tụ của báo cáo do đó là "
+     "một mở rộng của kết quả đã có, chứ không phải một cơ chế mới. Việc thêm bước phản "
+     "xạ vào khung phép chiếu xấp xỉ chỉ là kiểm rằng cơ chế bền vững với nhiễu vẫn "
+     "chạy qua bước phản xạ, và kết quả kiểm là đúng.", "thuong"),
+
+    ("Đây chính là lý do bài báo nhắm nhóm Q2 chứ không phải nhóm Q1. Kết luận này "
+     "không làm mất giá trị của công việc mà xác định đúng giá trị của nó: đóng góp nằm "
+     "ở chứng chỉ sai số tính được ở mục 6, chế độ ngân sách thích nghi và phân tích "
+     "chi phí ở mục 7, cùng giao thức đo ở mục 8. Ba thứ đó là đóng góp về thuật toán "
+     "và thực nghiệm, và chúng không phụ thuộc vào việc phần định lý có mới hay không.",
+     "thuong"),
+
+    ("9.7. Hai chỗ còn phải viết đầy đủ", "de_muc_phu"),
+    ("Chỗ thứ nhất là phát biểu chính xác của bổ đề tựa Fejér. Sau khi thêm nhiễu, "
+     "truy hồi không còn dạng đại lượng thế năng của bước sau không vượt đại lượng thế "
+     "năng của bước trước cộng một sai số cộng tính, mà có thêm một thừa số nhân lớn "
+     "hơn một. Dạng nhân tính này vẫn cho hội tụ khi cả dãy hệ số nhân lẫn dãy sai số "
+     "cộng đều tổng được, nhưng phải dùng đúng phát biểu dành cho dạng đó, và phải kiểm "
+     "rằng bước biến đổi không làm mất phần âm vốn là thứ cho ra tính tổng được của các "
+     "độ lệch.", "thuong"),
+
+    ("Chỗ thứ hai là bước chuyển qua giới hạn yếu. Lập luận cuối lấy một dãy con hội tụ "
+     "yếu, chuyển qua giới hạn trong đặc trưng phép chiếu, rồi dùng bổ đề Minty để kết "
+     "luận điểm giới hạn thuộc tập nghiệm, sau đó dùng bổ đề Opial. Trong không gian "
+     "hữu hạn chiều của phần thực nghiệm, các bước này là thường quy. Trong không gian "
+     "vô hạn chiều, bước Minty còn cần tính liên tục yếu theo dãy của toán tử chi phí, "
+     "và điều đó chưa được kiểm.", "thuong"),
+
+    ("Tóm lại, phần lý thuyết đứng vững ở khối chính và còn hai chỗ kỹ thuật phải viết "
+     "cho đủ. Mục 10 tiếp theo ghi lại các hướng đã thử mà không đi tới đâu, trong đó "
+     "có cả hai bản thảo chứng minh đã bị bác nói ở đầu mục này.", "thuong"),
+]
+
+
 def thay_chu(p, text):
     """Thay chữ của một đoạn nhưng giữ nguyên định dạng của lần chạy chữ đầu tiên."""
     runs = p.runs
@@ -981,7 +1142,8 @@ def main():
         "bang": BANG_MUC_4, "bang6": BANG_MUC_6, "bang7a": BANG_MUC_7A,
         "bang7b": BANG_MUC_7B, "bang8": BANG_MUC_8,
     }
-    for text, kieu in MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6 + MUC_7 + MUC_8:
+    for text, kieu in (MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6 + MUC_7
+                       + MUC_8 + MUC_9):
         if kieu in bang_theo_khoa:
             them_bang(doc, bang_theo_khoa[kieu])
             continue
