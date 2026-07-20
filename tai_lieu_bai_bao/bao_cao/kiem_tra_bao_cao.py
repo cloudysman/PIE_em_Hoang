@@ -1,6 +1,6 @@
 """Kiểm tra tệp báo cáo: số liệu, thuật ngữ, cách viết hoa và liên kết giữa các mục.
 
-Bảy nhóm kiểm tra:
+Tám nhóm kiểm tra:
   1. Mọi con số trong báo cáo phải khớp báo cáo thực nghiệm gốc hoặc tệp kết quả.
   2. Thuật ngữ phải nhất quán: không dùng hai từ khác nhau cho cùng một khái niệm.
   3. Không viết hoa tùy tiện ở giữa câu.
@@ -11,6 +11,8 @@ Bảy nhóm kiểm tra:
   6. Số dòng lệnh trong bảng liệt kê tệp mã nguồn phải khớp chính tệp đó, và tổng
      số dòng phải xuất hiện trong phần chữ. Nhóm 5 chỉ soát số thập phân nên bỏ sót.
   7. Mọi đường dẫn nêu trong bảng phải còn tồn tại trong kho lưu trữ.
+  8. Quy ước trình bày: mỗi mục chính bắt đầu một trang mới, chữ dùng đúng một
+     phông, và báo cáo có số trang.
 
 Chạy: python tai_lieu_bai_bao/bao_cao/kiem_tra_bao_cao.py
 """
@@ -130,6 +132,11 @@ CHO_PHEP_HOA = {
 }
 
 
+PHONG_CHUAN = "Times New Roman"
+SO_MUC = 15            # số mục chính của báo cáo
+SO_NHOM = 8            # số nhóm kiểm tra của chính chương trình này
+SO_NHOM_BANG_CHU = {6: "sáu", 7: "bảy", 8: "tám", 9: "chín"}
+
 BO_QUA_SO = {"4,1"}          # số hiệu bảng, không phải số liệu
 
 
@@ -221,6 +228,38 @@ def kiem_bang_ma_nguon(o_bang, text):
     if str(tong) not in text:
         loi.append(f"tổng số dòng lệnh đếm được là {tong}, "
                    f"nhưng con số này không có trong phần chữ")
+    return loi
+
+
+def kiem_trinh_bay(path, text):
+    """Kiểm các quy ước trình bày, để chúng không mất đi khi sửa trình sinh báo cáo.
+
+    Bốn điều được kiểm: mỗi mục chính phải là đề mục cấp một và phải bắt đầu một
+    trang mới; mọi đoạn chữ phải dùng đúng một phông; phải có số trang; và số nhóm
+    kiểm tra mà báo cáo tự mô tả phải khớp số nhóm thật. Điều cuối được thêm vì đã
+    hai lần thêm nhóm kiểm tra mới mà quên sửa con số nêu trong mục 11.4."""
+    d = Document(path)
+    loi = []
+    chu_so = SO_NHOM_BANG_CHU.get(SO_NHOM)
+    if chu_so and f"{chu_so} nhóm kiểm tra" not in text:
+        loi.append(f"báo cáo không nói trình kiểm tra có {chu_so} nhóm kiểm tra, "
+                   f"trong khi thực tế có {SO_NHOM} nhóm")
+    de_muc = [p for p in d.paragraphs if p.style.name == "Heading 1"]
+    if len(de_muc) != SO_MUC:
+        loi.append(f"có {len(de_muc)} đề mục cấp một, đáng lẽ phải là {SO_MUC}")
+    for p in de_muc:
+        if not p.paragraph_format.page_break_before:
+            loi.append(f"đề mục '{p.text[:40]}' không bắt đầu một trang mới")
+
+    phong = {r.font.name for p in d.paragraphs for r in p.runs if r.text.strip()}
+    phong |= {r.font.name for t in d.tables for hang in t.rows for o in hang.cells
+              for p in o.paragraphs for r in p.runs if r.text.strip()}
+    la = sorted(x for x in phong if x not in (None, PHONG_CHUAN))
+    if la:
+        loi.append(f"có chữ dùng phông khác {PHONG_CHUAN}: {la}")
+
+    if not d.sections[0].footer.paragraphs[0].runs:
+        loi.append("chân trang không có số trang")
     return loi
 
 
@@ -381,6 +420,7 @@ def main():
         ("5. Số trong bảng", kiem_bang(o_bang, ket_qua)),
         ("6. Bảng mã nguồn khớp kho lưu trữ", kiem_bang_ma_nguon(o_bang, text)),
         ("7. Đường dẫn trong bảng còn tồn tại", kiem_duong_dan(o_bang)),
+        ("8. Quy ước trình bày", kiem_trinh_bay(BAO_CAO, text)),
     ]:
         print(f"--- {ten} ---")
         if loi:

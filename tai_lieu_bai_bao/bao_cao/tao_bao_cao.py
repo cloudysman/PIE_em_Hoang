@@ -22,7 +22,8 @@ from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
-from docx.shared import Pt
+from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.shared import Pt, RGBColor
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 KHUON = r"C:\Users\trong\Downloads\SoundGuard_Report_FULL_EN.docx"
@@ -1262,12 +1263,13 @@ MUC_11 = [
      "Lệnh chạy lại từng thí nghiệm được ghi trong phần chú thích đầu của mỗi tệp, kèm "
      "các tham số đã dùng, nên người kiểm không phải đoán.", "thuong"),
 
-    ("Ngoài ra có một trình kiểm tra tự động cho chính báo cáo này, gồm bảy nhóm kiểm "
+    ("Ngoài ra có một trình kiểm tra tự động cho chính báo cáo này, gồm tám nhóm kiểm "
      "tra. Nó đối chiếu từng con số trong báo cáo với tệp kết quả, kể cả các số trong "
      "bảng và các số ghi ở dạng khoa học; kiểm tính nhất quán của thuật ngữ; kiểm cách "
      "viết hoa; kiểm các mục có dẫn sang nhau hay không; đếm lại số dòng lệnh của từng "
      "tệp trong bảng 11.1 để bảng đó không lỗi thời khi mã nguồn thay đổi; và kiểm mọi "
-     "đường dẫn nêu trong bảng 12.1 có còn tồn tại hay không. Trình kiểm tra này đã bắt "
+     "đường dẫn nêu trong bảng 12.1 có còn tồn tại hay không; và kiểm các quy ước trình "
+     "bày, gồm việc mỗi mục chính phải bắt đầu một trang mới. Trình kiểm tra này đã bắt "
      "được nhiều lỗi trong quá trình viết, trong đó có những con số lấy từ một lần chạy "
      "cũ đã bị thay thế, và một đường dẫn ghi thiếu tên thư mục.", "thuong"),
 
@@ -1649,8 +1651,43 @@ MUC_15 = [
      "thay vì rút gọn, vì chính chúng là căn cứ để tin các con số còn lại.", "thuong"),
 
     ("Đến đây báo cáo kết thúc. Toàn bộ nội dung, từ mục 1 đến mục 15, đã được trình "
-     "kiểm tra tự động soát qua bảy nhóm kiểm tra trước khi nộp.", "thuong"),
+     "kiểm tra tự động soát qua tám nhóm kiểm tra trước khi nộp.", "thuong"),
 ]
+
+
+# ---------------------------------------------------------------------------
+# Quy ước trình bày. Gom vào một chỗ để đổi một lần là đổi toàn báo cáo.
+# ---------------------------------------------------------------------------
+PHONG = "Times New Roman"
+CO_DE_MUC = 15                # đề mục cấp một, ví dụ "Mục 7. ..."
+CO_DE_MUC_PHU = 13            # đề mục cấp hai, ví dụ "7.1. ..."
+CO_CHU = 13                   # đoạn văn thường
+CO_BANG = 11                  # chữ trong bảng, nhỏ hơn để bảng rộng vẫn vừa trang
+CO_CHU_THICH = 11             # tiêu đề bảng và số trang
+GIAN_DONG = 1.4
+THUT_DAU_DONG = Pt(28)
+NEN_DONG_TIEU_DE = "E8E8E8"   # nền xám nhạt cho dòng tiêu đề bảng
+
+
+def dat_phong(r, co, dam=False, nghieng=False):
+    """Đặt phông chữ cho một lần chạy chữ.
+
+    Phải đặt cả thuộc tính phông cho chữ Đông Á, vì nếu thiếu thì Word có thể tự
+    thay phông khác cho các ký tự tiếng Việt có dấu."""
+    r.font.name = PHONG
+    r.font.size = Pt(co)
+    r.bold = dam
+    r.italic = nghieng
+    r._element.rPr.rFonts.set(qn("w:eastAsia"), PHONG)
+
+
+def them_phan_tu(cha, ten, **thuoc_tinh):
+    """Tạo một phần tử XML của Word và gắn vào phần tử cha."""
+    e = OxmlElement(f"w:{ten}")
+    for k, v in thuoc_tinh.items():
+        e.set(qn(f"w:{k}"), v)
+    cha.append(e)
+    return e
 
 
 def thay_chu(p, text):
@@ -1668,51 +1705,146 @@ def xoa_doan(p):
     p._element.getparent().remove(p._element)
 
 
+def them_de_muc(doc, text, cap):
+    """Thêm một đề mục, dùng kiểu Heading để mục lục nhận ra được.
+
+    Kiểu Heading sẵn có của Word dùng phông riêng và màu xanh, nên phải ép lại
+    phông Times New Roman màu đen cho khớp phần còn lại. Đề mục cấp một luôn bắt
+    đầu một trang mới, theo yêu cầu mỗi mục nằm riêng một trang."""
+    p = doc.add_paragraph(style=f"Heading {cap}")
+    r = p.add_run(text)
+    dat_phong(r, CO_DE_MUC if cap == 1 else CO_DE_MUC_PHU, dam=True)
+    r.font.color.rgb = RGBColor(0, 0, 0)
+    pf = p.paragraph_format
+    pf.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    pf.line_spacing = 1.2
+    pf.keep_with_next = True          # đề mục không bị bỏ lại một mình cuối trang
+    if cap == 1:
+        pf.page_break_before = True
+        pf.space_before = Pt(0)
+        pf.space_after = Pt(14)
+    else:
+        pf.space_before = Pt(12)
+        pf.space_after = Pt(6)
+    return p
+
+
+def them_doan(doc, text):
+    """Thêm một đoạn văn thường: căn đều hai bên, thụt dòng đầu."""
+    p = doc.add_paragraph()
+    dat_phong(p.add_run(text), CO_CHU)
+    pf = p.paragraph_format
+    pf.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
+    pf.line_spacing = GIAN_DONG
+    pf.space_after = Pt(6)
+    pf.first_line_indent = THUT_DAU_DONG
+    pf.widow_control = True           # không để một dòng lẻ trôi sang trang sau
+    return p
+
+
 def ke_vien(t):
     """Kẻ viền cho bảng bằng XML, vì tệp khuôn không có sẵn kiểu bảng kẻ viền."""
-    tbl_pr = t._tbl.tblPr
     borders = OxmlElement("w:tblBorders")
     for canh in ("top", "left", "bottom", "right", "insideH", "insideV"):
-        e = OxmlElement(f"w:{canh}")
-        e.set(qn("w:val"), "single")
-        e.set(qn("w:sz"), "6")
-        e.set(qn("w:color"), "000000")
-        borders.append(e)
-    tbl_pr.append(borders)
+        them_phan_tu(borders, canh, val="single", sz="6", color="000000")
+    t._tbl.tblPr.append(borders)
 
 
-def dat_chu(o, text, dam=False, co=12):
-    """Ghi chữ vào một ô của bảng, dùng phông Times New Roman."""
+def to_nen(o, mau):
+    """Tô nền cho một ô của bảng."""
+    them_phan_tu(o._tc.get_or_add_tcPr(), "shd", val="clear", fill=mau)
+
+
+def dat_chu(o, text, dam=False, canh_giua=False):
+    """Ghi chữ vào một ô của bảng."""
     o.text = ""
     p = o.paragraphs[0]
-    r = p.add_run(text)
-    r.font.name = "Times New Roman"
-    r.font.size = Pt(co)
-    r.bold = dam
-    p.paragraph_format.space_after = Pt(2)
-    p.paragraph_format.line_spacing = 1.15
+    dat_phong(p.add_run(text), CO_BANG, dam=dam)
+    pf = p.paragraph_format
+    pf.space_before = Pt(3)
+    pf.space_after = Pt(3)
+    pf.line_spacing = 1.15
+    if canh_giua:
+        pf.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 
 def them_bang(doc, bang):
-    """Thêm một bảng hai cột kèm dòng tiêu đề bảng ở trên."""
+    """Thêm một bảng kèm dòng chú thích ở trên.
+
+    Dòng tiêu đề được tô nền và đánh dấu lặp lại ở đầu mỗi trang, để bảng dài vẫn
+    đọc được khi tràn sang trang sau. Mỗi hàng không được vỡ giữa hai trang."""
     p = doc.add_paragraph()
-    r = p.add_run(bang["tieu_de"])
-    r.font.name = "Times New Roman"
-    r.font.size = Pt(12)
-    r.italic = True
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p.paragraph_format.space_before = Pt(8)
-    p.paragraph_format.space_after = Pt(4)
+    dat_phong(p.add_run(bang["tieu_de"]), CO_CHU_THICH, nghieng=True)
+    pf = p.paragraph_format
+    pf.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    pf.space_before = Pt(10)
+    pf.space_after = Pt(4)
+    pf.keep_with_next = True          # chú thích luôn đi liền với bảng của nó
 
     t = doc.add_table(rows=1, cols=len(bang["cot"]))
+    t.alignment = WD_TABLE_ALIGNMENT.CENTER
     ke_vien(t)
+
     for o, ten in zip(t.rows[0].cells, bang["cot"]):
-        dat_chu(o, ten, dam=True)
+        dat_chu(o, ten, dam=True, canh_giua=True)
+        to_nen(o, NEN_DONG_TIEU_DE)
+    them_phan_tu(t.rows[0]._tr.get_or_add_trPr(), "tblHeader", val="true")
+
     for dong in bang["dong"]:
         o = t.add_row().cells
         for i, gia_tri in enumerate(dong):
             dat_chu(o[i], gia_tri)
-    doc.add_paragraph().paragraph_format.space_after = Pt(6)
+
+    for hang in t.rows:
+        them_phan_tu(hang._tr.get_or_add_trPr(), "cantSplit", val="true")
+
+    doc.add_paragraph().paragraph_format.space_after = Pt(8)
+
+
+def them_truong(p, lenh, chu_tam):
+    """Chèn một trường của Word, chẳng hạn mục lục hoặc số trang.
+
+    Trường được đánh dấu cần tính lại để Word tự cập nhật khi mở tệp; chu_tam là
+    chữ hiện ra trong lúc trường chưa được tính."""
+    r = p.add_run()
+    them_phan_tu(r._r, "fldChar", fldCharType="begin", dirty="true")
+    e = OxmlElement("w:instrText")
+    e.set(qn("xml:space"), "preserve")
+    e.text = lenh
+    r._r.append(e)
+    them_phan_tu(r._r, "fldChar", fldCharType="separate")
+    t = OxmlElement("w:t")
+    t.text = chu_tam
+    r._r.append(t)
+    them_phan_tu(r._r, "fldChar", fldCharType="end")
+    return r
+
+
+def them_muc_luc(doc):
+    """Thêm trang mục lục, sinh tự động từ các đề mục."""
+    p = doc.add_paragraph()
+    dat_phong(p.add_run("Mục lục"), CO_DE_MUC, dam=True)
+    p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.space_after = Pt(14)
+
+    p = doc.add_paragraph()
+    lenh = 'TOC \\o "1-2" \\h \\z \\u'
+    r = them_truong(p, lenh, "Mở tệp bằng Word rồi nhấn phím F9 để hiện mục lục.")
+    dat_phong(r, CO_CHU)
+    p.paragraph_format.line_spacing = GIAN_DONG
+
+
+def them_so_trang(doc):
+    """Đánh số trang ở chân trang, căn giữa, trừ trang bìa.
+
+    Word cho phép khai báo riêng chân trang của trang đầu; ta để trống nó, nên bìa
+    không mang số trang còn các trang sau vẫn được đánh số."""
+    sec = doc.sections[0]
+    sec.different_first_page_header_footer = True
+    p = sec.footer.paragraphs[0]
+    p.text = ""
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    dat_phong(them_truong(p, "PAGE", "1"), CO_CHU_THICH)
 
 
 def main():
@@ -1730,7 +1862,11 @@ def main():
     for t in list(doc.tables):
         t._element.getparent().remove(t._element)
 
-    # 3. Ghi các mục nội dung.
+    # 3. Mục lục nằm ngay sau bìa; mỗi mục sau đó tự sang trang mới.
+    them_muc_luc(doc)
+    them_so_trang(doc)
+
+    # 4. Ghi các mục nội dung.
     bang_theo_khoa = {
         "bang": BANG_MUC_4, "bang6": BANG_MUC_6, "bang7a": BANG_MUC_7A,
         "bang7b": BANG_MUC_7B, "bang8": BANG_MUC_8, "bang11": BANG_MUC_11,
@@ -1743,28 +1879,12 @@ def main():
                        + MUC_14 + MUC_15):
         if kieu in bang_theo_khoa:
             them_bang(doc, bang_theo_khoa[kieu])
-            continue
-        p = doc.add_paragraph()
-        r = p.add_run(text)
-        r.font.name = "Times New Roman"
-        if kieu == "de_muc":
-            r.bold = True
-            r.font.size = Pt(15)
-            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-            p.paragraph_format.space_before = Pt(14)
-            p.paragraph_format.space_after = Pt(12)
+        elif kieu == "de_muc":
+            them_de_muc(doc, text, cap=1)
         elif kieu == "de_muc_phu":
-            r.bold = True
-            r.font.size = Pt(13)
-            p.alignment = WD_ALIGN_PARAGRAPH.LEFT
-            p.paragraph_format.space_before = Pt(10)
-            p.paragraph_format.space_after = Pt(6)
+            them_de_muc(doc, text, cap=2)
         else:
-            r.font.size = Pt(13)
-            p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
-            p.paragraph_format.space_after = Pt(6)
-            p.paragraph_format.first_line_indent = Pt(28)
-        p.paragraph_format.line_spacing = 1.4
+            them_doan(doc, text)
 
     doc.save(OUT)
     print(f"đã tạo: {OUT}")
