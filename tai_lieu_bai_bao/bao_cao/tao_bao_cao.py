@@ -1500,6 +1500,159 @@ MUC_14 = [
 ]
 
 
+BANG_PL_A = {
+    "tieu_de": ("Bảng 15.1. Phụ lục A: bảng thuật ngữ. Cột tiếng Việt là từ được dùng "
+                "thống nhất trong toàn báo cáo."),
+    "cot": ["Tiếng Việt", "Tiếng Anh"],
+    "dong": [
+        ("bất đẳng thức biến phân", "variational inequality"),
+        ("tập ràng buộc", "constraint set"),
+        ("tập nghiệm", "solution set"),
+        ("toán tử chi phí", "cost operator"),
+        ("quả cầu biến phân toàn phần", "total variation ball"),
+        ("điểm phản xạ", "reflected point"),
+        ("bước quán tính", "inertial step"),
+        ("bước neo", "anchor step"),
+        ("hiệu chỉnh kiểu Tseng", "Tseng-type correction"),
+        ("phép chiếu xấp xỉ", "inexact projection"),
+        ("bước nội", "inner iteration"),
+        ("bước ngoài", "outer iteration"),
+        ("khởi tạo ấm", "warm start"),
+        ("chứng chỉ sai số", "error certificate"),
+        ("khoảng cách đối ngẫu", "duality gap"),
+        ("ngân sách thích nghi", "adaptive budget"),
+        ("tổng được", "summable"),
+        ("phần dư biến phân", "variational residual"),
+        ("đại lượng thế năng", "potential function"),
+        ("tựa Fejér", "quasi-Fejér"),
+        ("độ dài bước", "step size"),
+    ],
+}
+
+BANG_PL_B = {
+    "tieu_de": ("Bảng 15.2. Phụ lục B: lệnh chạy lại từng thí nghiệm. Chạy từ thư mục "
+                "gốc của kho lưu trữ."),
+    "cot": ["Thí nghiệm", "Lệnh", "Mục liên quan"],
+    "dong": [
+        ("So chi phí theo giao thức đo công bằng",
+         "python grid_schedule.py --device cuda --K 150 --size 96 --n_test 8 "
+         "--blur gauss", "mục 7, mục 8"),
+        ("Kiểm chặn trên của chứng chỉ và đo cái giá",
+         "python test_certificate.py", "mục 6"),
+        ("Đo tính tổng được của dãy sai số",
+         "python test_summability.py --device cuda --K 600", "mục 7.6"),
+        ("Rút số liệu của mục 7 từ tệp kết quả",
+         "python phan_tich_muc7.py", "mục 7"),
+        ("Chạy bộ kiểm thử", "python -m pytest tests/", "mục 11.1"),
+        ("Sinh lại báo cáo này",
+         "python tai_lieu_bai_bao/bao_cao/tao_bao_cao.py", "mục 11.4"),
+        ("Kiểm tra báo cáo",
+         "python tai_lieu_bai_bao/bao_cao/kiem_tra_bao_cao.py", "mục 11.4"),
+    ],
+}
+
+BANG_PL_C = {
+    "tieu_de": ("Bảng 15.3. Phụ lục C: danh mục tệp kết quả, nhóm theo thí nghiệm sinh "
+                "ra chúng. Tất cả nằm trong thư mục results/theory/."),
+    "cot": ["Nhóm tệp", "Số tệp", "Thuộc thí nghiệm nào"],
+    "dong": [
+        ("certificate_check.csv, certificate_cost.csv", "2",
+         "Kiểm chứng chỉ, nguồn của bảng 6.1 và của các số ở mục 6.6"),
+        ("grid_fair_gauss.csv, grid_fair_motion.csv và hai tệp pareto", "4",
+         "Lưới so chi phí công bằng, nguồn của bảng 7.1 và bảng 7.2"),
+        ("grid_schedule_gauss.csv, grid_schedule_motion.csv", "2",
+         "Lưới lịch đầy đủ, nguồn của các số ở mục 8.1 và mục 10.1"),
+        ("muc7_he_so_*.csv, muc7_kha_thi.csv, muc7_lich_*.csv, muc7_do_nhay.csv", "6",
+         "Số liệu rút cho mục 7, sinh bởi phan_tich_muc7.py"),
+        ("summability_gauss.csv, summability_motion.csv", "2",
+         "Đo độ dốc và tính tổng được, nguồn của mục 7.6"),
+        ("theory_gauss_*.csv, theory_motion_*.csv", "12",
+         "Quỹ đạo theo từng chế độ ngân sách, nguồn của mức khả thi ở mục 7.4"),
+        ("pseudomono_*.csv, summary.csv", "4",
+         "Thí nghiệm về toán tử giả đơn điệu, không trích vào báo cáo này"),
+        ("compare_accel_gauss.log và ba tệp nhật ký khác", "4",
+         "Nhật ký chạy, nguồn của bảng 8.1 và của các số ở mục 10.1"),
+        ("results/theory/phan_tich.md", "1", "Ghi chép phân tích kèm theo các lần chạy"),
+    ],
+}
+
+BANG_PL_D = {
+    "tieu_de": ("Bảng 15.4. Phụ lục D: biên bản các vòng phản biện. Kết quả của mỗi "
+                "vòng đều đã được tích hợp vào báo cáo."),
+    "cot": ["Vòng", "Đối tượng phản biện", "Kết quả"],
+    "dong": [
+        ("1", "Bản thảo chứng minh thứ nhất, nhắm hội tụ mạnh cho sơ đồ bốn pha",
+         "Bị bác. Bổ đề một bước đòi chuỗi phép chiếu liền mạch, mà bước quán tính và "
+         "bước neo cắt đứt chuỗi đó. Dẫn tới việc bỏ hai bước ấy, xem mục 5"),
+        ("2", "Số liệu so chi phí bản đầu",
+         "Bị bác. Ba lỗi đo lường được chỉ ra, dẫn tới giao thức đo công bằng ở mục 8"),
+        ("3", "Bản thảo chứng minh thứ hai, hội tụ yếu",
+         "Bốn bổ đề đứng vững, phần lập luận tính mới bị bác vì là ngụy biện. Đề xuất "
+         "thay bằng tiêu chuẩn chiếu nới lỏng, hướng này về sau đóng lại, xem mục 10.4"),
+        ("4", "Bước ghép đại lượng thế năng cho phép chiếu chính xác",
+         "Ba người phản biện độc lập tính lại từng phép biến đổi và đều xác nhận đúng, "
+         "kể cả đẳng thức then chốt, xem mục 9.4"),
+        ("5", "Khẳng định hằng số nhiễu chứa nghịch đảo độ dài bước",
+         "Bị bác. Hai người phản biện xác nhận hằng số không chứa nghịch đảo độ dài "
+         "bước, nên định lý là mở rộng, xem mục 9.6"),
+    ],
+}
+
+MUC_15 = [
+    ("Mục 15. Phụ lục", "de_muc"),
+
+    ("Phụ lục gồm bốn phần. Phụ lục A là bảng thuật ngữ, để người đọc đối chiếu với "
+     "tài liệu tiếng Anh và để việc dùng từ trong báo cáo nhất quán. Phụ lục B là các "
+     "lệnh chạy lại thí nghiệm. Phụ lục C là danh mục tệp kết quả kèm chú thích từng "
+     "nhóm thuộc thí nghiệm nào. Phụ lục D là biên bản các vòng phản biện.", "thuong"),
+
+    ("15.1. Phụ lục A: bảng thuật ngữ", "de_muc_phu"),
+    ("Trong toàn báo cáo, mỗi khái niệm chỉ dùng đúng một từ tiếng Việt. Việc này được "
+     "kiểm tự động bằng nhóm kiểm tra thứ hai của trình kiểm tra nói ở mục 11.4, với "
+     "danh sách các cặp từ đồng nghĩa không được dùng lẫn. Bảng 15.1 liệt kê các thuật "
+     "ngữ chính.", "thuong"),
+
+    ("", "bangA"),
+
+    ("15.2. Phụ lục B: lệnh chạy lại thí nghiệm", "de_muc_phu"),
+    ("Bảng 15.2 ghi lệnh chạy lại từng thí nghiệm, kèm mục của báo cáo mà thí nghiệm "
+     "đó sinh số liệu. Lệnh so chi phí phải chạy hai lần, một lần với mờ Gauss và một "
+     "lần với mờ chuyển động, bằng cách đổi giá trị của tham số cuối. Các lệnh có tham "
+     "số chỉ định bộ xử lý đồ họa sẽ chạy được trên bộ xử lý trung tâm nếu đổi tham số "
+     "đó, nhưng khi ấy con số thời gian không so được với con số trong báo cáo.",
+     "thuong"),
+
+    ("", "bangB"),
+
+    ("15.3. Phụ lục C: danh mục tệp kết quả", "de_muc_phu"),
+    ("Thư mục kết quả có 37 tệp, gồm 32 tệp số liệu, 4 tệp nhật ký chạy và một tệp ghi "
+     "chép phân tích. Bảng 15.3 nhóm chúng theo thí nghiệm sinh ra chúng, để người kiểm "
+     "biết tệp nào ứng với con số nào trong báo cáo.", "thuong"),
+
+    ("", "bangC"),
+
+    ("Một nhóm tệp được giữ lại dù không trích vào báo cáo, là nhóm thí nghiệm về toán "
+     "tử giả đơn điệu. Lý do giữ đã nêu ở mục 12: dữ liệu thô giữ cả những lần chạy "
+     "không dùng tới, để người kiểm thấy được toàn bộ những gì đã đo chứ không chỉ phần "
+     "được trích.", "thuong"),
+
+    ("15.4. Phụ lục D: biên bản các vòng phản biện", "de_muc_phu"),
+    ("Có năm vòng phản biện trong giai đoạn nghiên cứu này. Bốn vòng kết thúc bằng việc "
+     "bác một phần hoặc toàn bộ nội dung được xem xét, và cả bốn lần kết luận của người "
+     "phản biện đều đúng; vòng còn lại xác nhận nội dung được xem xét là đúng. Bảng "
+     "15.4 tóm tắt từng vòng.", "thuong"),
+
+    ("", "bangD"),
+
+    ("Các vòng phản biện này là lý do vì sao báo cáo có mục 8 và mục 10. Hai mục ấy ghi "
+     "lại chỗ báo cáo tự nêu sai sót của chính mình, và chúng được giữ nguyên độ dài "
+     "thay vì rút gọn, vì chính chúng là căn cứ để tin các con số còn lại.", "thuong"),
+
+    ("Đến đây báo cáo kết thúc. Toàn bộ nội dung, từ mục 1 đến mục 15, đã được trình "
+     "kiểm tra tự động soát qua bảy nhóm kiểm tra trước khi nộp.", "thuong"),
+]
+
+
 def thay_chu(p, text):
     """Thay chữ của một đoạn nhưng giữ nguyên định dạng của lần chạy chữ đầu tiên."""
     runs = p.runs
@@ -1582,10 +1735,12 @@ def main():
         "bang": BANG_MUC_4, "bang6": BANG_MUC_6, "bang7a": BANG_MUC_7A,
         "bang7b": BANG_MUC_7B, "bang8": BANG_MUC_8, "bang11": BANG_MUC_11,
         "bang12": BANG_MUC_12,
+        "bangA": BANG_PL_A, "bangB": BANG_PL_B,
+        "bangC": BANG_PL_C, "bangD": BANG_PL_D,
     }
     for text, kieu in (MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6 + MUC_7
                        + MUC_8 + MUC_9 + MUC_10 + MUC_11 + MUC_12 + MUC_13
-                       + MUC_14):
+                       + MUC_14 + MUC_15):
         if kieu in bang_theo_khoa:
             them_bang(doc, bang_theo_khoa[kieu])
             continue

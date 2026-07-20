@@ -126,6 +126,7 @@ CHO_PHEP_HOA = {
     "Báo", "Tóm", "Bối", "Câu", "Khẳng", "Kết", "Điểm", "Đóng", "Phần",
     "Về", "Từ", "Có", "Cách", "Thiết", "Vì", "Điều", "Trên", "Đây", "Ba",
     "Hai", "Thứ", "Hệ", "Ngoài", "Nội", "Với", "Nhờ", "Số", "Trước",
+    "Việt", "Anh",                          # tên ngôn ngữ
 }
 
 
@@ -195,7 +196,10 @@ def kiem_bang_ma_nguon(o_bang, text):
     loi, tong = [], 0
     hang = {}
     for bi, ri, ci, chu in o_bang:
-        if chu.endswith(".py"):
+        # Chỉ nhận ô mà toàn bộ nội dung là một đường dẫn tệp. Ô như
+        # "python test_certificate.py" là một lệnh chạy, không phải mục của bảng
+        # liệt kê mã nguồn, nên không được đòi ô số dòng đi kèm.
+        if chu.endswith(".py") and " " not in chu:
             hang[(bi, ri)] = chu
     if not hang:
         return ["không tìm thấy bảng liệt kê tệp mã nguồn"]
