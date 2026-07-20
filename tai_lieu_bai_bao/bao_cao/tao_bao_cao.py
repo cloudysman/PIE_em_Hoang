@@ -387,6 +387,105 @@ MUC_4 = [
      "bước quán tính khỏi sơ đồ, như mục 5 trình bày.", "thuong"),
 ]
 
+MUC_5 = [
+    ("Mục 5. Sửa sai trong thiết kế và danh pháp", "de_muc"),
+
+    ("Mục này trình bày bốn việc sửa sai đã thực hiện trước khi bắt đầu phần đóng góp "
+     "chính. Cả bốn đều không hào nhoáng, và ba trong số đó là sửa lỗi của chính đề "
+     "tài. Tuy vậy chúng được trình bày thành một mục riêng vì hai lý do: nếu không "
+     "sửa thì mọi kết quả sau đó đứng trên nền sai, và bản thân cách phát hiện ra "
+     "chúng minh họa cho các nguyên tắc làm việc ở mục 3.", "thuong"),
+
+    ("5.1. Sửa sai về danh pháp", "de_muc_phu"),
+    ("Sơ đồ lặp ban đầu của đề tài gồm bốn pha, trong đó pha thứ ba được gọi là hiệu "
+     "chỉnh phản xạ. Cách gọi này sai. Pha đó có dạng lấy điểm chiếu rồi trừ đi hiệu "
+     "của toán tử tại hai điểm, tức là hiệu chỉnh kiểu Tseng, và nó tính toán tử hai "
+     "lần mỗi bước ngoài. Bước phản xạ kiểu Malitsky là một thứ khác hẳn: nó dùng điểm "
+     "phản xạ, tức điểm đối xứng lấy từ hai bước lặp gần nhất, làm đối số của toán tử, "
+     "và chỉ tính toán tử một lần mỗi bước ngoài.", "thuong"),
+    ("Hệ quả của việc gọi sai tên không nằm ở chữ nghĩa mà ở việc định vị. Khi còn gọi "
+     "pha thứ ba là hiệu chỉnh phản xạ, sơ đồ trông như một phương pháp có bước phản "
+     "xạ, tức thuộc một nhánh tài liệu tương đối trống. Khi gọi đúng tên là hiệu chỉnh "
+     "kiểu Tseng, sơ đồ hiện ra gần trùng với một bài đã công bố năm 2020, là bài Tan "
+     "và Qin đã nêu ở bảng 4.1, vốn có đủ quán tính, độ nhớt, một phép chiếu mỗi bước "
+     "và hiệu chỉnh kiểu Tseng. Nói cách khác, cách gọi sai đã che mờ một sự trùng lặp "
+     "với tài liệu, và chỉ sau khi sửa tên thì mới thấy phải đổi sơ đồ chứ không phải "
+     "chỉ đổi cách trình bày.", "thuong"),
+    ("Việc sửa này dẫn tới một quyết định cụ thể: chuyển pha thứ ba từ hiệu chỉnh kiểu "
+     "Tseng sang bước phản xạ kiểu Malitsky đúng nghĩa. Ngoài lý do định vị, việc "
+     "chuyển còn có lợi về chi phí, vì bước phản xạ chỉ cần tính toán tử một lần mỗi "
+     "bước ngoài.", "thuong"),
+
+    ("5.2. Bỏ bước quán tính", "de_muc_phu"),
+    ("Bước quán tính được bỏ khỏi sơ đồ. Có hai lý do độc lập, một về lý thuyết và một "
+     "về số liệu, và điều đáng nói là chúng dẫn tới cùng một kết luận.", "thuong"),
+    ("Lý do về lý thuyết là bước quán tính làm đứt chuỗi phép chiếu mà bổ đề một bước "
+     "đòi hỏi. Bổ đề một bước của phương pháp chiếu phản xạ được xây trên giả thiết "
+     "rằng điểm gốc của bước sau chính là kết quả phép chiếu của bước trước, tạo thành "
+     "một chuỗi liền mạch. Bước quán tính chèn một điểm ngoại suy vào giữa hai bước "
+     "chiếu, nên chuỗi ấy bị cắt và bổ đề không dùng được. Đây chính là lỗ hổng đã làm "
+     "một bản thảo chứng minh bị bác, như đã nêu ở mục 3.", "thuong"),
+    ("Lý do về số liệu là bỏ bước quán tính không làm mất kết quả. Phép đo trực tiếp "
+     "trên mờ Gauss, với ngân sách hai bước nội và 150 bước ngoài, cho thấy phiên bản "
+     "có bước quán tính đạt 24,3458 dB với phần dư biến phân 1,242 nhân mười mũ trừ "
+     "hai, còn phiên bản không có bước quán tính đạt 24,3458 dB với phần dư 1,243 nhân "
+     "mười mũ trừ hai. Hai kết quả trùng khít về chất lượng khôi phục và chênh nhau "
+     "khoảng một phần nghìn về phần dư biến phân.", "thuong"),
+    ("Kết hợp với phát hiện ở mục 4.4 rằng việc ghép bước phản xạ với quán tính đã có "
+     "người làm từ năm 2022, quyết định bỏ bước quán tính là rõ ràng: nó không đóng "
+     "góp gì về số liệu, nó cản trở chứng minh, và nếu giữ thì phần đó cũng không còn "
+     "là chỗ trống trong tài liệu.", "thuong"),
+
+    ("5.3. Bỏ bước neo", "de_muc_phu"),
+    ("Bước neo, tức bước kéo dãy lặp về một điểm cố định để có hội tụ mạnh, cũng được "
+     "bỏ. Cái giá phải trả là kết quả hội tụ thu được chỉ là hội tụ yếu thay vì hội tụ "
+     "mạnh; đây là điều báo cáo thừa nhận chứ không né tránh. Đổi lại có hai lý do, và "
+     "cũng như trường hợp bước quán tính, chúng độc lập nhau.", "thuong"),
+    ("Lý do thứ nhất giống lý do ở mục 5.2: bước neo cũng chèn một phép trộn vào giữa "
+     "hai bước chiếu, nên cũng làm đứt chuỗi phép chiếu. Khi bỏ cả bước quán tính lẫn "
+     "bước neo, điểm lặp tiếp theo chính là kết quả phép chiếu, chuỗi liền mạch được "
+     "khôi phục, và bổ đề một bước dùng được. Cần nói thêm rằng với toán tử đơn điệu, "
+     "hội tụ yếu là kết quả chuẩn của dòng nghiên cứu này, nên việc chấp nhận hội tụ "
+     "yếu không phải là hạ tiêu chuẩn.", "thuong"),
+    ("Lý do thứ hai chỉ lộ ra sau một phép đo dài và có phần bất ngờ, nên được trình "
+     "bày đầy đủ ở mục 7. Tóm tắt ở đây: bước neo làm cho dãy sai số của phép chiếu "
+     "xấp xỉ nằm sát ranh giới không tổng được, tức sát ranh giới vi phạm chính giả "
+     "thiết mà định lý cần. Như vậy bỏ bước neo không chỉ giúp chứng minh chạy được mà "
+     "còn cứu một giả thiết của chính định lý đó.", "thuong"),
+
+    ("5.4. Sửa một niềm tin sai về ràng buộc hộp", "de_muc_phu"),
+    ("Phát hiện thứ tư khác ba phát hiện trên ở chỗ nó sửa một niềm tin sai đã tồn tại "
+     "lâu trong đề tài, chứ không sửa một thành phần của sơ đồ. Niềm tin đó là: phép "
+     "kẹp giá trị điểm ảnh về ràng buộc hộp làm hỏng cấu trúc toán tử gần kề của bài "
+     "toán chiếu, nên phải bỏ ràng buộc hộp khi chạy phần lý thuyết. Niềm tin này xuất "
+     "hiện trong cả tài liệu nội bộ lẫn một vòng phản biện trước đó, nên nó được coi "
+     "là đúng suốt một thời gian dài.", "thuong"),
+    ("Niềm tin đó sai. Toán tử gần kề của tổng nửa chuẩn bình phương với hàm chỉ của "
+     "hộp đúng bằng phép kẹp áp lên nghiệm của phần bậc hai, vì ràng buộc hộp tách "
+     "được theo từng tọa độ nên bài toán rã thành các bài toán một chiều độc lập. Điều "
+     "này được kiểm bằng tìm kiếm vét cạn trên lưới, và sai lệch giữa công thức kẹp "
+     "với nghiệm tìm được chỉ ở mức một phần mười nghìn, đúng bằng độ mịn của lưới.",
+     "thuong"),
+    ("Hệ quả của việc sửa niềm tin này lớn hơn vẻ ngoài của nó. Ràng buộc hộp là ràng "
+     "buộc vật lý tự nhiên của ảnh, vì giá trị điểm ảnh vốn nằm trong một khoảng đóng. "
+     "Quan trọng hơn, quả cầu biến phân toàn phần tự nó không bị chặn, còn giao của nó "
+     "với hộp thì bị chặn; tính bị chặn ấy là điều kiện cần cho một hướng đã được thử "
+     "ở mục 10. Nếu vẫn giữ niềm tin sai và loại bỏ ràng buộc hộp, hướng đó thậm chí "
+     "không thể thử được.", "thuong"),
+
+    ("5.5. Sơ đồ sau khi sửa", "de_muc_phu"),
+    ("Sau bốn việc sửa trên, sơ đồ lặp rút từ bốn pha xuống còn hai dòng: lấy điểm "
+     "phản xạ từ hai bước lặp gần nhất, rồi chiếu xấp xỉ điểm thu được sau một bước đi "
+     "theo hướng ngược với toán tử tại điểm phản xạ. Toán tử chỉ được tính một lần mỗi "
+     "bước ngoài, và chuỗi phép chiếu liền mạch được giữ.", "thuong"),
+    ("Việc rút gọn này không phải là làm nghèo sơ đồ mà là loại bỏ những thành phần "
+     "không đóng góp. Ba thành phần bị bỏ đều đã được kiểm riêng: bước quán tính không "
+     "đổi kết quả về số liệu, bước neo đổi lại một giả thiết nằm sát ranh giới, và "
+     "hiệu chỉnh kiểu Tseng làm sơ đồ trùng với tài liệu. Sơ đồ hai dòng này là sơ đồ "
+     "được dùng cho toàn bộ phần còn lại của báo cáo, và mục 6 bắt đầu từ đây để trình "
+     "bày đóng góp chính.", "thuong"),
+]
+
 
 def thay_chu(p, text):
     """Thay chữ của một đoạn nhưng giữ nguyên định dạng của lần chạy chữ đầu tiên."""
@@ -466,7 +565,7 @@ def main():
         t._element.getparent().remove(t._element)
 
     # 3. Ghi các mục nội dung.
-    for text, kieu in MUC_1 + MUC_2 + MUC_3 + MUC_4:
+    for text, kieu in MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5:
         if kieu == "bang":
             them_bang(doc, BANG_MUC_4)
             continue

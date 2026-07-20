@@ -24,7 +24,7 @@ except Exception:
 from docx import Document
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-BAO_CAO = os.path.join(HERE, "Bao_cao_muc_1_4.docx")
+BAO_CAO = os.path.join(HERE, "Bao_cao_muc_1_5.docx")
 GOC = (r"C:\Users\trong\AppData\Local\Temp\claude"
        r"\c--Users-trong-Downloads-PIE-em-Hoang"
        r"\2bf96163-73da-4142-8ed0-60cb16987721\scratchpad\bao_cao_goc.txt")
@@ -38,7 +38,17 @@ NGUON_SO = {
     "13,2": "ket_qua", "19,2": "ket_qua", "4,7": "ket_qua", "9,7": "ket_qua",
     "17,2": "ket_qua", "23,6": "ket_qua", "7,2": "ket_qua", "14,7": "ket_qua",
     "1,0000": "ket_qua",
+    # số của phép đo nội bộ, đối chiếu với tài liệu trong tai_lieu_bai_bao
+    "24,3458": "noi_bo", "1,242": "noi_bo", "1,243": "noi_bo",
+    # mức phần dư biến phân mục tiêu, ấn định trước, có trong tệp kết quả
+    "3,0": "ket_qua", "1,0": "ket_qua",
 }
+
+# Tài liệu nội bộ dùng làm nguồn đối chiếu cho các phép đo của chính đề tài.
+NOI_BO = [os.path.join(HERE, "..", f) for f in
+          ("04_lo_trinh_chung_minh.md", "05_chung_minh_hoi_tu_yeu.md",
+           "02_ket_qua_so_tien_hoa.md")]
+KET_QUA_DIR = os.path.join(HERE, "..", "..", "results", "theory")
 
 # Cặp thuật ngữ: (từ đúng, các từ đồng nghĩa không được dùng).
 THUAT_NGU = [
@@ -59,7 +69,7 @@ CHO_PHEP_HOA = {
     "Numerical", "Algorithms", "Journal", "Scientific", "Computing",
     "Optimization", "Computational", "Applications", "Communications",
     "Nonlinear", "Science", "Simulation", "SIAM", "Ferreira", "Ugon",
-    "Millán", "Qin", "Tan",                 # tên tạp chí và tên tác giả
+    "Millán", "Qin", "Tan", "Tseng",        # tên tạp chí và tên tác giả
     "Plug-and-Play", "Gauss", "PIE-Net", "Fejér", "DnCNN", "Q1", "Q2",
     "Chambolle-Pock", "Malitsky", "Hà", "Nội", "Đào", "Trọng", "Hiếu",
     "Đặng", "Văn", "Chiến", "Học", "Viện", "Bộ", "Khoa", "Công", "Nghệ",
@@ -68,6 +78,29 @@ CHO_PHEP_HOA = {
     "Về", "Từ", "Có", "Cách", "Thiết", "Vì", "Điều", "Trên", "Đây", "Ba",
     "Hai", "Thứ", "Hệ", "Ngoài", "Nội", "Với", "Nhờ", "Số", "Trước",
 }
+
+
+BO_QUA_SO = {"4,1"}          # số hiệu bảng, không phải số liệu
+
+
+def khop_lam_tron(so_bao_cao, nguon):
+    """Số trong báo cáo có thể là số trong nguồn đã làm tròn.
+
+    Ví dụ báo cáo ghi 19,2 còn tệp kết quả ghi 19,17. So khớp chuỗi cứng sẽ báo sai;
+    ở đây ta tìm trong nguồn một số mà khi làm tròn tới đúng số chữ số thập phân của
+    số trong báo cáo thì trùng với nó."""
+    muc = so_bao_cao.replace(",", ".")
+    if muc in nguon:
+        return True
+    try:
+        gia_tri = float(muc)
+    except ValueError:
+        return False
+    so_le = len(muc.split(".")[1]) if "." in muc else 0
+    for ung_vien in re.findall(r"\d+\.\d+", nguon):
+        if round(float(ung_vien), so_le) == gia_tri:
+            return True
+    return False
 
 
 def lay_van_ban(path):
@@ -86,13 +119,25 @@ def tach_muc(doan):
     return ket
 
 
-def kiem_so_lieu(text, goc):
+def kiem_so_lieu(text, goc, noi_bo, ket_qua):
+    """Mọi con số trong báo cáo phải tìm thấy ở nguồn tương ứng.
+
+    Cảnh báo cả trường hợp ngược lại: con số xuất hiện trong báo cáo mà chưa có
+    trong danh sách đối chiếu, tức là một con số chưa được kiểm."""
     loi = []
     for so, nguon in NGUON_SO.items():
         if so not in text:
             continue
         if nguon == "goc" and so not in goc:
             loi.append(f"số {so} không tìm thấy trong báo cáo gốc")
+        if nguon == "noi_bo" and so not in noi_bo:
+            loi.append(f"số {so} không tìm thấy trong tài liệu nội bộ")
+        if nguon == "ket_qua" and not khop_lam_tron(so, ket_qua):
+            loi.append(f"số {so} không tìm thấy trong tệp kết quả, "
+                       f"kể cả khi tính tới làm tròn")
+    for so in sorted(set(re.findall(r"\d+,\d+", text))):
+        if so not in NGUON_SO and so not in BO_QUA_SO:
+            loi.append(f"số {so} chưa được đưa vào danh sách đối chiếu")
     return loi
 
 
@@ -170,6 +215,14 @@ def main():
         sys.exit(f"Không tìm thấy báo cáo: {BAO_CAO}")
     doan = lay_van_ban(BAO_CAO)
     goc = open(GOC, encoding="utf-8").read() if os.path.exists(GOC) else ""
+    noi_bo = "".join(open(f, encoding="utf-8").read()
+                     for f in NOI_BO if os.path.exists(f))
+    ket_qua = ""
+    if os.path.isdir(KET_QUA_DIR):
+        for f in os.listdir(KET_QUA_DIR):
+            if f.endswith(".csv"):
+                ket_qua += open(os.path.join(KET_QUA_DIR, f),
+                                encoding="utf-8").read()
     muc = tach_muc(doan)
     text = " ".join(doan)
 
@@ -182,7 +235,7 @@ def main():
 
     tat_ca_loi = []
     for ten, loi in [
-        ("1. Đối chiếu số liệu với nguồn", kiem_so_lieu(text, goc)),
+        ("1. Đối chiếu số liệu với nguồn", kiem_so_lieu(text, goc, noi_bo, ket_qua)),
         ("2. Thuật ngữ nhất quán", kiem_thuat_ngu(doan)),
         ("3. Viết hoa giữa câu", kiem_viet_hoa(doan)),
     ]:
