@@ -110,6 +110,12 @@ MUC_1 = [
 MUC_2 = [
     ("Mục 2. Bối cảnh và điểm xuất phát", "de_muc"),
 
+    ("Mục 1 đã liệt kê các đóng góp nhưng chưa nói vì sao chúng cần thiết. Mục này trả "
+     "lời câu hỏi đó: trình bày bài toán, nhắc lại các kết luận của báo cáo thực nghiệm "
+     "trước, và chỉ ra điều gì còn đứng vững sau khi phần lớn các kết luận ấy bị đóng "
+     "lại. Chính phần còn lại đó là điểm xuất phát của giai đoạn nghiên cứu này.",
+     "thuong"),
+
     ("2.1. Bài toán", "de_muc_phu"),
     ("Đề tài PIE-Net nhằm giải bài toán ngược trong xử lý ảnh, viết dưới dạng y = Bx + "
      "ε, trong đó x là ảnh gốc cần khôi phục, y là dữ liệu quan sát, B là toán tử suy "
@@ -206,7 +212,9 @@ MUC_2 = [
 MUC_3 = [
     ("Mục 3. Phương pháp làm việc", "de_muc"),
 
-    ("Mục này trình bày bốn nguyên tắc được áp dụng thống nhất cho toàn bộ giai đoạn "
+    ("Mục 2 kết thúc bằng một yêu cầu: giai đoạn nghiên cứu này phải được thiết kế chặt "
+     "hơn giai đoạn trước, để không lặp lại việc rút kết luận từ bằng chứng yếu. "
+     "Mục này trình bày bốn nguyên tắc được áp dụng thống nhất cho toàn bộ giai đoạn "
      "nghiên cứu. Lý do phải trình bày chúng trước khi nêu kết quả là như sau: đóng "
      "góp của báo cáo này chủ yếu là một so sánh chi phí, mà một so sánh chi phí chỉ "
      "có nghĩa khi phép đo công bằng, phương pháp đối chứng được cho cơ hội mạnh nhất, "
@@ -348,7 +356,7 @@ MUC_4 = [
      "phương pháp dùng phép chiếu xấp xỉ, có xét tới sai số của phép chiếu; nhưng các "
      "bài trong nhánh này không có bước quán tính và không có bước độ nhớt, và quan "
      "trọng hơn, không bài nào phân tích chi phí thực của vòng lặp nội.", "thuong"),
-    ("Sự phân đôi này là điểm mấu chốt của mục 4, vì nó chỉ ra chỗ trống: không có bài "
+    ("Sự phân đôi này là điểm mấu chốt của khảo sát, vì nó chỉ ra chỗ trống: không có bài "
      "nào đồng thời dùng bước phản xạ và phép chiếu xấp xỉ. Bảng 4.1 liệt kê các bài "
      "chặn quan trọng nhất cùng điểm khác biệt của từng bài so với công việc của báo "
      "cáo này.", "thuong"),
@@ -619,6 +627,278 @@ MUC_6 = [
 ]
 
 
+# Hai bảng ở mục 7: chi phí của chế độ thích nghi so với phép chiếu chính xác,
+# trích từ results/theory/muc7_he_so_gauss.csv và muc7_he_so_motion.csv.
+COT_MUC_7 = ["Mức phần dư biến phân", "Bước nội của phép chiếu chính xác",
+             "Giây của phép chiếu chính xác", "Bước nội của chế độ thích nghi",
+             "Giây của chế độ thích nghi", "Hệ số theo bước nội",
+             "Hệ số theo thời gian"]
+
+BANG_MUC_7A = {
+    "tieu_de": ("Bảng 7.1. Chi phí trên mờ Gauss ở năm mức phần dư biến phân ấn định "
+                "trước. Hai cột cuối là số lần chế độ thích nghi rẻ hơn."),
+    "cot": COT_MUC_7,
+    "dong": [
+        ("3,0·10⁻²", "3796", "2,48", "198", "0,52", "19,17", "4,73"),
+        ("2,0·10⁻²", "3858", "5,13", "275", "0,70", "14,03", "7,38"),
+        ("1,5·10⁻²", "5738", "8,61", "357", "0,88", "16,07", "9,74"),
+        ("1,2·10⁻²", "8509", "9,73", "476", "1,12", "17,88", "8,68"),
+        ("1,0·10⁻²", "8566", "11,25", "649", "1,43", "13,20", "7,89"),
+    ],
+}
+
+BANG_MUC_7B = {
+    "tieu_de": ("Bảng 7.2. Chi phí trên mờ chuyển động, cùng năm mức phần dư biến phân. "
+                "Dòng cuối được bàn riêng trong phần chữ."),
+    "cot": COT_MUC_7,
+    "dong": [
+        ("3,0·10⁻²", "5786", "3,97", "245", "0,55", "23,62", "7,15"),
+        ("2,0·10⁻²", "5848", "6,57", "321", "0,76", "18,22", "8,60"),
+        ("1,5·10⁻²", "8448", "10,98", "434", "0,91", "19,47", "12,08"),
+        ("1,2·10⁻²", "8494", "15,33", "493", "1,04", "17,23", "14,72"),
+        ("1,0·10⁻²", "435795", "732,89", "773", "1,54", "563,77", "476,69"),
+    ],
+}
+
+MUC_7 = [
+    ("Mục 7. Ngân sách thích nghi và kết quả chi phí", "de_muc"),
+
+    ("Mục 6 kết thúc bằng một chứng chỉ mà chương trình kiểm được ở mỗi bước nội. Mục "
+     "này dùng chứng chỉ đó để xây một chế độ chọn ngân sách bước nội, rồi đo xem chế "
+     "độ ấy tiết kiệm được bao nhiêu so với phép chiếu chính xác. Đây là phần kết quả "
+     "số chính của giai đoạn nghiên cứu.", "thuong"),
+
+    ("7.1. Chế độ ngân sách thích nghi", "de_muc_phu"),
+    ("Chế độ được mô tả như sau. Trước khi chạy, đặt một lịch sai số giảm dần theo số "
+     "bước ngoài: mức sai số cho phép ở bước ngoài thứ k bằng hệ số đầu chia cho k cộng "
+     "một, tất cả lũy thừa một số mũ lớn hơn một. Tại mỗi bước ngoài, vòng lặp nội chạy "
+     "cho tới khi chứng chỉ xuống dưới mức của lịch tại bước ngoài đó, rồi dừng.",
+     "thuong"),
+
+    ("Có hai điểm cần giải thích trong cách đặt lịch. Thứ nhất, số mũ phải lớn hơn một "
+     "vì chỉ khi đó chuỗi các mức sai số mới hội tụ, tức dãy sai số tổng được; đây đúng "
+     "là giả thiết mà định lý ở mục 9 cần, nên lịch không phải chọn tùy tiện mà được "
+     "chọn để thỏa giả thiết. Thứ hai, mức sai số giảm dần chứ không cố định, vì ở những "
+     "bước ngoài đầu nghiệm còn xa nên chiếu chính xác là lãng phí, còn ở những bước "
+     "ngoài sau thì cần chính xác hơn để không làm hỏng hội tụ.", "thuong"),
+
+    ("Vòng lặp nội dùng khởi tạo ấm: biến gốc và biến đối ngẫu của bước ngoài trước "
+     "được giữ lại làm điểm xuất phát cho bước ngoài sau. Nhờ vậy phần lớn bước ngoài "
+     "chỉ tốn vài bước nội, vì điểm xuất phát đã gần nghiệm chiếu mới.", "thuong"),
+
+    ("7.2. Thiết lập thực nghiệm", "de_muc_phu"),
+    ("Bài toán thử nghiệm là khử mờ ảnh. Ảnh xám cạnh 96 điểm ảnh, tám ảnh kiểm tra, "
+     "hai loại mờ là mờ Gauss và mờ chuyển động, nhiễu cộng có độ lệch chuẩn 0,05. Mỗi "
+     "lần chạy gồm 150 bước ngoài. Bán kính quả cầu biến phân toàn phần đặt bằng 0,55 "
+     "lần biến phân toàn phần của ảnh gốc, giống nhau cho mọi cấu hình.", "thuong"),
+
+    ("Hằng số Lipschitz của toán tử được ước lượng bằng phép lặp lũy thừa, và độ dài "
+     "bước lấy bằng 0,9 lần cận trên lý thuyết. Đại lượng dùng để so sánh là phần dư "
+     "biến phân, tức chuẩn của phần dư bất đẳng thức biến phân sau khi chuẩn hóa. Toàn "
+     "bộ phép đo chạy trên máy chủ có bộ xử lý đồ họa, với đồng bộ hóa trước và sau mỗi "
+     "phép bấm giờ; lý do phải đồng bộ hóa được nêu ở mục 8.", "thuong"),
+
+    ("7.3. Kết quả chi phí", "de_muc_phu"),
+    ("Cách so sánh như sau. Năm mức phần dư biến phân được ấn định trước khi chạy. Với "
+     "mỗi mức, ghi lại chi phí nhỏ nhất mà phép chiếu chính xác cần để đạt mức đó, và "
+     "chi phí nhỏ nhất mà chế độ thích nghi cần để đạt cùng mức đó. Chi phí đo bằng hai "
+     "thước đo song song: tổng số bước nội và thời gian chạy thuật toán. Kết quả ở bảng "
+     "7.1 và bảng 7.2.", "thuong"),
+
+    ("", "bang7a"),
+    ("", "bang7b"),
+
+    ("Trên mờ Gauss, chế độ thích nghi rẻ hơn phép chiếu chính xác từ 13,2 đến 19,2 lần "
+     "theo bước nội, và từ 4,7 đến 9,7 lần theo thời gian. Trên mờ chuyển động, ở bốn "
+     "mức phần dư biến phân đầu, các con số tương ứng là từ 17,2 đến 23,6 lần và từ 7,2 "
+     "đến 14,7 lần.", "thuong"),
+
+    ("Cần chú ý là hệ số theo thời gian luôn nhỏ hơn hệ số theo bước nội. Lý do là một "
+     "bước nội của chế độ thích nghi đắt hơn một bước nội của phép chiếu chính xác, vì "
+     "nó còn phải tính chứng chỉ. Đây chính là chỗ mà cách đo chỉ đếm bước nội sẽ thổi "
+     "phồng lợi thế, và mục 8 sẽ bàn kỹ.", "thuong"),
+
+    ("Dòng cuối của bảng 7.2 phải được đọc riêng và không nên trích như một thành tích. "
+     "Ở mức phần dư biến phân chặt nhất trên mờ chuyển động, phép chiếu chính xác cần "
+     "435795 bước nội và 732,89 giây, khiến hệ số vọt lên 563,77 lần theo bước nội và "
+     "476,69 lần theo thời gian. Con số lớn ấy phản ánh việc phép chiếu chính xác gần "
+     "như không đạt được mức đó trong ngân sách cho phép, chứ không phản ánh chế độ "
+     "thích nghi mạnh lên. Khoảng nên trích dẫn vẫn là khoảng của bốn mức đầu.",
+     "thuong"),
+
+    ("7.4. Tính khả thi của đầu ra", "de_muc_phu"),
+    ("Một kết quả đi kèm đáng nêu là mọi đầu ra đều khả thi. Trên toàn bộ 92 cấu hình "
+     "của hai lưới thực nghiệm, biến phân toàn phần của ảnh đầu ra chia cho bán kính "
+     "quả cầu không bao giờ vượt 1,0000, tức không cấu hình nào ra ngoài tập ràng "
+     "buộc; hai cấu hình còn dừng hẳn bên trong, ở mức 0,9994 và 0,9995. Điều này có "
+     "được là nhờ phép ép về tập ràng buộc mô tả ở mục 6.3, vốn được gắn liền với việc "
+     "tính chứng chỉ.", "thuong"),
+
+    ("Để thấy điều này không hiển nhiên, có thể so với chế độ ngân sách cố định. Khi "
+     "mỗi bước ngoài chỉ chạy đúng một bước nội, đầu ra trên mờ chuyển động có biến "
+     "phân toàn phần bằng 1,2433 lần bán kính, tức vượt ra ngoài tập ràng buộc 24,3 "
+     "phần trăm. Một nghiệm như vậy không còn thỏa bài toán ban đầu, dù các chỉ số chất "
+     "lượng ảnh của nó trông không tệ.", "thuong"),
+
+    ("7.5. Chỗ phương pháp thua", "de_muc_phu"),
+    ("Chế độ thích nghi có một điểm yếu rõ ràng: nó rất nhạy với lịch sai số, và một "
+     "lịch đặt sai làm chi phí bùng nổ. Phần này trình bày điểm yếu đó ngang hàng với "
+     "phần thắng ở trên.", "thuong"),
+
+    ("Trên lưới lịch đầy đủ gồm mười sáu cấu hình cho mỗi loại mờ, cấu hình xấu nhất ở "
+     "cả hai loại mờ đều là cấu hình có hệ số đầu nhỏ nhất và số mũ lớn nhất. Nó tốn "
+     "hơn mốc phép chiếu chính xác 42,83 lần trên mờ Gauss và 39,64 lần trên mờ chuyển "
+     "động. Ngay trong lưới công bằng đã lọc bớt lịch xấu, khoảng cách giữa cấu hình "
+     "đắt nhất và cấu hình rẻ nhất vẫn là 970 lần trên mờ Gauss và 1104 lần trên mờ "
+     "chuyển động.", "thuong"),
+
+    ("Nguyên nhân là như sau. Số mũ lớn làm mức sai số cho phép giảm quá nhanh, nên chỉ "
+     "sau ít bước ngoài lịch đã đòi độ chính xác gần bằng phép chiếu chính xác, mà khi "
+     "ấy chi phí mỗi bước ngoài tăng vọt trong khi chất lượng nghiệm gần như không đổi. "
+     "Hệ số đầu nhỏ gây ra cùng một hiệu ứng ngay từ bước ngoài đầu tiên.", "thuong"),
+
+    ("Quy luật chọn lịch rút ra từ đây rất đơn giản: lấy số mũ sát một từ phía trên, và "
+     "lấy hệ số đầu lớn. Trong các thực nghiệm trên, số mũ 1,01 cùng hệ số đầu từ 4 đến "
+     "8 cho kết quả tốt nhất ở cả hai loại mờ. Đây là một khuyến nghị thực hành rút từ "
+     "số liệu, không phải một kết quả lý thuyết.", "thuong"),
+
+    ("7.6. Dãy sai số có tổng được hay không", "de_muc_phu"),
+    ("Mục 5.3 đã hoãn lại lý do thứ hai để bỏ bước neo; phần này trả lời. Câu hỏi là "
+     "dãy sai số của phép chiếu xấp xỉ dọc quỹ đạo sinh ra có tổng được hay không, vì "
+     "đó là giả thiết mà định lý ở mục 9 cần.", "thuong"),
+
+    ("Phép đo thực hiện trên 3000 bước ngoài, dài gấp hai mươi lần các thực nghiệm ở "
+     "trên, và đo độ dốc của dịch chuyển bước chiếu trên thang lôgarit hai chiều. Khi "
+     "không dùng bước neo, độ dốc là âm 2,342 trên mờ Gauss và âm 2,838 trên mờ chuyển "
+     "động. Cả hai đều nhỏ hơn âm một khá xa, nên chuỗi hội tụ; tổng tích lũy đến hết "
+     "quỹ đạo chỉ lớn hơn tổng tích lũy đến giữa quỹ đạo 1,006 lần và 1,000 lần, tức "
+     "đã bão hòa.", "thuong"),
+
+    ("Khi thêm bước neo, độ dốc tụt xuống âm 1,191 trên mờ Gauss và âm 1,011 trên mờ "
+     "chuyển động. Con số thứ hai đáng lo: ngưỡng để chuỗi còn hội tụ là âm một, nên "
+     "âm 1,011 nằm sát ngay ranh giới. Với một biên hẹp như vậy, không thể khẳng định "
+     "chắc chắn giả thiết tổng được vẫn đúng khi đổi bài toán hoặc đổi tham số.",
+     "thuong"),
+
+    ("Đây là lý do thứ hai để bỏ bước neo, bên cạnh lý do về chuỗi phép chiếu đã nêu ở "
+     "mục 5.3. Sau khi bỏ bước neo, giả thiết tổng được không những đúng mà còn đúng "
+     "với biên rộng, và điều đó làm phần lý thuyết ở mục 9 đứng vững hơn hẳn.",
+     "thuong"),
+
+    ("Tất cả các con số trong mục này chỉ có nghĩa nếu phép đo công bằng. Mục 8 trình "
+     "bày giao thức đo đã dùng, và ba lỗi đo lường đã phải tự sửa trước khi có được "
+     "các con số trên.", "thuong"),
+]
+
+
+# Bảng ở mục 8: bẫy đo lường khi áp lịch bước tăng tốc, trích từ compare_accel_gauss.log.
+BANG_MUC_8 = {
+    "tieu_de": ("Bảng 8.1. Bẫy đo lường: áp lịch bước tăng tốc cho mọi chế độ làm hệ số "
+                "tiết kiệm trông lớn hơn, nhưng là do phương pháp đối chứng chậm đi."),
+    "cot": ["Chế độ", "Bước nội khi không tăng tốc", "Bước nội khi tăng tốc",
+            "Hệ số tiết kiệm khi không tăng tốc", "Hệ số tiết kiệm khi tăng tốc"],
+    "dong": [
+        ("Phép chiếu chính xác", "384", "560", "mốc so sánh", "mốc so sánh"),
+        ("Ngân sách cố định hai bước nội", "162", "162", "2,37", "3,46"),
+        ("Ngân sách cố định năm bước nội", "255", "305", "1,51", "1,84"),
+        ("Ngân sách theo lôgarit", "289", "379", "1,33", "1,48"),
+    ],
+}
+
+MUC_8 = [
+    ("Mục 8. Giao thức đo chi phí công bằng", "de_muc"),
+
+    ("Đóng góp của mục 7 chủ yếu là một so sánh chi phí, mà một so sánh chi phí chỉ đáng "
+     "tin khi phép đo công bằng. Mục này trình bày giao thức đo đã dùng. Cách trình bày "
+     "là kể lại ba lỗi đo lường đã mắc rồi tự phát hiện và sửa, cùng một lỗi kỹ thuật và "
+     "một cái bẫy đã kịp tránh. Viết như vậy vì các con số trước khi sửa đã từng được "
+     "ghi vào tài liệu nội bộ, nên việc giấu chúng đi sẽ làm sai lệch bức tranh về quá "
+     "trình nghiên cứu.", "thuong"),
+
+    ("8.1. Lỗi thứ nhất: chỉ đếm bước nội mà không đo thời gian", "de_muc_phu"),
+    ("Bản đo đầu tiên chỉ đếm tổng số bước nội. Theo thước đo đó, chế độ thích nghi rẻ "
+     "hơn phép chiếu chính xác 12,86 lần trên mờ Gauss và 14,90 lần trên mờ chuyển "
+     "động. Hai con số này đã được ghi lại và đã suýt được dùng làm kết quả chính.",
+     "thuong"),
+
+    ("Chúng thổi phồng lợi thế. Một bước nội của chế độ thích nghi không tương đương một "
+     "bước nội của phép chiếu chính xác, vì nó còn phải tính chứng chỉ, tức tính thêm "
+     "hai hàm mục tiêu ở mỗi bước. Đếm hai loại bước nội như nhau là so sánh hai đơn vị "
+     "khác nhau.", "thuong"),
+
+    ("Cách sửa là báo song song cả hai thước đo, số bước nội và thời gian chạy thuật "
+     "toán, như hai cột cuối của bảng 7.1 và bảng 7.2. Sau khi sửa, hệ số theo thời gian "
+     "thấp hơn hệ số theo bước nội một cách nhất quán, đúng như dự đoán. Con số nên "
+     "trích dẫn là con số theo thời gian, vì đó là thứ người dùng thật sự phải trả.",
+     "thuong"),
+
+    ("8.2. Lỗi thứ hai: mức phần dư biến phân mục tiêu chọn sau khi đã thấy số liệu",
+     "de_muc_phu"),
+    ("Bản đo đầu tiên lấy mức phần dư biến phân mục tiêu từ chính kết quả cuối của "
+     "phương pháp đối chứng, rồi hỏi chế độ thích nghi cần bao nhiêu chi phí để đạt "
+     "mức đó. Cách làm này có vẻ tự nhiên nhưng là một vòng luẩn quẩn: mục tiêu được "
+     "đặt sau khi đã nhìn thấy số liệu, nên có thể vô tình rơi vào đúng vùng mà phương "
+     "pháp đề xuất có lợi.", "thuong"),
+
+    ("Cách sửa là ấn định trước năm mức phần dư biến phân, ghi thẳng vào mã nguồn trước "
+     "khi chạy, và giữ nguyên cho cả hai loại mờ lẫn mọi cấu hình. Năm mức ấy là các "
+     "mức trong cột đầu của bảng 7.1 và bảng 7.2. Cấu hình nào không đạt mức nào thì bị "
+     "loại khỏi mức đó, không có ngoại lệ.", "thuong"),
+
+    ("8.3. Lỗi thứ ba: dò tham số bất đối xứng", "de_muc_phu"),
+    ("Bản đo đầu tiên dò mười sáu cấu hình cho phương pháp đề xuất nhưng chỉ hai cấu "
+     "hình cho phương pháp đối chứng. Khi một bên được dò kỹ hơn bên kia tám lần thì "
+     "phần thắng có thể chỉ là phần thưởng của công dò, chứ không phải ưu thế của "
+     "phương pháp.", "thuong"),
+
+    ("Cách sửa là dò bằng nhau ở hai nhóm chính: tám cấu hình cho nhóm thích nghi và "
+     "tám cấu hình cho nhóm phép chiếu chính xác. Ngoài ra có thêm hai nhóm tiêu chuẩn "
+     "tương đối làm đối chứng phụ, với bốn và tám cấu hình. Với mỗi nhóm, chỉ cấu hình "
+     "tốt nhất tại mỗi mức phần dư biến phân được đưa vào bảng, nên mỗi nhóm đều được "
+     "trình bày ở trạng thái mạnh nhất của nó.", "thuong"),
+
+    ("8.4. Một lỗi kỹ thuật khi bấm giờ", "de_muc_phu"),
+    ("Ngoài ba lỗi trên còn một lỗi kỹ thuật. Bộ xử lý đồ họa chạy bất đồng bộ với bộ "
+     "xử lý trung tâm: lệnh được xếp vào hàng đợi rồi trả về ngay, trước khi phép tính "
+     "thật sự xong. Bấm giờ mà không đồng bộ hóa thì chỉ đo thời gian xếp lệnh chứ "
+     "không đo thời gian tính, và con số thu được gần như vô nghĩa.", "thuong"),
+
+    ("Cách sửa là gọi đồng bộ hóa ngay trước và ngay sau mỗi đoạn được bấm giờ. Cùng "
+     "với đó, thời gian thuật toán được tách khỏi thời gian đo đạc phụ trợ như tính chỉ "
+     "số chất lượng ảnh hay ghi tệp. Việc tách này quan trọng hơn vẻ ngoài của nó: phần "
+     "đo đạc phụ trợ tốn khoảng 45 giây mỗi lần chạy, đủ để nhấn chìm phần thuật toán "
+     "vốn chỉ khoảng một giây, và nếu lấy cột thời gian tổng thì mọi khác biệt giữa các "
+     "chế độ sẽ biến mất.", "thuong"),
+
+    ("8.5. Một cái bẫy đã tránh", "de_muc_phu"),
+    ("Có một thay đổi từng làm kết quả trông đẹp hơn mà cuối cùng bị loại. Bộ giải nội "
+     "Chambolle-Pock có một lịch bước tăng tốc dành cho bài toán lồi mạnh. Khi áp lịch "
+     "này cho mọi chế độ, hệ số tiết kiệm của chế độ ngân sách cố định hai bước nội "
+     "tăng từ 2,37 lên 3,46 lần.", "thuong"),
+
+    ("", "bang8"),
+
+    ("Nhìn vào bảng 8.1 sẽ thấy vì sao con số đó không dùng được. Chế độ ngân sách cố "
+     "định hai bước nội vẫn tốn đúng 162 bước nội như cũ, tức nó không hề tốt lên. Cái "
+     "thay đổi là phép chiếu chính xác, vốn dùng làm mốc so sánh, tăng từ 384 lên 560 "
+     "bước nội. Hệ số tăng lên hoàn toàn vì mẫu số xấu đi.", "thuong"),
+
+    ("Lịch bước tăng tốc do đó bị loại, và kết quả âm tính này được ghi lại ở mục 10. "
+     "Bài học rút ra là khi một thay đổi làm hệ số so sánh tăng lên, phải kiểm cả tử số "
+     "lẫn mẫu số trước khi mừng.", "thuong"),
+
+    ("8.6. Kết luận của mục", "de_muc_phu"),
+    ("Con số đáng tin là con số đo sau khi đã sửa cả ba lỗi và lỗi kỹ thuật nói trên, "
+     "tức các con số trong bảng 7.1 và bảng 7.2. Chúng nhỏ hơn các con số ban đầu, "
+     "nhưng chúng chịu được phản biện. Giao thức này cũng là câu trả lời cho nguyên tắc "
+     "thứ nhất và nguyên tắc thứ hai ở mục 3, vốn đòi đặt tiêu chí trước khi chạy và "
+     "cho phương pháp đối chứng cơ hội mạnh nhất.", "thuong"),
+
+    ("Phần thực nghiệm đến đây là hết. Mục 9 chuyển sang phần lý thuyết, và trình bày "
+     "định lý hội tụ cùng những giả thiết mà mục 7 đã kiểm bằng số.", "thuong"),
+]
+
+
 def thay_chu(p, text):
     """Thay chữ của một đoạn nhưng giữ nguyên định dạng của lần chạy chữ đầu tiên."""
     runs = p.runs
@@ -697,12 +977,13 @@ def main():
         t._element.getparent().remove(t._element)
 
     # 3. Ghi các mục nội dung.
-    for text, kieu in MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6:
-        if kieu == "bang":
-            them_bang(doc, BANG_MUC_4)
-            continue
-        if kieu == "bang6":
-            them_bang(doc, BANG_MUC_6)
+    bang_theo_khoa = {
+        "bang": BANG_MUC_4, "bang6": BANG_MUC_6, "bang7a": BANG_MUC_7A,
+        "bang7b": BANG_MUC_7B, "bang8": BANG_MUC_8,
+    }
+    for text, kieu in MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6 + MUC_7 + MUC_8:
+        if kieu in bang_theo_khoa:
+            them_bang(doc, bang_theo_khoa[kieu])
             continue
         p = doc.add_paragraph()
         r = p.add_run(text)

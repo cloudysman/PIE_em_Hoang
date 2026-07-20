@@ -1,0 +1,17 @@
+cau_hinh,buoc_noi_toi_muc_tieu,buoc_noi_cua_moc,lan_so_voi_moc
+adaptive e0.5_p1.5,336725,8494,39.64
+adaptive e1.0_p1.5,307095,8494,36.15
+adaptive e2.0_p1.5,259642,8494,30.57
+adaptive e0.5_p1.1,259263,8494,30.52
+adaptive e0.5_p1.05,236016,8494,27.79
+adaptive e0.5_p1.01,210954,8494,24.84
+adaptive e4.0_p1.5,183789,8494,21.64
+adaptive e1.0_p1.1,144876,8494,17.06
+adaptive e1.0_p1.05,91716,8494,10.80
+adaptive e1.0_p1.01,54118,8494,6.37
+adaptive e2.0_p1.1,1773,8494,0.21
+adaptive e2.0_p1.05,1073,8494,0.13
+adaptive e2.0_p1.01,862,8494,0.10
+adaptive e4.0_p1.1,691,8494,0.08
+adaptive e4.0_p1.01,570,8494,0.07
+adaptive e4.0_p1.05,605,8494,0.07

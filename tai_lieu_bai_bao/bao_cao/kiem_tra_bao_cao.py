@@ -1,11 +1,13 @@
 """Kiểm tra tệp báo cáo: số liệu, thuật ngữ, cách viết hoa và liên kết giữa các mục.
 
-Bốn nhóm kiểm tra:
+Năm nhóm kiểm tra:
   1. Mọi con số trong báo cáo phải khớp báo cáo thực nghiệm gốc hoặc tệp kết quả.
   2. Thuật ngữ phải nhất quán: không dùng hai từ khác nhau cho cùng một khái niệm.
   3. Không viết hoa tùy tiện ở giữa câu.
   4. Mục 1 và mục 2 phải liên kết: mọi khái niệm mục 1 nhắc tới đều được mục 2 giải
      thích, và số liệu chung giữa hai mục phải trùng nhau.
+  5. Mọi ô số trong mọi bảng phải tìm thấy trong tệp kết quả. Nhóm 1 chỉ soát phần
+     chữ, vì python-docx để bảng ngoài danh sách đoạn, nên bảng cần một nhóm riêng.
 
 Chạy: python tai_lieu_bai_bao/bao_cao/kiem_tra_bao_cao.py
 """
@@ -51,6 +53,21 @@ NGUON_SO = {
     "0,332": "ket_qua", "0,0872": "ket_qua", "0,218": "ket_qua", "0,0505": "ket_qua",
     "2,26": "ket_qua", "2,52": "ket_qua", "3,03": "ket_qua", "3,98": "ket_qua",
     "5,41": "ket_qua", "6,95": "ket_qua",
+    # mục 7: hệ số chi phí, mức khả thi, chi phí của lịch quá siết, độ dốc tổng được
+    "563,77": "ket_qua", "476,69": "ket_qua", "732,89": "ket_qua",
+    "1,2433": "ket_qua", "42,83": "ket_qua", "39,64": "ket_qua",
+    "2,342": "ket_qua", "2,838": "ket_qua", "1,191": "ket_qua", "1,011": "ket_qua",
+    "1,006": "ket_qua", "1,000": "ket_qua",
+    # mục 8: hai con số trước khi sửa cách đo, và bẫy lịch bước tăng tốc
+    "12,86": "ket_qua", "14,90": "ket_qua", "2,37": "ket_qua", "3,46": "ket_qua",
+    # tham số do ta ấn định trước khi chạy, không phải kết quả đo
+    "0,9": "thiet_ke", "1,01": "thiet_ke",
+    # số suy ra từ một số khác đã đối chiếu: 24,3 phần trăm là từ mức khả thi 1,2433
+    "24,3": "suy_ra",
+    # mức khả thi của hai cấu hình dừng hẳn bên trong tập ràng buộc, và hai tham số
+    # thực nghiệm ấn định trước
+    "0,9994": "ket_qua", "0,9995": "ket_qua",
+    "0,05": "thiet_ke", "0,55": "thiet_ke",
 }
 
 # Tài liệu nội bộ dùng làm nguồn đối chiếu cho các phép đo của chính đề tài.
@@ -80,7 +97,7 @@ CHO_PHEP_HOA = {
     "Nonlinear", "Science", "Simulation", "SIAM", "Ferreira", "Ugon",
     "Millán", "Qin", "Tan", "Tseng",        # tên tạp chí và tên tác giả
     "Plug-and-Play", "Gauss", "PIE-Net", "Fejér", "DnCNN", "Q1", "Q2",
-    "Chambolle-Pock", "Malitsky", "Hà", "Nội", "Đào", "Trọng", "Hiếu",
+    "Chambolle-Pock", "Malitsky", "Lipschitz", "Hà", "Nội", "Đào", "Trọng", "Hiếu",
     "Đặng", "Văn", "Chiến", "Học", "Viện", "Bộ", "Khoa", "Công", "Nghệ",
     "Bưu", "Chính", "Viễn", "Thông", "Mục", "Đề", "Giảng", "Lớp", "Biết",
     "Báo", "Tóm", "Bối", "Câu", "Khẳng", "Kết", "Điểm", "Đóng", "Phần",
@@ -118,10 +135,39 @@ def lay_van_ban(path):
     return [p.text.strip() for p in d.paragraphs if p.text.strip()]
 
 
+def lay_o_bang(path):
+    """Trả về các ô của mọi bảng, kèm vị trí để báo lỗi cho rõ."""
+    d = Document(path)
+    ra = []
+    for bi, t in enumerate(d.tables, start=1):
+        for ri, hang in enumerate(t.rows):
+            for ci, o in enumerate(hang.cells):
+                ra.append((bi, ri, ci, o.text.strip()))
+    return ra
+
+
+def kiem_bang(o_bang, ket_qua):
+    """Mọi ô chứa số trong bảng phải truy được về tệp kết quả.
+
+    Bỏ qua ô chỉ là số nguyên nhỏ dùng làm nhãn, và ô đã khai báo trong NGUON_SO
+    với nguồn không phải kết quả đo."""
+    loi = []
+    for bi, ri, ci, chu in o_bang:
+        for so in re.findall(r"\d+,\d+", chu):
+            if NGUON_SO.get(so) in ("goc", "noi_bo", "thiet_ke", "suy_ra"):
+                continue
+            if not khop_lam_tron(so, ket_qua):
+                loi.append(f"bảng {bi}, dòng {ri}, cột {ci}: số {so} "
+                           f"không tìm thấy trong tệp kết quả")
+    return loi
+
+
 def tach_muc(doan):
     """Tách danh sách đoạn thành từng mục, trả về dict {số mục: các đoạn}."""
+    # Đòi có khoảng trắng ngay sau dấu chấm, để câu mở đầu bằng số tiểu mục như
+    # "Mục 5.3 đã hoãn lại..." không bị nhận nhầm là tiêu đề của mục 5.
     moc = [(i, int(t.split(".")[0].split()[-1]))
-           for i, t in enumerate(doan) if re.match(r"^Mục \d+\.", t)]
+           for i, t in enumerate(doan) if re.match(r"^Mục \d+\. \S", t)]
     ket = {}
     for k, (i, so) in enumerate(moc):
         j = moc[k + 1][0] if k + 1 < len(moc) else len(doan)
@@ -224,19 +270,21 @@ def main():
     if not os.path.exists(BAO_CAO):
         sys.exit(f"Không tìm thấy báo cáo: {BAO_CAO}")
     doan = lay_van_ban(BAO_CAO)
+    o_bang = lay_o_bang(BAO_CAO)
     goc = open(GOC, encoding="utf-8").read() if os.path.exists(GOC) else ""
     noi_bo = "".join(open(f, encoding="utf-8").read()
                      for f in NOI_BO if os.path.exists(f))
     ket_qua = ""
     if os.path.isdir(KET_QUA_DIR):
         for f in os.listdir(KET_QUA_DIR):
-            if f.endswith(".csv"):
+            if f.endswith(".csv") or f.endswith(".log"):
                 ket_qua += open(os.path.join(KET_QUA_DIR, f),
                                 encoding="utf-8").read()
     muc = tach_muc(doan)
     text = " ".join(doan)
 
-    print(f"Báo cáo: {len(doan)} đoạn, {len(text.split())} chữ")
+    print(f"Báo cáo: {len(doan)} đoạn, {len(text.split())} chữ, "
+          f"{len(o_bang)} ô bảng")
     for k in sorted(muc):
         sc = len(" ".join(muc[k]).split())
         print(f"   mục {k}: {len(muc[k]):2d} đoạn, {sc:4d} chữ "
@@ -248,6 +296,7 @@ def main():
         ("1. Đối chiếu số liệu với nguồn", kiem_so_lieu(text, goc, noi_bo, ket_qua)),
         ("2. Thuật ngữ nhất quán", kiem_thuat_ngu(doan)),
         ("3. Viết hoa giữa câu", kiem_viet_hoa(doan)),
+        ("5. Số trong bảng", kiem_bang(o_bang, ket_qua)),
     ]:
         print(f"--- {ten} ---")
         if loi:

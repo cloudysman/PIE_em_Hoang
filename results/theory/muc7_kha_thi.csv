@@ -1,0 +1,17 @@
+tep,so_cau_hinh,muc_kha_thi_lon_nhat,vi_pham
+grid_fair_gauss.csv,28,1.000000,khong
+grid_fair_motion.csv,28,1.000000,khong
+grid_schedule_gauss.csv,18,1.000000,khong
+grid_schedule_motion.csv,18,1.000000,khong
+theory_gauss_epsconst.csv,3,1.004466,co
+theory_gauss_exact.csv,3,1.000948,co
+theory_gauss_m1.csv,3,1.006279,co
+theory_gauss_m2.csv,3,1.000119,co
+theory_gauss_m5.csv,3,1.000023,khong
+theory_gauss_mlog.csv,3,1.000017,khong
+theory_motion_epsconst.csv,3,1.004211,co
+theory_motion_exact.csv,3,1.000623,co
+theory_motion_m1.csv,3,1.243303,co
+theory_motion_m2.csv,3,1.001264,co
+theory_motion_m5.csv,3,1.000225,co
+theory_motion_mlog.csv,3,1.000049,khong
