@@ -1285,8 +1285,78 @@ MUC_11 = [
      "nhưng chúng giải thích vì sao phần thiết lập tốn thời gian hơn phần chạy.",
      "thuong"),
 
-    ("Đến đây phần hồ sơ kết thúc. Mục 12 tổng kết những gì giai đoạn nghiên cứu này "
-     "thu được và những gì còn lại phải làm.", "thuong"),
+    ("Mục 12 tiếp theo liệt kê đầy đủ các sản phẩm đã bàn giao, kèm vị trí của từng "
+     "sản phẩm trong kho lưu trữ.", "thuong"),
+]
+
+
+# Bảng ở mục 12: các sản phẩm bàn giao, vị trí đã đối chiếu với kho lưu trữ.
+BANG_MUC_12 = {
+    "tieu_de": ("Bảng 12.1. Các sản phẩm bàn giao của giai đoạn nghiên cứu. Vị trí "
+                "tính từ thư mục gốc của kho lưu trữ."),
+    "cot": ["Sản phẩm", "Vị trí", "Mô tả"],
+    "dong": [
+        ("Bản thảo bài báo bằng tiếng Anh",
+         "tai_lieu_bai_bao/paper/",
+         "Tệp nguồn và bản đã biên dịch, 8 trang, biên dịch không lỗi"),
+        ("Tài liệu định vị",
+         "tai_lieu_bai_bao/00_ket_luan_dieu_hanh.md và "
+         "tai_lieu_bai_bao/01_khung_bai_bao.md",
+         "Kết luận điều hành và khung bài báo, dùng để quyết định hướng đi"),
+        ("Khảo sát tài liệu",
+         "tai_lieu_bai_bao/khao_sat_tai_lieu_bang_tong_hop.md và "
+         "tai_lieu_bai_bao/khao_sat_tai_lieu_ket_luan_5_goc.md",
+         "Bảng thuộc tính của các bài đã đọc, và kết luận theo từng góc khảo sát"),
+        ("Báo cáo số liệu",
+         "tai_lieu_bai_bao/02_ket_qua_so_tien_hoa.md",
+         "Toàn bộ số liệu đã đo, kể cả số liệu của các lần chạy đã bị thay thế"),
+        ("Bản thảo chứng minh thứ nhất",
+         "tai_lieu_bai_bao/03_chung_minh_dinh_ly.md",
+         "Bản nhắm hội tụ mạnh cho sơ đồ bốn pha, đã bị bác, giữ kèm biên bản"),
+        ("Lộ trình chứng minh",
+         "tai_lieu_bai_bao/04_lo_trinh_chung_minh.md",
+         "Các bước phải làm sau khi bản thảo thứ nhất bị bác"),
+        ("Bản thảo chứng minh thứ hai",
+         "tai_lieu_bai_bao/05_chung_minh_hoi_tu_yeu.md",
+         "Bốn bổ đề đứng vững, phần còn lại bị bác, kèm biên bản phản biện"),
+        ("Bản chứng minh hiện hành",
+         "tai_lieu_bai_bao/06_chung_minh_day_du.md",
+         "Bản đang dùng, gồm dẫn xuất hằng số nhiễu và kết quả phản biện"),
+        ("Tệp kết quả thô",
+         "results/theory/",
+         "32 tệp số liệu và 4 tệp nhật ký chạy, gồm cả các lần chạy âm tính"),
+        ("Mã nguồn và bộ kiểm thử",
+         "pie_net/, tests/ và các tệp đo ở thư mục gốc",
+         "1653 dòng lệnh và mười bốn kiểm thử, xem bảng 11.1"),
+        ("Báo cáo này",
+         "tai_lieu_bai_bao/bao_cao/",
+         "Tệp báo cáo, trình sinh báo cáo và trình kiểm tra tự động sáu nhóm"),
+    ],
+}
+
+MUC_12 = [
+    ("Mục 12. Sản phẩm bàn giao", "de_muc"),
+
+    ("Mục này liệt kê những gì đã bàn giao, để người hướng dẫn biết trong tay có sẵn "
+     "cái gì và tìm chúng ở đâu. Bảng 12.1 ghi tên sản phẩm, vị trí trong kho lưu trữ, "
+     "và một dòng mô tả. Mọi vị trí trong bảng đã được đối chiếu với kho lưu trữ tại "
+     "thời điểm viết báo cáo.", "thuong"),
+
+    ("", "bang12"),
+
+    ("Có một điểm về cách bàn giao cần nói rõ. Hai bản thảo chứng minh đã bị bác vẫn "
+     "được giữ lại nguyên trạng, kèm biên bản phản biện chỉ ra chỗ sai, thay vì xóa đi "
+     "và chỉ nộp bản hiện hành. Lý do là hai bản ấy cho thấy vì sao sơ đồ cuối cùng có "
+     "dạng như ở mục 9.1: bản thứ nhất sụp vì bước quán tính và bước neo cắt đứt chuỗi "
+     "phép chiếu, và chính điều đó dẫn tới việc bỏ hai bước ấy ở mục 5. Người đọc chỉ "
+     "xem bản hiện hành sẽ không thấy được lý do đó.", "thuong"),
+
+    ("Tương tự, tệp kết quả thô giữ cả số liệu của các lần chạy đã bị thay thế và các "
+     "lần chạy cho kết quả âm tính ở mục 10, chứ không chỉ giữ các lần chạy được trích "
+     "vào báo cáo. Nhờ vậy người kiểm có thể tự đối chiếu con số trong báo cáo với "
+     "nguồn, và cũng thấy được những con số đã bị loại cùng lý do loại.", "thuong"),
+
+    ("Mục 13 tiếp theo nêu các hạn chế của công việc này.", "thuong"),
 ]
 
 
@@ -1371,9 +1441,10 @@ def main():
     bang_theo_khoa = {
         "bang": BANG_MUC_4, "bang6": BANG_MUC_6, "bang7a": BANG_MUC_7A,
         "bang7b": BANG_MUC_7B, "bang8": BANG_MUC_8, "bang11": BANG_MUC_11,
+        "bang12": BANG_MUC_12,
     }
     for text, kieu in (MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6 + MUC_7
-                       + MUC_8 + MUC_9 + MUC_10 + MUC_11):
+                       + MUC_8 + MUC_9 + MUC_10 + MUC_11 + MUC_12):
         if kieu in bang_theo_khoa:
             them_bang(doc, bang_theo_khoa[kieu])
             continue

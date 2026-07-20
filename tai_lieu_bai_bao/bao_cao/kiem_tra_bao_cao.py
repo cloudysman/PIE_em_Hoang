@@ -210,6 +210,26 @@ def kiem_bang_ma_nguon(o_bang, text):
     return loi
 
 
+def kiem_duong_dan(o_bang):
+    """Mọi đường dẫn nêu trong bảng phải còn tồn tại trong kho lưu trữ.
+
+    Bảng sản phẩm bàn giao chỉ có giá trị nếu người đọc tìm được đúng chỗ. Đường dẫn
+    lỗi thời là loại lỗi im lặng: báo cáo vẫn đọc trôi, nhưng người kiểm không thấy
+    tệp đâu."""
+    goc = os.path.join(HERE, "..", "..")
+    mau = re.compile(r"[\w./-]+/|[\w-]+/[\w./-]+\.\w+|[\w-]+\.(?:py|md|tex|pdf)")
+    loi = []
+    for bi, ri, ci, chu in o_bang:
+        for phan in re.split(r",\s*| và ", chu):
+            phan = phan.strip()
+            if not mau.fullmatch(phan):
+                continue
+            if not os.path.exists(os.path.join(goc, phan)):
+                loi.append(f"bảng {bi}, dòng {ri}: không tìm thấy {phan} "
+                           f"trong kho lưu trữ")
+    return loi
+
+
 def tach_muc(doan):
     """Tách danh sách đoạn thành từng mục, trả về dict {số mục: các đoạn}."""
     # Đòi có khoảng trắng ngay sau dấu chấm, để câu mở đầu bằng số tiểu mục như
@@ -346,6 +366,7 @@ def main():
         ("3. Viết hoa giữa câu", kiem_viet_hoa(doan)),
         ("5. Số trong bảng", kiem_bang(o_bang, ket_qua)),
         ("6. Bảng mã nguồn khớp kho lưu trữ", kiem_bang_ma_nguon(o_bang, text)),
+        ("7. Đường dẫn trong bảng còn tồn tại", kiem_duong_dan(o_bang)),
     ]:
         print(f"--- {ten} ---")
         if loi:
