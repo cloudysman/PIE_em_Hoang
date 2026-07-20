@@ -74,12 +74,15 @@ NGUON_SO = {
     "120,25": "noi_bo", "0,31": "noi_bo", "2,0236": "noi_bo", "2,0894": "noi_bo",
     "2,56": "noi_bo", "8,8": "noi_bo",
     "0,25": "thiet_ke",
+    # mục 11: phần dư biến phân đầu và cuối, lấy từ README và chú thích mã nguồn
+    "2,48": "noi_bo", "0,199": "noi_bo",
 }
 
 # Tài liệu nội bộ dùng làm nguồn đối chiếu cho các phép đo của chính đề tài.
-NOI_BO = [os.path.join(HERE, "..", f) for f in
-          ("04_lo_trinh_chung_minh.md", "05_chung_minh_hoi_tu_yeu.md",
-           "02_ket_qua_so_tien_hoa.md")]
+NOI_BO = ([os.path.join(HERE, "..", f) for f in
+           ("04_lo_trinh_chung_minh.md", "05_chung_minh_hoi_tu_yeu.md",
+            "02_ket_qua_so_tien_hoa.md")]
+          + [os.path.join(HERE, "..", "..", "README.md")])
 KET_QUA_DIR = os.path.join(HERE, "..", "..", "results", "theory")
 
 # Cặp thuật ngữ: (từ đúng, các từ đồng nghĩa không được dùng).
@@ -106,7 +109,7 @@ CHO_PHEP_HOA = {
     "Optimization", "Computational", "Applications", "Communications",
     "Nonlinear", "Science", "Simulation", "SIAM", "Ferreira", "Ugon",
     "Millán", "Díaz", "Qin", "Tan", "Tseng",  # tên tạp chí và tên tác giả
-    "Plug-and-Play", "Gauss", "PIE-Net", "Fejér", "DnCNN", "Q1", "Q2",
+    "Plug-and-Play", "Gauss", "PIE-Net", "Fejér", "DnCNN", "Q1", "Q2", "Python",
     "Chambolle-Pock", "Malitsky", "Lipschitz", "Minty", "Opial", "Hà", "Nội", "Đào", "Trọng", "Hiếu",
     "Đặng", "Văn", "Chiến", "Học", "Viện", "Bộ", "Khoa", "Công", "Nghệ",
     "Bưu", "Chính", "Viễn", "Thông", "Mục", "Đề", "Giảng", "Lớp", "Biết",
@@ -169,6 +172,41 @@ def kiem_bang(o_bang, ket_qua):
             if not khop_lam_tron(so, ket_qua):
                 loi.append(f"bảng {bi}, dòng {ri}, cột {ci}: số {so} "
                            f"không tìm thấy trong tệp kết quả")
+    return loi
+
+
+def kiem_bang_ma_nguon(o_bang, text):
+    """Bảng liệt kê tệp mã nguồn phải khớp mã nguồn thật.
+
+    Nhóm 5 chỉ soát số thập phân, nên số dòng lệnh trong bảng 11.1 lọt lưới. Bảng này
+    lỗi thời rất dễ, vì mỗi lần sửa mã là số dòng đổi. Ở đây ta đếm lại từ chính tệp,
+    và kiểm cả tổng số dòng nêu trong phần chữ."""
+    goc = os.path.join(HERE, "..", "..")
+    loi, tong = [], 0
+    hang = {}
+    for bi, ri, ci, chu in o_bang:
+        if chu.endswith(".py"):
+            hang[(bi, ri)] = chu
+    if not hang:
+        return ["không tìm thấy bảng liệt kê tệp mã nguồn"]
+    for (bi, ri), tep in sorted(hang.items()):
+        so_o = [chu for b, r, c, chu in o_bang
+                if b == bi and r == ri and chu.isdigit()]
+        duong_dan = os.path.join(goc, tep)
+        if not os.path.exists(duong_dan):
+            loi.append(f"bảng {bi}: tệp {tep} không còn trong kho lưu trữ")
+            continue
+        with open(duong_dan, encoding="utf-8") as f:
+            that = sum(1 for d in f if d.strip())
+        tong += that
+        if not so_o:
+            loi.append(f"bảng {bi}, dòng {ri}: tệp {tep} thiếu ô số dòng")
+        elif int(so_o[0]) != that:
+            loi.append(f"bảng {bi}, dòng {ri}: tệp {tep} ghi {so_o[0]} dòng "
+                       f"nhưng đếm được {that}")
+    if str(tong) not in text:
+        loi.append(f"tổng số dòng lệnh đếm được là {tong}, "
+                   f"nhưng con số này không có trong phần chữ")
     return loi
 
 
@@ -307,6 +345,7 @@ def main():
         ("2. Thuật ngữ nhất quán", kiem_thuat_ngu(doan)),
         ("3. Viết hoa giữa câu", kiem_viet_hoa(doan)),
         ("5. Số trong bảng", kiem_bang(o_bang, ket_qua)),
+        ("6. Bảng mã nguồn khớp kho lưu trữ", kiem_bang_ma_nguon(o_bang, text)),
     ]:
         print(f"--- {ten} ---")
         if loi:

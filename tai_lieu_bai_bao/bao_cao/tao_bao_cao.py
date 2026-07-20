@@ -1180,6 +1180,116 @@ MUC_10 = [
 ]
 
 
+# Bảng ở mục 11: các tệp mã nguồn chính và vai trò, số dòng đếm từ kho lưu trữ.
+BANG_MUC_11 = {
+    "tieu_de": ("Bảng 11.1. Các tệp mã nguồn chính của phần lý thuyết và thực nghiệm. "
+                "Số dòng không tính dòng trắng."),
+    "cot": ["Tệp", "Vai trò", "Số dòng"],
+    "dong": [
+        ("pie_net/constraints.py",
+         "Phép chiếu lên quả cầu biến phân toàn phần, chứng chỉ sai số, phép ép khả thi",
+         "377"),
+        ("pie_net/reflected_solver.py",
+         "Sơ đồ phản xạ hai dòng và các chế độ chọn ngân sách bước nội", "345"),
+        ("pie_net/operators.py", "Toán tử làm mờ và ước lượng hằng số Lipschitz", "160"),
+        ("pie_net/data.py", "Sinh dữ liệu thử nghiệm và tạo ảnh quan sát", "106"),
+        ("grid_schedule.py", "Lưới so chi phí theo giao thức đo công bằng ở mục 8",
+         "150"),
+        ("test_certificate.py", "Kiểm chặn trên của chứng chỉ và đo cái giá của nó",
+         "108"),
+        ("test_summability.py", "Đo độ dốc và tính tổng được của dãy sai số", "92"),
+        ("phan_tich_muc7.py", "Rút số liệu của mục 7 từ tệp kết quả", "155"),
+        ("tests/test_theory.py", "Mười bốn kiểm thử tính chất toán học", "160"),
+    ],
+}
+
+MUC_11 = [
+    ("Mục 11. Chất lượng mã nguồn và tính tái lập", "de_muc"),
+
+    ("Các con số ở mục 7 và các kết luận âm tính ở mục 10 chỉ có giá trị nếu người khác "
+     "kiểm lại được. Mục này trình bày những việc đã làm để phần thực thi đủ tin cậy "
+     "cho việc đó: bộ kiểm thử, việc dọn các khẳng định vượt quá số liệu, cách tổ chức "
+     "mã nguồn, và cách chạy lại từng thí nghiệm.", "thuong"),
+
+    ("11.1. Bộ kiểm thử", "de_muc_phu"),
+    ("Có mười bốn kiểm thử tự động, tất cả đều chạy qua. Nguyên tắc khi viết chúng là "
+     "kiểm tính chất toán học chứ không kiểm chi tiết cài đặt, vì một kiểm thử ràng "
+     "vào chi tiết cài đặt sẽ hỏng mỗi lần sửa mã mà không cho biết điều gì về tính "
+     "đúng đắn.", "thuong"),
+
+    ("Vài kiểm thử tiêu biểu. Một kiểm thử xác nhận đặc trưng biến phân của phép chiếu, "
+     "tức tích vô hướng giữa vectơ từ điểm chiếu tới điểm cần chiếu với hướng đi từ "
+     "điểm chiếu tới mọi điểm khác của tập ràng buộc đều không dương. Một kiểm thử xác "
+     "nhận chứng chỉ là chặn trên thật sự, tức nó không bao giờ nhỏ hơn sai số thật; "
+     "đây chính là tính chất mà mục 6.5 đo bằng số, nay được đưa vào bộ kiểm thử để "
+     "không thể vô tình làm hỏng về sau. Một kiểm thử xác nhận khởi tạo ấm tốn ít bước "
+     "nội hơn khởi tạo lạnh. Một kiểm thử xác nhận độ dài bước sinh ra từ hằng số "
+     "Lipschitz ước lượng được luôn thỏa điều kiện ở giả thiết thứ ba của mục 9.2. "
+     "Các kiểm thử còn lại phủ tính khả thi của đầu ra, tính không âm của khoảng cách "
+     "đối ngẫu, và quan hệ giữa ngân sách bước nội với sai số thu được.", "thuong"),
+
+    ("11.2. Dọn các khẳng định vượt quá số liệu", "de_muc_phu"),
+    ("Hai việc dọn dẹp đã thực hiện, cả hai đều là sửa lỗi của chính đề tài.", "thuong"),
+
+    ("Việc thứ nhất là gỡ khẳng định rằng phần dư biến phân tiến về không. Khẳng định "
+     "này từng có trong cả tài liệu hướng dẫn lẫn chú thích mã nguồn. Số liệu thật chỉ "
+     "cho thấy phần dư biến phân giảm từ 2,48 xuống 0,199 qua 200 bước ngoài, và giảm "
+     "không đơn điệu. Một dãy giảm không đơn điệu trên một đoạn hữu hạn không phải bằng "
+     "chứng cho việc tiến về không, nên khẳng định cũ đã được thay bằng đúng điều số "
+     "liệu cho phép nói.", "thuong"),
+
+    ("Việc thứ hai là sửa danh pháp, đã trình bày ở mục 5.1. Pha thứ ba của sơ đồ bốn "
+     "pha cũ là hiệu chỉnh kiểu Tseng chứ không phải bước phản xạ, và các tài liệu "
+     "trước gọi sai tên. Tên gọi sai này đã được sửa trong tài liệu hướng dẫn và trong "
+     "chú thích mã nguồn, kèm một dòng ghi rõ tên cũ sai ở chỗ nào, để người đọc tài "
+     "liệu cũ không bị nhầm tiếp.", "thuong"),
+
+    ("11.3. Tổ chức mã nguồn", "de_muc_phu"),
+    ("Phần lý thuyết và thực nghiệm gồm chín tệp chính, tổng cộng 1653 dòng lệnh không "
+     "tính dòng trắng. Bảng 11.1 liệt kê từng tệp cùng vai trò của nó.", "thuong"),
+
+    ("", "bang11"),
+
+    ("Cách chia tệp theo một nguyên tắc: mỗi tệp trả lời một câu hỏi. Ba tệp đo, gồm "
+     "tệp kiểm chứng chỉ, tệp đo tính tổng được và tệp rút số liệu của mục 7, chạy độc "
+     "lập với nhau và mỗi tệp ghi thẳng kết quả ra tệp dữ liệu. Nhờ vậy mọi con số "
+     "trong báo cáo đều truy được về một tệp cụ thể thay vì về trí nhớ.", "thuong"),
+
+    ("11.4. Tính tái lập", "de_muc_phu"),
+    ("Mã nguồn, dữ liệu thô và các kịch bản phân tích đều công khai trên kho lưu trữ "
+     "của đề tài. Dữ liệu thô gồm các tệp kết quả của mọi lần chạy, kể cả các lần chạy "
+     "cho kết quả âm tính ở mục 10, chứ không chỉ các lần chạy cho kết quả thuận lợi. "
+     "Lệnh chạy lại từng thí nghiệm được ghi trong phần chú thích đầu của mỗi tệp, kèm "
+     "các tham số đã dùng, nên người kiểm không phải đoán.", "thuong"),
+
+    ("Ngoài ra có một trình kiểm tra tự động cho chính báo cáo này, gồm sáu nhóm kiểm "
+     "tra. Nó đối chiếu từng con số trong báo cáo với tệp kết quả, kể cả các số trong "
+     "bảng và các số ghi ở dạng khoa học; kiểm tính nhất quán của thuật ngữ; kiểm cách "
+     "viết hoa; kiểm các mục có dẫn sang nhau hay không; và đếm lại số dòng lệnh của "
+     "từng tệp trong bảng 11.1 để bảng đó không lỗi thời khi mã nguồn thay đổi. Trình "
+     "kiểm tra này đã bắt được nhiều lỗi số liệu trong quá trình viết, trong đó có "
+     "những con số lấy từ một lần chạy cũ đã bị thay thế.", "thuong"),
+
+    ("11.5. Hạ tầng tính toán", "de_muc_phu"),
+    ("Các phép đo chi phí ở mục 7 chạy trên một máy chủ có bộ xử lý đồ họa, vì phép đo "
+     "thời gian chỉ có nghĩa khi mọi cấu hình chạy trên cùng một máy. Có ba trở ngại về "
+     "môi trường đã phải xử lý, ghi lại ở đây vì người khác dựng lại môi trường sẽ gặp "
+     "đúng chúng.", "thuong"),
+
+    ("Trở ngại thứ nhất là máy chủ không có sẵn công cụ tạo môi trường ảo của Python. "
+     "Trở ngại thứ hai là không có sẵn trình quản lý gói, phải cài riêng vào thư mục "
+     "người dùng. Trở ngại thứ ba, và mất thời gian nhất, là bản thư viện tính toán "
+     "được tải về mặc định biên dịch cho một phiên bản nền tảng tính toán song song mới "
+     "hơn phiên bản mà trình điều khiển của máy chủ hỗ trợ, nên phải chỉ định rõ nguồn "
+     "tải bản khớp với trình điều khiển. Ba trở ngại này không ảnh hưởng tới kết quả, "
+     "nhưng chúng giải thích vì sao phần thiết lập tốn thời gian hơn phần chạy.",
+     "thuong"),
+
+    ("Đến đây phần hồ sơ kết thúc. Mục 12 tổng kết những gì giai đoạn nghiên cứu này "
+     "thu được và những gì còn lại phải làm.", "thuong"),
+]
+
+
 def thay_chu(p, text):
     """Thay chữ của một đoạn nhưng giữ nguyên định dạng của lần chạy chữ đầu tiên."""
     runs = p.runs
@@ -1260,10 +1370,10 @@ def main():
     # 3. Ghi các mục nội dung.
     bang_theo_khoa = {
         "bang": BANG_MUC_4, "bang6": BANG_MUC_6, "bang7a": BANG_MUC_7A,
-        "bang7b": BANG_MUC_7B, "bang8": BANG_MUC_8,
+        "bang7b": BANG_MUC_7B, "bang8": BANG_MUC_8, "bang11": BANG_MUC_11,
     }
     for text, kieu in (MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6 + MUC_7
-                       + MUC_8 + MUC_9 + MUC_10):
+                       + MUC_8 + MUC_9 + MUC_10 + MUC_11):
         if kieu in bang_theo_khoa:
             them_bang(doc, bang_theo_khoa[kieu])
             continue
