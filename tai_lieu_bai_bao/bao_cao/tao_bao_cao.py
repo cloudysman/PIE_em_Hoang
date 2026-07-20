@@ -23,7 +23,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.shared import Pt, RGBColor
+from docx.shared import Emu, Pt, RGBColor
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 KHUON = r"C:\Users\trong\Downloads\SoundGuard_Report_FULL_EN.docx"
@@ -43,25 +43,32 @@ BIA = {
     9: "Hà Nội - 2026",
 }
 
-DOAN_NGAT_TRANG = 10          # đoạn chứa ngắt trang, giữ lại
+DOAN_CUOI_BIA = 9             # đoạn cuối cùng của bìa; từ đoạn sau là nội dung
+                              # cũ, xóa hết. Bìa của tệp khuôn liệt kê bốn tác
+                              # giả, nên nếu giữ tới đoạn 10 thì tên tác giả thứ
+                              # tư của báo cáo gốc còn sót lại trên bìa.
 MUC_1 = [
     ("Mục 1. Tóm tắt", "de_muc"),
+
+    ("1.1. Điểm xuất phát", "de_muc_phu"),
     ("Báo cáo này trình bày các đóng góp của giai đoạn nghiên cứu tiếp nối báo cáo "
      "thực nghiệm trước đó của đề tài PIE-Net. Điểm xuất phát là một kết luận không "
      "thuận lợi. Báo cáo thực nghiệm trước đã kiểm bốn khẳng định của thiết kế ban "
      "đầu qua năm thí nghiệm, mỗi thí nghiệm có tiêu chí đạt hay không đạt đặt trước "
-     "khi chạy, và chỉ một khẳng định đứng vững. Hệ số vô hướng học được đạt 28,31 dB "
-     "so với 28,91 dB của hệ số hằng được tinh chỉnh tốt, tức thấp hơn 0,60 dB; phương "
-     "pháp của đề tài thua Plug-and-Play 0,59 dB ở chế độ khớp mức nhiễu và 0,88 dB ở "
-     "chế độ lệch mức nhiễu. Các kết quả này có tính cấu trúc, tức xuất phát từ bản "
-     "chất toán học của cách dựng mô hình chứ không từ lỗi cài đặt, nên hướng thực "
-     "nghiệm đã được đóng lại. Khẳng định duy nhất còn đứng vững là lợi thế chi phí "
-     "của phép chiếu xấp xỉ có khởi tạo ấm.", "thuong"),
+     "khi chạy, và chỉ một khẳng định đứng vững.", "thuong"),
+    ("Cụ thể, hệ số vô hướng học được đạt 28,31 dB so với 28,91 dB của hệ số hằng được "
+     "tinh chỉnh tốt, tức thấp hơn 0,60 dB; phương pháp của đề tài thua Plug-and-Play "
+     "0,59 dB ở chế độ khớp mức nhiễu và 0,88 dB ở chế độ lệch mức nhiễu. Các kết quả "
+     "này có tính cấu trúc, tức xuất phát từ bản chất toán học của cách dựng mô hình "
+     "chứ không từ lỗi cài đặt, nên hướng thực nghiệm đã được đóng lại. Khẳng định duy "
+     "nhất còn đứng vững là lợi thế chi phí của phép chiếu xấp xỉ có khởi tạo ấm.",
+     "thuong"),
     ("Câu hỏi của giai đoạn này vì thế được thu hẹp lại: có thể biến điều duy nhất "
      "còn đứng vững đó thành một đóng góp công bố được hay không. Để trả lời, trọng "
      "tâm được chuyển từ phần học sang phần thuật toán và giải tích số, sơ đồ lặp "
      "được dựng lại cho đúng với tài liệu, và toàn bộ phần đo chi phí được thiết kế "
      "lại.", "thuong"),
+    ("1.2. Ba đóng góp", "de_muc_phu"),
     ("Báo cáo có ba đóng góp. Đóng góp thứ nhất là một chứng chỉ sai số tính được cho "
      "phép chiếu xấp xỉ. Định nghĩa phép chiếu xấp xỉ trong tài liệu đòi kiểm khoảng "
      "cách tới phép chiếu chính xác, mà phép chiếu chính xác lại chính là đại lượng "
@@ -78,7 +85,7 @@ MUC_1 = [
      "lần tính theo thời gian thuật toán trên mờ Gauss; trên mờ chuyển động các hệ số "
      "tương ứng là 17,2 đến 23,6 lần và 7,2 đến 14,7 lần. Mọi cấu hình đều cho nghiệm "
      "khả thi, với mức vi phạm ràng buộc không vượt 1,0000, trong khi chế độ ngân sách "
-     "cố định cho đầu ra vi phạm ràng buộc tới vài phần trăm.", "thuong"),
+     "cố định cho đầu ra vượt ra ngoài tập ràng buộc tới 24,3 phần trăm.", "thuong"),
     ("Đóng góp thứ ba là một giao thức đo chi phí công bằng, được xây dựng sau khi ba "
      "lỗi phương pháp luận trong chính phần đo của chúng tôi bị phát hiện và sửa: chỉ "
      "đếm bước nội mà không đo thời gian, trong khi bước nội của chế độ thích nghi đắt "
@@ -88,6 +95,7 @@ MUC_1 = [
      "đối chứng. Giao thức sau khi sửa báo cả hai thước đo chi phí, ấn định mức phần "
      "dư mục tiêu trước khi chạy, và dò tham số cho hai bên với cùng số cấu hình.",
      "thuong"),
+    ("1.3. Mức công bố và phần chưa hoàn tất", "de_muc_phu"),
     ("Về mức công bố, báo cáo kết luận rằng công trình phù hợp một tạp chí thuộc nhóm "
      "Q2 chứ không phải nhóm Q1. Lý do nằm ở phần lý thuyết: sau khi dẫn xuất đầy đủ, "
      "hằng số của số hạng nhiễu do phép chiếu xấp xỉ không chứa nghịch đảo độ dài bước, "
@@ -100,6 +108,7 @@ MUC_1 = [
      "tựa Fejér loại nhân tính sao cho nó không hấp thụ mất số hạng âm, và bước chuyển "
      "giới hạn yếu trong không gian vô hạn chiều; chi tiết thứ hai là thường quy trong "
      "không gian hữu hạn chiều của phần thực nghiệm.", "thuong"),
+    ("1.4. Bố cục của báo cáo", "de_muc_phu"),
     ("Phần còn lại của báo cáo được tổ chức như sau. Mục 2 trình bày bối cảnh và điểm "
      "xuất phát, tức bài toán và các kết luận của báo cáo thực nghiệm trước. Mục 3 nêu "
      "bốn nguyên tắc làm việc, là cơ sở để đánh giá độ tin cậy của các con số về sau. "
@@ -171,7 +180,9 @@ MUC_2 = [
      "khác biệt về chất lượng. Thứ hai, ràng buộc cứng nhất quán dữ liệu buộc nghiệm "
      "bám sát quả cầu quanh dữ liệu quan sát, mà dữ liệu quan sát đã mang nhiễu, nên "
      "ép như vậy chính là nạp nhiễu trở lại ảnh khôi phục; điều này giải thích vì sao "
-     "khoảng cách với Plug-and-Play nới rộng đúng ở chế độ lệch mức nhiễu. Thứ ba, hai "
+     "khoảng cách với Plug-and-Play nới rộng đúng ở chế độ lệch mức nhiễu.", "thuong"),
+
+    ("Thứ ba, hai "
      "thành phần được kỳ vọng của đề tài loại trừ lẫn nhau: toán tử học được chỉ ổn "
      "định khi ngân sách bước nội đủ lớn, mà ngân sách bước nội lớn lại phá hủy đúng "
      "lợi thế chi phí của phép chiếu xấp xỉ ít bước nội.", "thuong"),
@@ -300,6 +311,7 @@ MUC_3 = [
 
 # Bảng ở mục 4: mỗi dòng gồm bài chặn và điểm khác biệt so với công việc của báo cáo.
 BANG_MUC_4 = {
+    "rong": [42, 58],
     "tieu_de": "Bảng 4.1. Các bài chặn và điểm khác biệt so với công việc của báo cáo.",
     "cot": ["Bài chặn", "Điểm khác biệt"],
     "dong": [
@@ -497,6 +509,7 @@ MUC_5 = [
 
 # Bảng ở mục 6: kiểm chứng chặn trên của chứng chỉ theo số bước nội.
 BANG_MUC_6 = {
+    "rong": [16, 30, 26, 28],
     "tieu_de": ("Bảng 6.1. Kiểm chứng chặn trên của chứng chỉ theo số bước nội. "
                 "Cột cuối là tỉ số giữa chặn trên và sai số thật."),
     "cot": ["Số bước nội", "Chặn trên từ chứng chỉ", "Sai số thật",
@@ -592,7 +605,7 @@ MUC_6 = [
      "lấp chỗ ấy là điều mà báo cáo này nhận là đóng góp, không hơn.", "thuong"),
 
     ("6.5. Kiểm chứng: chứng chỉ có thật sự là chặn trên hay không", "de_muc_phu"),
-    ("Một chứng chỉ chỉ dùng được nếu nó không bao giờ đánh giá thấp sai số thật. Nếu "
+    ("Một chứng chỉ dùng được chỉ khi nó không bao giờ đánh giá thấp sai số thật. Nếu "
      "nó đánh giá thấp, thuật toán sẽ dừng sớm và giả thiết của định lý bị vi phạm mà "
      "không ai biết. Vì vậy tính chất chặn trên được kiểm trực tiếp bằng số, chứ không "
      "chỉ dựa vào lập luận.", "thuong"),
@@ -630,34 +643,36 @@ MUC_6 = [
 
 # Hai bảng ở mục 7: chi phí của chế độ thích nghi so với phép chiếu chính xác,
 # trích từ results/theory/muc7_he_so_gauss.csv và muc7_he_so_motion.csv.
-COT_MUC_7 = ["Mức phần dư biến phân", "Bước nội của phép chiếu chính xác",
-             "Giây của phép chiếu chính xác", "Bước nội của chế độ thích nghi",
-             "Giây của chế độ thích nghi", "Hệ số theo bước nội",
-             "Hệ số theo thời gian"]
+COT_MUC_7 = ["Mức phần dư biến phân", "Phép chiếu chính xác",
+             "Chế độ thích nghi", "Hệ số theo bước nội", "Hệ số theo thời gian"]
+RONG_MUC_7 = [19, 22, 22, 18, 19]
 
 BANG_MUC_7A = {
+    "rong": RONG_MUC_7,
     "tieu_de": ("Bảng 7.1. Chi phí trên mờ Gauss ở năm mức phần dư biến phân ấn định "
-                "trước. Hai cột cuối là số lần chế độ thích nghi rẻ hơn."),
+                "trước. Hai cột giữa ghi tổng bước nội và số giây, cách nhau bằng "
+                "dấu gạch chéo. Hai cột cuối là số lần chế độ thích nghi rẻ hơn."),
     "cot": COT_MUC_7,
     "dong": [
-        ("3,0·10⁻²", "3796", "2,48", "198", "0,52", "19,17", "4,73"),
-        ("2,0·10⁻²", "3858", "5,13", "275", "0,70", "14,03", "7,38"),
-        ("1,5·10⁻²", "5738", "8,61", "357", "0,88", "16,07", "9,74"),
-        ("1,2·10⁻²", "8509", "9,73", "476", "1,12", "17,88", "8,68"),
-        ("1,0·10⁻²", "8566", "11,25", "649", "1,43", "13,20", "7,89"),
+        ("3,0·10⁻²", "3796 / 2,48", "198 / 0,52", "19,17", "4,73"),
+        ("2,0·10⁻²", "3858 / 5,13", "275 / 0,70", "14,03", "7,38"),
+        ("1,5·10⁻²", "5738 / 8,61", "357 / 0,88", "16,07", "9,74"),
+        ("1,2·10⁻²", "8509 / 9,73", "476 / 1,12", "17,88", "8,68"),
+        ("1,0·10⁻²", "8566 / 11,25", "649 / 1,43", "13,20", "7,89"),
     ],
 }
 
 BANG_MUC_7B = {
-    "tieu_de": ("Bảng 7.2. Chi phí trên mờ chuyển động, cùng năm mức phần dư biến phân. "
-                "Dòng cuối được bàn riêng trong phần chữ."),
+    "rong": RONG_MUC_7,
+    "tieu_de": ("Bảng 7.2. Chi phí trên mờ chuyển động, cùng năm mức phần dư biến phân, "
+                "trình bày như bảng 7.1. Dòng cuối được bàn riêng trong phần chữ."),
     "cot": COT_MUC_7,
     "dong": [
-        ("3,0·10⁻²", "5786", "3,97", "245", "0,55", "23,62", "7,15"),
-        ("2,0·10⁻²", "5848", "6,57", "321", "0,76", "18,22", "8,60"),
-        ("1,5·10⁻²", "8448", "10,98", "434", "0,91", "19,47", "12,08"),
-        ("1,2·10⁻²", "8494", "15,33", "493", "1,04", "17,23", "14,72"),
-        ("1,0·10⁻²", "435795", "732,89", "773", "1,54", "563,77", "476,69"),
+        ("3,0·10⁻²", "5786 / 3,97", "245 / 0,55", "23,62", "7,15"),
+        ("2,0·10⁻²", "5848 / 6,57", "321 / 0,76", "18,22", "8,60"),
+        ("1,5·10⁻²", "8448 / 10,98", "434 / 0,91", "19,47", "12,08"),
+        ("1,2·10⁻²", "8494 / 15,33", "493 / 1,04", "17,23", "14,72"),
+        ("1,0·10⁻²", "435795 / 732,89", "773 / 1,54", "563,77", "476,69"),
     ],
 }
 
@@ -794,10 +809,11 @@ MUC_7 = [
 
 # Bảng ở mục 8: bẫy đo lường khi áp lịch bước tăng tốc, trích từ compare_accel_gauss.log.
 BANG_MUC_8 = {
+    "rong": [28, 17, 17, 19, 19],
     "tieu_de": ("Bảng 8.1. Bẫy đo lường: áp lịch bước tăng tốc cho mọi chế độ làm hệ số "
                 "tiết kiệm trông lớn hơn, nhưng là do phương pháp đối chứng chậm đi."),
-    "cot": ["Chế độ", "Bước nội khi không tăng tốc", "Bước nội khi tăng tốc",
-            "Hệ số tiết kiệm khi không tăng tốc", "Hệ số tiết kiệm khi tăng tốc"],
+    "cot": ["Chế độ", "Bước nội, không tăng tốc", "Bước nội, có tăng tốc",
+            "Hệ số, không tăng tốc", "Hệ số, có tăng tốc"],
     "dong": [
         ("Phép chiếu chính xác", "384", "560", "mốc so sánh", "mốc so sánh"),
         ("Ngân sách cố định hai bước nội", "162", "162", "2,37", "3,46"),
@@ -1094,8 +1110,8 @@ MUC_10 = [
      "hiện tại. Nhưng chặn trên vẫn hợp lệ nếu thay bằng giá trị tốt nhất đã gặp trong "
      "các bước nội đã qua, tức giá trị nhỏ nhất của hàm mục tiêu gốc và giá trị lớn "
      "nhất của hàm mục tiêu đối ngẫu. Vì khoảng cách đối ngẫu tính theo cặp giá trị tốt "
-     "nhất không lớn hơn khoảng cách tính theo cặp giá trị hiện tại, chứng chỉ chỉ có "
-     "thể chặt hơn, và vòng lặp nội sẽ dừng sớm hơn.", "thuong"),
+     "nhất không lớn hơn khoảng cách tính theo cặp giá trị hiện tại, chứng chỉ khi ấy "
+     "chỉ có thể chặt thêm, và vòng lặp nội sẽ dừng sớm hơn.", "thuong"),
 
     ("Số liệu: không giảm được bước nội nào, ở mọi mức sai số đã thử.", "thuong"),
 
@@ -1142,7 +1158,9 @@ MUC_10 = [
      "ràng buộc bằng hộp bao ngoài, và cận này quá thô đến mức vô dụng. Đo trên bài "
      "chiếu thật, ngay cả khi chạy 2000 bước nội tức gần như chiếu chính xác, vế trái "
      "vẫn là 120,25 trong khi vế phải với dung sai 0,25 chỉ là 0,31. Tiêu chuẩn không "
-     "bao giờ thỏa. Nguyên nhân có tính cấu trúc: quả cầu biến phân toàn phần giao hộp "
+     "bao giờ thỏa.", "thuong"),
+
+    ("Nguyên nhân có tính cấu trúc: quả cầu biến phân toàn phần giao hộp "
      "nhỏ hơn hộp rất nhiều, nên thay tập ràng buộc bằng hộp làm cận trên phồng lên; "
      "phép chiếu chính xác thỏa bất đẳng thức trên tập ràng buộc thật nhưng không thỏa "
      "trên hộp. Muốn kiểm đúng phải tính hàm tựa của tập ràng buộc, tức giải thêm một "
@@ -1183,6 +1201,7 @@ MUC_10 = [
 
 # Bảng ở mục 11: các tệp mã nguồn chính và vai trò, số dòng đếm từ kho lưu trữ.
 BANG_MUC_11 = {
+    "rong": [30, 57, 13],
     "tieu_de": ("Bảng 11.1. Các tệp mã nguồn chính của phần lý thuyết và thực nghiệm. "
                 "Số dòng không tính dòng trắng."),
     "cot": ["Tệp", "Vai trò", "Số dòng"],
@@ -1223,7 +1242,9 @@ MUC_11 = [
      "điểm chiếu tới mọi điểm khác của tập ràng buộc đều không dương. Một kiểm thử xác "
      "nhận chứng chỉ là chặn trên thật sự, tức nó không bao giờ nhỏ hơn sai số thật; "
      "đây chính là tính chất mà mục 6.5 đo bằng số, nay được đưa vào bộ kiểm thử để "
-     "không thể vô tình làm hỏng về sau. Một kiểm thử xác nhận khởi tạo ấm tốn ít bước "
+     "không thể vô tình làm hỏng về sau.", "thuong"),
+
+    ("Hai kiểm thử nữa đáng nêu. Một kiểm thử xác nhận khởi tạo ấm tốn ít bước "
      "nội hơn khởi tạo lạnh. Một kiểm thử xác nhận độ dài bước sinh ra từ hằng số "
      "Lipschitz ước lượng được luôn thỏa điều kiện ở giả thiết thứ ba của mục 9.2. "
      "Các kiểm thử còn lại phủ tính khả thi của đầu ra, tính không âm của khoảng cách "
@@ -1267,9 +1288,11 @@ MUC_11 = [
      "tra. Nó đối chiếu từng con số trong báo cáo với tệp kết quả, kể cả các số trong "
      "bảng và các số ghi ở dạng khoa học; kiểm tính nhất quán của thuật ngữ; kiểm cách "
      "viết hoa; kiểm các mục có dẫn sang nhau hay không; đếm lại số dòng lệnh của từng "
-     "tệp trong bảng 11.1 để bảng đó không lỗi thời khi mã nguồn thay đổi; và kiểm mọi "
-     "đường dẫn nêu trong bảng 12.1 có còn tồn tại hay không; và kiểm các quy ước trình "
-     "bày, gồm việc mỗi mục chính phải bắt đầu một trang mới. Trình kiểm tra này đã bắt "
+     "tệp trong bảng 11.1 để bảng đó không lỗi thời khi mã nguồn thay đổi; kiểm mọi "
+     "đường dẫn nêu trong bảng 12.1 có còn tồn tại hay không; và kiểm các quy ước "
+     "trình bày, gồm việc mỗi mục chính phải bắt đầu một trang mới.", "thuong"),
+
+    ("Trình kiểm tra này đã bắt "
      "được nhiều lỗi trong quá trình viết, trong đó có những con số lấy từ một lần chạy "
      "cũ đã bị thay thế, và một đường dẫn ghi thiếu tên thư mục.", "thuong"),
 
@@ -1295,6 +1318,7 @@ MUC_11 = [
 
 # Bảng ở mục 12: các sản phẩm bàn giao, vị trí đã đối chiếu với kho lưu trữ.
 BANG_MUC_12 = {
+    "rong": [24, 34, 42],
     "tieu_de": ("Bảng 12.1. Các sản phẩm bàn giao của giai đoạn nghiên cứu. Vị trí "
                 "tính từ thư mục gốc của kho lưu trữ."),
     "cot": ["Sản phẩm", "Vị trí", "Mô tả"],
@@ -1340,6 +1364,7 @@ BANG_MUC_12 = {
 MUC_12 = [
     ("Mục 12. Sản phẩm bàn giao", "de_muc"),
 
+    ("12.1. Danh mục sản phẩm", "de_muc_phu"),
     ("Mục này liệt kê những gì đã bàn giao, để người hướng dẫn biết trong tay có sẵn "
      "cái gì và tìm chúng ở đâu. Bảng 12.1 ghi tên sản phẩm, vị trí trong kho lưu trữ, "
      "và một dòng mô tả. Mọi vị trí trong bảng đã được đối chiếu với kho lưu trữ tại "
@@ -1347,6 +1372,7 @@ MUC_12 = [
 
     ("", "bang12"),
 
+    ("12.2. Vì sao giữ lại cả phần đã bị bác", "de_muc_phu"),
     ("Có một điểm về cách bàn giao cần nói rõ. Hai bản thảo chứng minh đã bị bác vẫn "
      "được giữ lại nguyên trạng, kèm biên bản phản biện chỉ ra chỗ sai, thay vì xóa đi "
      "và chỉ nộp bản hiện hành. Lý do là hai bản ấy cho thấy vì sao sơ đồ cuối cùng có "
@@ -1503,6 +1529,7 @@ MUC_14 = [
 
 
 BANG_PL_A = {
+    "rong": [50, 50],
     "tieu_de": ("Bảng 15.1. Phụ lục A: bảng thuật ngữ. Cột tiếng Việt là từ được dùng "
                 "thống nhất trong toàn báo cáo."),
     "cot": ["Tiếng Việt", "Tiếng Anh"],
@@ -1532,6 +1559,7 @@ BANG_PL_A = {
 }
 
 BANG_PL_B = {
+    "rong": [30, 52, 18],
     "tieu_de": ("Bảng 15.2. Phụ lục B: lệnh chạy lại từng thí nghiệm. Chạy từ thư mục "
                 "gốc của kho lưu trữ."),
     "cot": ["Thí nghiệm", "Lệnh", "Mục liên quan"],
@@ -1554,6 +1582,7 @@ BANG_PL_B = {
 }
 
 BANG_PL_C = {
+    "rong": [40, 9, 51],
     "tieu_de": ("Bảng 15.3. Phụ lục C: danh mục tệp kết quả, nhóm theo thí nghiệm sinh "
                 "ra chúng. Tất cả nằm trong thư mục results/theory/."),
     "cot": ["Nhóm tệp", "Số tệp", "Thuộc thí nghiệm nào"],
@@ -1579,6 +1608,7 @@ BANG_PL_C = {
 }
 
 BANG_PL_D = {
+    "rong": [7, 33, 60],
     "tieu_de": ("Bảng 15.4. Phụ lục D: biên bản các vòng phản biện. Kết quả của mỗi "
                 "vòng đều đã được tích hợp vào báo cáo."),
     "cot": ["Vòng", "Đối tượng phản biện", "Kết quả"],
@@ -1617,7 +1647,7 @@ MUC_15 = [
     ("", "bangA"),
 
     ("15.2. Phụ lục B: lệnh chạy lại thí nghiệm", "de_muc_phu"),
-    ("Bảng 15.2 ghi lệnh chạy lại từng thí nghiệm, kèm mục của báo cáo mà thí nghiệm "
+    ("Các lệnh dưới đây chạy lại từng thí nghiệm, kèm mục của báo cáo mà thí nghiệm "
      "đó sinh số liệu. Lệnh so chi phí phải chạy hai lần, một lần với mờ Gauss và một "
      "lần với mờ chuyển động, bằng cách đổi giá trị của tham số cuối. Các lệnh có tham "
      "số chỉ định bộ xử lý đồ họa sẽ chạy được trên bộ xử lý trung tâm nếu đổi tham số "
@@ -1768,6 +1798,25 @@ def dat_chu(o, text, dam=False, canh_giua=False):
         pf.alignment = WD_ALIGN_PARAGRAPH.CENTER
 
 
+def dat_rong_cot(t, ti_le):
+    """Chia độ rộng các cột theo tỉ lệ cho trước.
+
+    Nếu để Word tự chia thì mọi cột rộng bằng nhau, nên cột chỉ chứa một con số cũng
+    chiếm chỗ ngang cột chứa cả câu, làm bảng mất cân đối. Tỉ lệ được tính trên bề
+    rộng vùng chữ, tức khổ giấy trừ hai lề."""
+    sec = t._parent.part.document.sections[0]
+    rong = sec.page_width - sec.left_margin - sec.right_margin
+    if not ti_le:
+        ti_le = [1] * len(t.columns)
+    tong = sum(ti_le)
+    t.autofit = False
+    for cot, phan in zip(t.columns, ti_le):
+        w = Emu(int(rong * phan / tong))
+        cot.width = w
+        for o in cot.cells:          # Word chỉ tôn trọng độ rộng đặt trên từng ô
+            o.width = w
+
+
 def them_bang(doc, bang):
     """Thêm một bảng kèm dòng chú thích ở trên.
 
@@ -1784,6 +1833,7 @@ def them_bang(doc, bang):
     t = doc.add_table(rows=1, cols=len(bang["cot"]))
     t.alignment = WD_TABLE_ALIGNMENT.CENTER
     ke_vien(t)
+    dat_rong_cot(t, bang.get("rong"))
 
     for o, ten in zip(t.rows[0].cells, bang["cot"]):
         dat_chu(o, ten, dam=True, canh_giua=True)
@@ -1826,6 +1876,7 @@ def them_muc_luc(doc):
     dat_phong(p.add_run("Mục lục"), CO_DE_MUC, dam=True)
     p.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_after = Pt(14)
+    p.paragraph_format.page_break_before = True
 
     p = doc.add_paragraph()
     lenh = 'TOC \\o "1-2" \\h \\z \\u'
@@ -1857,7 +1908,7 @@ def main():
         thay_chu(doc.paragraphs[i], text)
 
     # 2. Xóa toàn bộ nội dung cũ phía sau ngắt trang, gồm cả bảng.
-    for p in list(doc.paragraphs[DOAN_NGAT_TRANG + 1:]):
+    for p in list(doc.paragraphs[DOAN_CUOI_BIA + 1:]):
         xoa_doan(p)
     for t in list(doc.tables):
         t._element.getparent().remove(t._element)
