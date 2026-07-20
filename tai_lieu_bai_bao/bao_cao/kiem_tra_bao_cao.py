@@ -68,6 +68,12 @@ NGUON_SO = {
     # thực nghiệm ấn định trước
     "0,9994": "ket_qua", "0,9995": "ket_qua",
     "0,05": "thiet_ke", "0,55": "thiet_ke",
+    # mục 10: bốn kết quả âm tính. Hệ số của lịch bước tăng tốc lấy từ nhật ký chạy;
+    # các số của tiêu chuẩn chiếu nới lỏng lấy từ tài liệu nội bộ 05.
+    "0,84": "ket_qua", "0,76": "ket_qua", "0,69": "ket_qua",
+    "120,25": "noi_bo", "0,31": "noi_bo", "2,0236": "noi_bo", "2,0894": "noi_bo",
+    "2,56": "noi_bo", "8,8": "noi_bo",
+    "0,25": "thiet_ke",
 }
 
 # Tài liệu nội bộ dùng làm nguồn đối chiếu cho các phép đo của chính đề tài.
@@ -99,7 +105,7 @@ CHO_PHEP_HOA = {
     "Numerical", "Algorithms", "Journal", "Scientific", "Computing",
     "Optimization", "Computational", "Applications", "Communications",
     "Nonlinear", "Science", "Simulation", "SIAM", "Ferreira", "Ugon",
-    "Millán", "Qin", "Tan", "Tseng",        # tên tạp chí và tên tác giả
+    "Millán", "Díaz", "Qin", "Tan", "Tseng",  # tên tạp chí và tên tác giả
     "Plug-and-Play", "Gauss", "PIE-Net", "Fejér", "DnCNN", "Q1", "Q2",
     "Chambolle-Pock", "Malitsky", "Lipschitz", "Minty", "Opial", "Hà", "Nội", "Đào", "Trọng", "Hiếu",
     "Đặng", "Văn", "Chiến", "Học", "Viện", "Bộ", "Khoa", "Công", "Nghệ",

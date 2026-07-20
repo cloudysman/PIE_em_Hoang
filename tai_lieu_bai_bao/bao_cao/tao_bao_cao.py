@@ -1060,6 +1060,126 @@ MUC_9 = [
 ]
 
 
+MUC_10 = [
+    ("Mục 10. Các kết quả âm tính đã ghi nhận", "de_muc"),
+
+    ("Mục này ghi lại bốn hướng đã thử và đã đóng lại. Lý do dành hẳn một mục cho chúng "
+     "là để người đọc, kể cả chính đề tài về sau, không mất công thử lại. Bốn hướng "
+     "được trình bày theo cùng một khuôn: ý tưởng là gì, vì sao lúc đầu nó có vẻ hợp "
+     "lý, số liệu đo được ra sao, và nguyên nhân thất bại nằm ở đâu. Hai trong bốn "
+     "hướng đã được nhắc tới ở mục 6 và mục 8; ở đây chúng được ghi đầy đủ.", "thuong"),
+
+    ("10.1. Lịch bước tăng tốc cho bài toán chiếu", "de_muc_phu"),
+    ("Ý tưởng: thuật toán Chambolle-Pock có một lịch bước tăng tốc dành riêng cho bài "
+     "toán có hàm mục tiêu lồi mạnh, trong đó độ dài bước gốc co dần còn độ dài bước "
+     "đối ngẫu giãn dần. Bài toán chiếu lên quả cầu biến phân toàn phần đúng là lồi "
+     "mạnh, nên lịch này áp được và trên lý thuyết cho tốc độ hội tụ tốt hơn.",
+     "thuong"),
+
+    ("Số liệu: không chế độ nào nhanh lên. Một chế độ giữ nguyên số bước nội, ba chế độ "
+     "còn lại tốn thêm bước nội. Nếu lấy tỉ số giữa chi phí khi không tăng tốc và chi "
+     "phí khi tăng tốc, thì tỉ số đó là 0,84, 0,76 và 0,69, tức đều nhỏ hơn một nên đều "
+     "là chậm đi; chế độ chậm đi nhiều nhất chính là phép chiếu chính xác.", "thuong"),
+
+    ("Nguyên nhân: lịch tăng tốc co độ dài bước gốc ngay từ những bước nội đầu tiên, "
+     "trong khi chế độ của báo cáo chỉ chạy vài bước nội mỗi bước ngoài nhờ khởi tạo "
+     "ấm. Lợi ích tiệm cận của lịch tăng tốc chỉ xuất hiện sau nhiều bước nội, còn cái "
+     "giá là bước ngắn thì phải trả ngay. Thêm nữa, lịch được đặt lại ở mỗi bước ngoài, "
+     "nên nó không bao giờ chạy đủ dài để lợi ích kịp xuất hiện. Kết quả này còn dẫn "
+     "tới một bẫy đo lường đã trình bày ở mục 8.5.", "thuong"),
+
+    ("10.2. Siết chứng chỉ bằng cách theo dõi giá trị tốt nhất", "de_muc_phu"),
+    ("Ý tưởng: chứng chỉ ở mục 6 được tính từ giá trị hai hàm mục tiêu tại bước nội "
+     "hiện tại. Nhưng chặn trên vẫn hợp lệ nếu thay bằng giá trị tốt nhất đã gặp trong "
+     "các bước nội đã qua, tức giá trị nhỏ nhất của hàm mục tiêu gốc và giá trị lớn "
+     "nhất của hàm mục tiêu đối ngẫu. Vì khoảng cách đối ngẫu tính theo cặp giá trị tốt "
+     "nhất không lớn hơn khoảng cách tính theo cặp giá trị hiện tại, chứng chỉ chỉ có "
+     "thể chặt hơn, và vòng lặp nội sẽ dừng sớm hơn.", "thuong"),
+
+    ("Số liệu: không giảm được bước nội nào, ở mọi mức sai số đã thử.", "thuong"),
+
+    ("Nguyên nhân: lập luận đúng nhưng vô ích trên thực tế, vì thuật toán Chambolle-Pock "
+     "vốn đã cho hai dãy giá trị gần đơn điệu. Khi giá trị hiện tại gần như luôn là giá "
+     "trị tốt nhất, việc theo dõi thêm giá trị tốt nhất chỉ tốn bộ nhớ và vài phép so "
+     "sánh mà không đổi thời điểm dừng. Đây là một cải tiến đúng về lý thuyết nhưng "
+     "không có chỗ để phát huy.", "thuong"),
+
+    ("10.3. Tiêu chuẩn sai số tương đối theo chuẩn của toán tử", "de_muc_phu"),
+    ("Ý tưởng: thay vì đặt trước một lịch sai số như ở mục 7.1, cho mức sai số cho phép "
+     "tỉ lệ với chuẩn của toán tử chi phí tại điểm phản xạ. Cách này hấp dẫn vì nó tự "
+     "điều chỉnh: khi còn xa nghiệm thì chuẩn lớn nên sai số cho phép lớn, khi gần "
+     "nghiệm thì chuẩn nhỏ nên sai số cho phép tự siết lại, và người dùng không phải "
+     "chọn lịch.", "thuong"),
+
+    ("Nguyên nhân thất bại nằm ở lý thuyết, nên hướng này bị đóng trước khi đo. Định lý "
+     "đòi mức sai số cho phép tiến về không, nhưng chuẩn của toán tử chi phí chỉ tiến "
+     "về không khi nghiệm nằm hẳn bên trong tập ràng buộc. Nếu nghiệm nằm trên biên, "
+     "tức có ràng buộc kích hoạt, thì tại nghiệm toán tử chi phí khác không. Với bài "
+     "toán khôi phục ảnh dùng quả cầu biến phân toàn phần, nghiệm hầu như luôn nằm trên "
+     "biên, vì bán kính được đặt nhỏ hơn biến phân toàn phần của ảnh gốc. Tiêu chuẩn "
+     "này do đó hỏng đúng ở trường hợp mà đề tài quan tâm.", "thuong"),
+
+    ("10.4. Tiêu chuẩn chiếu nới lỏng", "de_muc_phu"),
+    ("Ý tưởng: đây là hướng được đầu tư nhiều nhất trong bốn hướng, và do một vòng phản "
+     "biện đề xuất. Thay mô hình sai số dạng quả cầu bằng bất đẳng thức chiếu nới lỏng "
+     "theo cách Díaz Millán định nghĩa, trong đó điểm trả về phải nằm trong tập ràng "
+     "buộc và thỏa bất đẳng thức đặc trưng của phép chiếu với một sai số bậc hai theo "
+     "dịch chuyển. Cái lợi rất lớn: sai số vào chứng minh ở bậc hai nên bị phần âm của "
+     "bổ đề một bước hấp thụ, và khi đó dung sai chỉ cần là một hằng số chứ không cần "
+     "một dãy tiến về không. Nếu làm được thì giả thiết thứ năm ở mục 9.2 biến mất.",
+     "thuong"),
+
+    ("Có đúng hai cách kiểm tiêu chuẩn này, và cả hai đã được thử. Cách thứ nhất là "
+     "lấy cận trên của vế trái trên toàn tập ràng buộc. Ở đây gặp một rào cản: quả cầu "
+     "biến phân toàn phần không bị chặn, vì mọi ảnh hằng đều có biến phân toàn phần "
+     "bằng không; một ảnh hằng giá trị 1000 có biến phân toàn phần chỉ 2,56 nhân mười "
+     "mũ trừ bốn trong khi chuẩn của nó là 16000. Rào cản này được gỡ bằng cách lấy tập "
+     "ràng buộc là quả cầu biến phân toàn phần giao với hộp giá trị điểm ảnh, vốn là "
+     "ràng buộc vật lý tự nhiên của ảnh; khi đó tập ràng buộc bị chặn.", "thuong"),
+
+    ("Nhưng chỗ thất bại nằm ngay sau đó. Cận trên tính được rẻ duy nhất là thay tập "
+     "ràng buộc bằng hộp bao ngoài, và cận này quá thô đến mức vô dụng. Đo trên bài "
+     "chiếu thật, ngay cả khi chạy 2000 bước nội tức gần như chiếu chính xác, vế trái "
+     "vẫn là 120,25 trong khi vế phải với dung sai 0,25 chỉ là 0,31. Tiêu chuẩn không "
+     "bao giờ thỏa. Nguyên nhân có tính cấu trúc: quả cầu biến phân toàn phần giao hộp "
+     "nhỏ hơn hộp rất nhiều, nên thay tập ràng buộc bằng hộp làm cận trên phồng lên; "
+     "phép chiếu chính xác thỏa bất đẳng thức trên tập ràng buộc thật nhưng không thỏa "
+     "trên hộp. Muốn kiểm đúng phải tính hàm tựa của tập ràng buộc, tức giải thêm một "
+     "bài toán tối ưu lồi ở mỗi lần kiểm, đắt ngang chính phép chiếu.", "thuong"),
+
+    ("Cách thứ hai là xuất bất đẳng thức nới lỏng từ chứng chỉ ở mục 6, thay vì kiểm "
+     "bằng cận trên. Cách này chết vì sai bậc, và điều đó chứng minh được trên giấy: "
+     "khai triển cho thấy vế trái bị chặn bởi mức sai số nhân một hằng số, tức bậc nhất "
+     "theo mức sai số, trong khi tiêu chuẩn nới lỏng đòi vế trái không vượt một hằng số "
+     "nhân bình phương dịch chuyển, tức bậc hai. Muốn ghép hai bên phải chọn mức sai số "
+     "cỡ bình phương của dịch chuyển.", "thuong"),
+
+    ("Số liệu xác nhận mức độ chênh. Tại bước ngoài thứ 199 của bài chiếu thật, dịch "
+     "chuyển là 2,0236 nhân mười mũ trừ ba, trong khi mức sai số cần thiết với dung sai "
+     "0,25 chỉ là 2,0894 nhân mười mũ trừ tám, tức phải siết chặt hơn dịch chuyển tới "
+     "năm bậc. Tỉ lệ giữa hai đại lượng còn xấu đi khi tiến tới nghiệm, từ 8,8 nhân "
+     "mười mũ trừ ba ở bước ngoài đầu xuống 1,0 nhân mười mũ trừ năm ở bước ngoài thứ "
+     "199. Chi phí vòng lặp nội vì thế bùng nổ.", "thuong"),
+
+    ("Kết luận cho hướng này: tiêu chuẩn chiếu nới lỏng đúng về lý thuyết nhưng không "
+     "thực thi được trên bài toán chiếu lên quả cầu biến phân toàn phần với bộ giải nội "
+     "hiện có. Chính vì cả hai cách đều đóng mà báo cáo quay lại mô hình sai số dạng "
+     "quả cầu cùng giả thiết tổng được, và phải đo tính tổng được bằng số như đã trình "
+     "bày ở mục 7.6.", "thuong"),
+
+    ("10.5. Điều rút ra chung", "de_muc_phu"),
+    ("Bốn hướng trên thất bại vì bốn lý do khác nhau, và không hướng nào thất bại vì "
+     "lỗi cài đặt. "
+     "Hướng thứ nhất và hướng thứ hai đúng về lý thuyết nhưng không có chỗ phát huy "
+     "trong chế độ vận hành thật. Hướng thứ ba sai ngay ở giả thiết, và được phát hiện "
+     "bằng lập luận chứ không phải bằng đo. Hướng thứ tư đúng cả về lý thuyết lẫn ý "
+     "tưởng nhưng vướng một tính chất của chính tập ràng buộc. Ghi lại cả bốn, kèm số "
+     "liệu, là cách giữ cho các hướng này thật sự đóng chứ không mở lại theo trí nhớ. "
+     "Mục 11 trình bày mã nguồn và cách tái lập, trong đó có cả các phép đo âm tính nói "
+     "trên.", "thuong"),
+]
+
+
 def thay_chu(p, text):
     """Thay chữ của một đoạn nhưng giữ nguyên định dạng của lần chạy chữ đầu tiên."""
     runs = p.runs
@@ -1143,7 +1263,7 @@ def main():
         "bang7b": BANG_MUC_7B, "bang8": BANG_MUC_8,
     }
     for text, kieu in (MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6 + MUC_7
-                       + MUC_8 + MUC_9):
+                       + MUC_8 + MUC_9 + MUC_10):
         if kieu in bang_theo_khoa:
             them_bang(doc, bang_theo_khoa[kieu])
             continue
