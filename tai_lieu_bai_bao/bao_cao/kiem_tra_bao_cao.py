@@ -116,6 +116,7 @@ CHO_PHEP_HOA = {
     "Numerical", "Algorithms", "Journal", "Scientific", "Computing",
     "Optimization", "Computational", "Applications", "Communications",
     "Nonlinear", "Science", "Simulation", "SIAM", "Ferreira", "Ugon",
+    "Applied", "Mathematics", "Mathematical", "Programming",
     "Millán", "Díaz", "Qin", "Tan", "Tseng",  # tên tạp chí và tên tác giả
     "Plug-and-Play", "Gauss", "PIE-Net", "Fejér", "DnCNN", "Q1", "Q2", "Python",
     "Chambolle-Pock", "Malitsky", "Lipschitz", "Minty", "Opial",

@@ -1434,6 +1434,72 @@ MUC_13 = [
 ]
 
 
+MUC_14 = [
+    ("Mục 14. Việc còn lại và khuyến nghị", "de_muc"),
+
+    ("Mục này liệt kê ba việc còn lại, sắp theo thứ tự ưu tiên rút ra từ năm hạn chế ở "
+     "mục 13, kèm ước lượng công sức cho từng việc. Cuối mục là một khuyến nghị về mức "
+     "công bố. Cả ba việc đều đã đủ rõ để quyết định ngay, không cần khảo sát thêm.",
+     "thuong"),
+
+    ("14.1. Việc thứ nhất: hoàn tất hai chi tiết của chứng minh", "de_muc_phu"),
+    ("Đây là việc ưu tiên cao nhất, vì chừng nào chưa xong thì phần định lý chưa nộp "
+     "được. Hai chi tiết đã nêu ở mục 9.7 và nhắc lại ở mục 13.5: phát biểu chính xác "
+     "của bổ đề tựa Fejér cho dạng truy hồi có thừa số nhân, và bước chuyển qua giới "
+     "hạn yếu trong không gian vô hạn chiều.", "thuong"),
+
+    ("Cả hai đều là việc tra cứu và viết cho đủ, không phải việc tìm ý mới, vì hướng "
+     "xử lý đã biết và chỉ cần dùng đúng phát biểu có sẵn trong tài liệu. Ước lượng "
+     "công sức: một đến hai tuần.", "thuong"),
+
+    ("14.2. Việc thứ hai: bổ sung so sánh với phương pháp đã công bố", "de_muc_phu"),
+    ("Đây là việc ưu tiên thứ hai, và lý do rất thực tế: người phản biện chắc chắn sẽ "
+     "hỏi. Như mục 13.2 đã nêu, mọi so sánh hiện có đều nằm trong cùng một sơ đồ, nên "
+     "chưa trả lời được câu hỏi sơ đồ này đứng ở đâu so với các phương pháp khác.",
+     "thuong"),
+
+    ("Đề xuất cụ thể là cài lại hai hoặc ba phương pháp trong bảng 4.1 và đo trên cùng "
+     "máy, theo đúng giao thức đo ở mục 8. Nên ưu tiên phương pháp chiếu phản xạ gốc và "
+     "một phương pháp dùng phép chiếu xấp xỉ với tiêu chuẩn sai số tương đối, vì đó là "
+     "hai bài gần công việc này nhất. Ước lượng công sức: ba đến năm tuần, phần lớn dành "
+     "cho việc cài lại cho đúng chứ không phải cho việc chạy.", "thuong"),
+
+    ("14.3. Việc thứ ba: chọn tạp chí", "de_muc_phu"),
+    ("Ba tạp chí phù hợp với mức đóng góp đã định vị là Optimization, Journal of "
+     "Computational and Applied Mathematics, và Numerical Algorithms. Đề xuất lấy "
+     "Optimization làm lựa chọn chính, vì phạm vi của nó nhận cả phần thuật toán lẫn "
+     "phần thực nghiệm, và vì mức đóng góp của bài khớp với mặt bằng bài đăng ở đó.",
+     "thuong"),
+
+    ("Cần nói rõ một thay đổi so với ban đầu. Ở giai đoạn khảo sát tài liệu, tạp chí "
+     "được nhắm tới là Numerical Algorithms, và đó là lý do bài đăng năm 2023 trên tạp "
+     "chí này được kiểm rủi ro trùng lặp trước mọi việc khác, như mục 4.4 đã trình bày. "
+     "Sau khi biết phần định lý chỉ là mở rộng, thứ tự ưu tiên được đổi lại như trên; "
+     "Numerical Algorithms lùi xuống phương án dự phòng chứ không bị loại. Quyết định "
+     "cuối cùng thuộc về người hướng dẫn; phần này chỉ nêu căn cứ.", "thuong"),
+
+    ("14.4. Khuyến nghị về mức công bố", "de_muc_phu"),
+    ("Khuyến nghị là không nhắm nhóm Q1 với phần định lý hiện tại. Đây không phải sự "
+     "thận trọng quá mức mà là kết luận rút từ chính phép tính ở mục 9.6: hằng số của "
+     "số hạng nhiễu điểm gốc không chứa nghịch đảo độ dài bước, nên việc thêm bước phản "
+     "xạ vào khung phép chiếu xấp xỉ không tạo ra cơ chế mới, và định lý là một mở "
+     "rộng.", "thuong"),
+
+    ("Các tạp chí nhóm hàng đầu như SIAM Journal on Optimization hay Mathematical "
+     "Programming đòi một cơ chế mới. Nộp vào đó với phần định lý hiện tại nhiều khả "
+     "năng chỉ dẫn tới một vòng phản biện dài rồi bị từ chối, và thời gian ấy đủ để làm "
+     "xong cả hai việc ở mục 14.1 và 14.2.", "thuong"),
+
+    ("Cách đặt giá trị của bài nên theo đúng những gì đã đo được: đóng góp nằm ở chứng "
+     "chỉ sai số tính được, ở chế độ ngân sách thích nghi cùng phân tích chi phí, và ở "
+     "giao thức đo công bằng. Ba thứ đó thuộc về thuật toán và thực nghiệm, và chúng "
+     "không yếu đi vì phần định lý chỉ là mở rộng.", "thuong"),
+
+    ("Mục 15 là phụ lục, gồm các bảng số liệu đầy đủ và các chi tiết kỹ thuật không đưa "
+     "vào phần chính.", "thuong"),
+]
+
+
 def thay_chu(p, text):
     """Thay chữ của một đoạn nhưng giữ nguyên định dạng của lần chạy chữ đầu tiên."""
     runs = p.runs
@@ -1518,7 +1584,8 @@ def main():
         "bang12": BANG_MUC_12,
     }
     for text, kieu in (MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6 + MUC_7
-                       + MUC_8 + MUC_9 + MUC_10 + MUC_11 + MUC_12 + MUC_13):
+                       + MUC_8 + MUC_9 + MUC_10 + MUC_11 + MUC_12 + MUC_13
+                       + MUC_14):
         if kieu in bang_theo_khoa:
             them_bang(doc, bang_theo_khoa[kieu])
             continue
