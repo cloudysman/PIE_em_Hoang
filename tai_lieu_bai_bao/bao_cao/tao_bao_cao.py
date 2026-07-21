@@ -23,7 +23,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.enum.table import WD_TABLE_ALIGNMENT
-from docx.shared import Emu, Pt, RGBColor
+from docx.shared import Cm, Emu, Pt, RGBColor
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 KHUON = r"C:\Users\trong\Downloads\SoundGuard_Report_FULL_EN.docx"
@@ -41,6 +41,30 @@ BIA = {
     7: "Học viên: Đào Trọng Hiếu — M25VMCS07",
     8: "Lớp: M25VMCS",
     9: "Hà Nội - 2026",
+}
+
+# Bốn hình của báo cáo, sinh từ tệp kết quả bằng tai_lieu_bai_bao/bao_cao/sinh_hinh.py.
+# Chú thích của hình đặt ở dưới hình, và mỗi hình đều được dẫn tới trong phần chữ.
+HINH_6_1 = {
+    "tep": os.path.join("hinh", "hinh_6_1_chung_chi.png"), "rong": 12.0,
+    "chu_thich": ("Hình 6.1. Chặn trên từ chứng chỉ luôn nằm trên sai số thật, và cả "
+                  "hai cùng giảm khi số bước nội tăng. Hai trục theo thang lôgarit."),
+}
+HINH_7_1 = {
+    "tep": os.path.join("hinh", "hinh_7_1_chi_phi.png"), "rong": 15.0,
+    "chu_thich": ("Hình 7.1. Tổng bước nội để đạt từng mức phần dư biến phân, chế độ "
+                  "thích nghi so với phép chiếu chính xác, trên hai loại mờ. Trục đứng "
+                  "theo thang lôgarit."),
+}
+HINH_7_2 = {
+    "tep": os.path.join("hinh", "hinh_7_2_tong_duoc.png"), "rong": 12.0,
+    "chu_thich": ("Hình 7.2. Độ dốc lôgarit của dịch chuyển bước chiếu ở bốn cấu hình. "
+                  "Khi có bước neo, độ dốc tiến sát ngưỡng phân kỳ là âm một."),
+}
+HINH_9_1 = {
+    "tep": os.path.join("hinh", "hinh_9_1_so_do.png"), "rong": 15.0,
+    "chu_thich": ("Hình 9.1. Sơ đồ hai dòng của phương pháp, sau khi đã bỏ bước quán "
+                  "tính và bước neo."),
 }
 
 DOAN_CUOI_BIA = 9             # đoạn cuối cùng của bìa; từ đoạn sau là nội dung
@@ -612,12 +636,13 @@ MUC_6 = [
     ("Phép kiểm được thực hiện như sau: chạy bộ giải nội tới nhiều mức số bước khác "
      "nhau; ở mỗi mức, tính chặn trên từ chứng chỉ, đồng thời tính sai số thật bằng "
      "cách so với một nghiệm chiếu tham chiếu chạy rất dài; rồi so hai đại lượng. Kết "
-     "quả trình bày ở bảng 6.1.", "thuong"),
+     "quả trình bày ở bảng 6.1 và minh họa ở hình 6.1.", "thuong"),
     ("__BANG_6_1__", "bang6"),
     ("Ở toàn bộ tám mức số bước nội đã thử, chặn trên luôn lớn hơn sai số thật, nên "
      "chứng chỉ hợp lệ. Ngoài ra cả hai đại lượng cùng giảm khi số bước nội tăng, đúng "
      "như mong đợi: ở năm bước nội chặn trên là 5,29 còn sai số thật là 2,83; ở 1500 "
      "bước nội chặn trên còn 0,0901 và sai số thật còn 0,0110.", "thuong"),
+    ("", "hinh61"),
 
     ("6.6. Cái giá phải trả", "de_muc_phu"),
     ("Chứng chỉ có một nhược điểm phải nói thẳng: nó bi quan, và mức bi quan tăng dần "
@@ -719,10 +744,11 @@ MUC_7 = [
      "mỗi mức, ghi lại chi phí nhỏ nhất mà phép chiếu chính xác cần để đạt mức đó, và "
      "chi phí nhỏ nhất mà chế độ thích nghi cần để đạt cùng mức đó. Chi phí đo bằng hai "
      "thước đo song song: tổng số bước nội và thời gian chạy thuật toán. Kết quả ở bảng "
-     "7.1 và bảng 7.2.", "thuong"),
+     "7.1, bảng 7.2 và hình 7.1.", "thuong"),
 
     ("", "bang7a"),
     ("", "bang7b"),
+    ("", "hinh71"),
 
     ("Trên mờ Gauss, chế độ thích nghi rẻ hơn phép chiếu chính xác từ 13,2 đến 19,2 lần "
      "theo bước nội, và từ 4,7 đến 9,7 lần theo thời gian. Trên mờ chuyển động, ở bốn "
@@ -793,8 +819,9 @@ MUC_7 = [
     ("Khi thêm bước neo, độ dốc tụt xuống âm 1,191 trên mờ Gauss và âm 1,011 trên mờ "
      "chuyển động. Con số thứ hai đáng lo: ngưỡng để chuỗi còn hội tụ là âm một, nên "
      "âm 1,011 nằm sát ngay ranh giới. Với một biên hẹp như vậy, không thể khẳng định "
-     "chắc chắn giả thiết tổng được vẫn đúng khi đổi bài toán hoặc đổi tham số.",
-     "thuong"),
+     "chắc chắn giả thiết tổng được vẫn đúng khi đổi bài toán hoặc đổi tham số. Hình "
+     "7.2 vẽ độ dốc của cả bốn cấu hình cùng ngưỡng phân kỳ.", "thuong"),
+    ("", "hinh72"),
 
     ("Đây là lý do thứ hai để bỏ bước neo, bên cạnh lý do về chuỗi phép chiếu đã nêu ở "
      "mục 5.3. Sau khi bỏ bước neo, giả thiết tổng được không những đúng mà còn đúng "
@@ -936,7 +963,8 @@ MUC_9 = [
      "thứ hai đi một bước theo hướng ngược với toán tử chi phí tại điểm phản xạ, với độ "
      "dài bước cố định, rồi chiếu xấp xỉ điểm thu được lên tập ràng buộc với mức sai số "
      "cho phép của bước ngoài đó. Toán tử chi phí chỉ được tính một lần trong mỗi bước "
-     "ngoài.", "thuong"),
+     "ngoài. Hình 9.1 vẽ sơ đồ này.", "thuong"),
+    ("", "hinh91"),
 
     ("9.2. Các giả thiết", "de_muc_phu"),
     ("Định lý dùng năm giả thiết. Thứ nhất, tập ràng buộc lồi, đóng và khác rỗng, và "
@@ -1284,13 +1312,14 @@ MUC_11 = [
      "Lệnh chạy lại từng thí nghiệm được ghi trong phần chú thích đầu của mỗi tệp, kèm "
      "các tham số đã dùng, nên người kiểm không phải đoán.", "thuong"),
 
-    ("Ngoài ra có một trình kiểm tra tự động cho chính báo cáo này, gồm tám nhóm kiểm "
+    ("Ngoài ra có một trình kiểm tra tự động cho chính báo cáo này, gồm chín nhóm kiểm "
      "tra. Nó đối chiếu từng con số trong báo cáo với tệp kết quả, kể cả các số trong "
      "bảng và các số ghi ở dạng khoa học; kiểm tính nhất quán của thuật ngữ; kiểm cách "
      "viết hoa; kiểm các mục có dẫn sang nhau hay không; đếm lại số dòng lệnh của từng "
      "tệp trong bảng 11.1 để bảng đó không lỗi thời khi mã nguồn thay đổi; kiểm mọi "
-     "đường dẫn nêu trong bảng 12.1 có còn tồn tại hay không; và kiểm các quy ước "
-     "trình bày, gồm việc mỗi mục chính phải bắt đầu một trang mới.", "thuong"),
+     "đường dẫn nêu trong bảng 12.1 có còn tồn tại hay không; kiểm các quy ước trình "
+     "bày, gồm việc mỗi mục chính phải bắt đầu một trang mới; và kiểm mỗi hình đều "
+     "được đánh số và được dẫn tới trong phần chữ.", "thuong"),
 
     ("Trình kiểm tra này đã bắt "
      "được nhiều lỗi trong quá trình viết, trong đó có những con số lấy từ một lần chạy "
@@ -1681,7 +1710,7 @@ MUC_15 = [
      "thay vì rút gọn, vì chính chúng là căn cứ để tin các con số còn lại.", "thuong"),
 
     ("Đến đây báo cáo kết thúc. Toàn bộ nội dung, từ mục 1 đến mục 15, đã được trình "
-     "kiểm tra tự động soát qua tám nhóm kiểm tra trước khi nộp.", "thuong"),
+     "kiểm tra tự động soát qua chín nhóm kiểm tra trước khi nộp.", "thuong"),
 ]
 
 
@@ -1851,6 +1880,25 @@ def them_bang(doc, bang):
     doc.add_paragraph().paragraph_format.space_after = Pt(8)
 
 
+def them_hinh(doc, hinh):
+    """Chèn một hình, căn giữa, kèm chú thích ở dưới.
+
+    Theo quy ước trình bày, chú thích của hình đặt ở dưới hình, khác với chú thích
+    của bảng đặt ở trên. Hình và chú thích được giữ trên cùng một trang."""
+    duong_dan = os.path.join(HERE, hinh["tep"])
+    p = doc.add_paragraph()
+    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    p.paragraph_format.space_before = Pt(8)
+    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.keep_with_next = True
+    p.add_run().add_picture(duong_dan, width=Cm(hinh["rong"]))
+
+    c = doc.add_paragraph()
+    dat_phong(c.add_run(hinh["chu_thich"]), CO_CHU_THICH, nghieng=True)
+    c.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    c.paragraph_format.space_after = Pt(10)
+
+
 def them_truong(p, lenh, chu_tam):
     """Chèn một trường của Word, chẳng hạn mục lục hoặc số trang.
 
@@ -1925,11 +1973,17 @@ def main():
         "bangA": BANG_PL_A, "bangB": BANG_PL_B,
         "bangC": BANG_PL_C, "bangD": BANG_PL_D,
     }
+    hinh_theo_khoa = {
+        "hinh61": HINH_6_1, "hinh71": HINH_7_1,
+        "hinh72": HINH_7_2, "hinh91": HINH_9_1,
+    }
     for text, kieu in (MUC_1 + MUC_2 + MUC_3 + MUC_4 + MUC_5 + MUC_6 + MUC_7
                        + MUC_8 + MUC_9 + MUC_10 + MUC_11 + MUC_12 + MUC_13
                        + MUC_14 + MUC_15):
         if kieu in bang_theo_khoa:
             them_bang(doc, bang_theo_khoa[kieu])
+        elif kieu in hinh_theo_khoa:
+            them_hinh(doc, hinh_theo_khoa[kieu])
         elif kieu == "de_muc":
             them_de_muc(doc, text, cap=1)
         elif kieu == "de_muc_phu":

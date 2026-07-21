@@ -1,6 +1,6 @@
 """Kiểm tra tệp báo cáo: số liệu, thuật ngữ, cách viết hoa và liên kết giữa các mục.
 
-Tám nhóm kiểm tra:
+Chín nhóm kiểm tra:
   1. Mọi con số trong báo cáo phải khớp báo cáo thực nghiệm gốc hoặc tệp kết quả.
   2. Thuật ngữ phải nhất quán: không dùng hai từ khác nhau cho cùng một khái niệm.
   3. Không viết hoa tùy tiện ở giữa câu.
@@ -13,6 +13,7 @@ Tám nhóm kiểm tra:
   7. Mọi đường dẫn nêu trong bảng phải còn tồn tại trong kho lưu trữ.
   8. Quy ước trình bày: mỗi mục chính bắt đầu một trang mới, chữ dùng đúng một
      phông, và báo cáo có số trang.
+  9. Hình: mỗi hình được đánh số, được dẫn tới trong phần chữ, và còn tệp ảnh nguồn.
 
 Chạy: python tai_lieu_bai_bao/bao_cao/kiem_tra_bao_cao.py
 """
@@ -134,8 +135,12 @@ CHO_PHEP_HOA = {
 
 PHONG_CHUAN = "Times New Roman"
 SO_MUC = 15            # số mục chính của báo cáo
-SO_NHOM = 8            # số nhóm kiểm tra của chính chương trình này
-SO_NHOM_BANG_CHU = {6: "sáu", 7: "bảy", 8: "tám", 9: "chín"}
+SO_HINH = 4           # số hình của báo cáo
+SO_NHOM = 9           # số nhóm kiểm tra của chính chương trình này
+SO_NHOM_BANG_CHU = {6: "sáu", 7: "bảy", 8: "tám", 9: "chín", 10: "mười"}
+HINH = [os.path.join(HERE, "hinh", ten) for ten in (
+    "hinh_6_1_chung_chi.png", "hinh_7_1_chi_phi.png",
+    "hinh_7_2_tong_duoc.png", "hinh_9_1_so_do.png")]
 
 BO_QUA_SO = {"4,1"}          # số hiệu bảng, không phải số liệu
 
@@ -260,6 +265,34 @@ def kiem_trinh_bay(path, text):
 
     if not d.sections[0].footer.paragraphs[0].runs:
         loi.append("chân trang không có số trang")
+    return loi
+
+
+def kiem_hinh(doan):
+    """Mỗi hình phải được đánh số, được dẫn tới trong phần chữ, và còn tệp ảnh nguồn.
+
+    Ba điều kiểm: số hình đúng bằng SO_HINH; mỗi số hiệu hình có đúng một chú thích và
+    được nhắc lại ít nhất một lần ngoài chú thích, tức có câu dẫn tới nó; và tệp ảnh
+    nguồn của mỗi hình còn trong kho lưu trữ để sinh lại được."""
+    text = " ".join(doan)
+    chu_thich = {}
+    for t in doan:
+        m = re.match(r"Hình (\d+\.\d+)\.", t)
+        if m:
+            chu_thich[m.group(1)] = chu_thich.get(m.group(1), 0) + 1
+    loi = []
+    if len(chu_thich) != SO_HINH:
+        loi.append(f"có {len(chu_thich)} hình, đáng lẽ phải là {SO_HINH}")
+    for so, n in sorted(chu_thich.items()):
+        if n > 1:
+            loi.append(f"Hình {so} có {n} chú thích, đáng lẽ chỉ một")
+        # đếm cả chú thích lẫn câu dẫn; câu dẫn giữa câu viết thường "hình", câu dẫn
+        # đầu câu viết hoa "Hình", nên bỏ qua hoa thường.
+        if len(re.findall(rf"hình {re.escape(so)}\b", text, re.IGNORECASE)) < 2:
+            loi.append(f"Hình {so} không được dẫn tới trong phần chữ")
+    for tep in HINH:
+        if not os.path.exists(tep):
+            loi.append(f"thiếu tệp ảnh nguồn {os.path.basename(tep)}")
     return loi
 
 
@@ -421,6 +454,7 @@ def main():
         ("6. Bảng mã nguồn khớp kho lưu trữ", kiem_bang_ma_nguon(o_bang, text)),
         ("7. Đường dẫn trong bảng còn tồn tại", kiem_duong_dan(o_bang)),
         ("8. Quy ước trình bày", kiem_trinh_bay(BAO_CAO, text)),
+        ("9. Hình", kiem_hinh(doan)),
     ]:
         print(f"--- {ten} ---")
         if loi:
