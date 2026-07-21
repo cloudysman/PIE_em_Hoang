@@ -1,10 +1,12 @@
-"""Sinh bốn hình của báo cáo từ tệp kết quả, để mọi hình đều tái lập được.
+"""Sinh ba hình dữ liệu của báo cáo từ tệp kết quả, để chúng tái lập được.
 
-Bốn hình:
+Ba hình:
   Hình 6.1  certificate_check.csv   chứng chỉ là chặn trên của sai số thật
   Hình 7.1  grid_fair_*_pareto.csv  đường đánh đổi chi phí theo mức phần dư
   Hình 7.2  summability_*.csv       độ dốc tổng được, có bước neo so với không
-  Hình 9.1  (sơ đồ khái niệm)       sơ đồ hai dòng của phương pháp
+
+Hình 9.1 là sơ đồ khái niệm vẽ tay, giữ ở hinh/hinh_9_1_so_do.png, nên chương trình
+này không sinh nó và không đè lên nó.
 
 Nguyên tắc trình bày, để hình đọc được cả khi in đen trắng:
   - phông Times New Roman, khớp phần chữ của báo cáo;
@@ -25,7 +27,6 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 from matplotlib.ticker import FuncFormatter
 
 # Dấu thập phân trong báo cáo là dấu phẩy, nên số trên trục cũng phải dùng dấu phẩy.
@@ -156,51 +157,12 @@ def hinh_7_2():
     luu(fig, "hinh_7_2_tong_duoc.png")
 
 
-def hop(ax, x, y, chu, rong=0.26, cao=0.16, mau="#F2F2F2"):
-    ax.add_patch(FancyBboxPatch(
-        (x - rong / 2, y - cao / 2), rong, cao,
-        boxstyle="round,pad=0.01,rounding_size=0.02",
-        linewidth=1.2, edgecolor="#333333", facecolor=mau, zorder=2))
-    ax.text(x, y, chu, ha="center", va="center", fontsize=11, zorder=3)
-
-
-def mui_ten(ax, x1, y1, x2, y2):
-    ax.add_patch(FancyArrowPatch(
-        (x1, y1), (x2, y2), arrowstyle="-|>", mutation_scale=14,
-        linewidth=1.2, color="#333333", zorder=1))
-
-
-def hinh_9_1():
-    """Sơ đồ hai dòng: lấy điểm phản xạ rồi chiếu xấp xỉ."""
-    fig, ax = plt.subplots(figsize=(6.8, 2.7))
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    ax.axis("off")
-
-    # Dùng chữ thay cho ký hiệu, để khớp với văn phong không dùng ký hiệu của báo cáo.
-    y1, y2 = 0.70, 0.24
-    hop(ax, 0.13, y1, "Hai bước lặp\ngần nhất", mau="#FFFFFF")
-    hop(ax, 0.5, y1, "Điểm phản xạ:\nhai lần điểm hiện tại\ntrừ điểm trước",
-        cao=0.22, mau="#EAF2F8")
-    mui_ten(ax, 0.26, y1, 0.37, y1)
-
-    hop(ax, 0.5, y2, "Đi một bước ngược\nhướng toán tử chi phí", mau="#FBEEE6")
-    mui_ten(ax, 0.5, y1 - 0.11, 0.5, y2 + 0.08)
-
-    hop(ax, 0.86, y2, "Chiếu xấp xỉ\nlên tập ràng buộc", mau="#EAF2F8")
-    mui_ten(ax, 0.63, y2, 0.73, y2)
-
-    hop(ax, 0.86, y1, "Bước lặp\nmới", mau="#FFFFFF")
-    mui_ten(ax, 0.86, y2 + 0.08, 0.86, y1 - 0.08)
-    luu(fig, "hinh_9_1_so_do.png")
-
-
 def main():
     dat_kieu()
     hinh_6_1()
     hinh_7_1()
     hinh_7_2()
-    hinh_9_1()
+    # Hình 9.1 là sơ đồ vẽ tay, không sinh ở đây.
 
 
 if __name__ == "__main__":
